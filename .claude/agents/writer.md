@@ -125,11 +125,17 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
 
 > **Hanja glossary** (`summaries/hanja-glossary.md`): If any term was annotated with 한글(漢字) for the first time in this episode, add it.
 
-### E. Unified Review & Revision
+### E. External Feedback & Unified Review
 
-> Complete review with a single `unified-reviewer` agent call.
+- [ ] 10. **Call `review_episode` MCP** (external AI feedback):
+  ```
+  mcp__novel_editor__review_episode(episode_file="{chapter_path}", novel_dir="{novel_dir}", sources="auto")
+  ```
+  - Generates `EDITOR_FEEDBACK_*.md` files (Gemini/GPT/NIM/Ollama per CLAUDE.md flags).
+  - Skip if all feedback flags are `false` in CLAUDE.md.
+  - On failure: log and continue — unified-reviewer will run without external feedback.
 
-- [ ] 10. **Determine review mode** (periodic + change-volume based):
+- [ ] 11. **Determine review mode** (periodic + change-volume based):
 
 | Mode | Trigger (if any condition is met) |
 |------|----------------------------------|
@@ -137,12 +143,13 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
 | `standard` | Every 5th episode **OR**: new key character introduced / relationship reversal·betrayal·reconciliation / secret revealed·misunderstanding resolved / combat-heavy episode / emotional climax / issue found during self-review |
 | `full` | Arc boundary / setting change occurred / immediately before long-term foreshadowing payoff |
 
-- [ ] 11. Call `unified-reviewer` agent:
+- [ ] 12. Call `unified-reviewer` agent:
   ```
   /unified-reviewer mode:{mode} episode:{episode_number}
   ```
+  - unified-reviewer reads `EDITOR_FEEDBACK_*.md` files generated in step 10.
 
-- [ ] 12. **Apply revisions**:
+- [ ] 13. **Apply revisions**:
 
 | Result | Action |
 |--------|--------|
@@ -151,13 +158,13 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
 | Note (💡) / Low priority | May ignore |
 | Overall score < 2.5 or continuity error | Fix then re-review with `mode: continuity` |
 
-- [ ] 13. **If revisions were made, re-update D-step summary files** (skip if no revisions).
+- [ ] 14. **If revisions were made, re-update D-step summary files** (skip if no revisions).
 
 ### F. Commit
 
-- [ ] 14. git add: Stage manuscript + all updated summary files.
-- [ ] 15. git commit (`{소설명} {N}화 집필`)
-- [ ] 16. git status to check for missed files.
+- [ ] 15. git add: Stage manuscript + all updated summary files.
+- [ ] 16. git commit (`{소설명} {N}화 집필`)
+- [ ] 17. git status to check for missed files.
 
 ---
 
