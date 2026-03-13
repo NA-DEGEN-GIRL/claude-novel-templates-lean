@@ -2,7 +2,7 @@
 
 AI(Claude Code)로 웹소설을 쓰기 위한 **경량화 템플릿**.
 
-[원본 템플릿](https://github.com/NA-DEGEN-GIRL/claude-novel-templates)에서 에이전트 12종 → 2종으로 통합하고, MCP 기반 맥락 압축(`compile_brief`)과 인라인 요약 갱신으로 **토큰 사용량을 ~80% 절감**한다.
+[원본 템플릿](https://github.com/NA-DEGEN-GIRL/claude-novel-templates)에서 에이전트 12종 → 2종으로 통합하고, MCP 기반 맥락 압축(`compile_brief`)과 인라인 요약 갱신으로 **토큰 사용량을 ~70-80% 절감**한다.
 
 ---
 
@@ -15,7 +15,7 @@ AI(Claude Code)로 웹소설을 쓰기 위한 **경량화 템플릿**.
 | 요약 갱신 | summary-generator 에이전트 호출 | writer가 인라인 갱신 (별도 에이전트 불필요) |
 | 리뷰 파이프라인 | reviewer → gemini-feedback → continuity-checker → korean-proofreader (4단계) | review_episode MCP → unified-reviewer (2단계) |
 | 지시문 언어 | 한국어 | **영어** (토큰 ~40% 추가 절감). 소설 출력은 한국어 |
-| 토큰 절감 | 기준 | **~80% 절감** |
+| 토큰 절감 | 기준 | **~70-80% 절감** |
 
 ### Language Contract
 
