@@ -93,6 +93,21 @@ my-novel/
 ├── batch-supervisor.md        ← 배치 집필 감독 프롬프트
 ├── batch-supervisor-audit.md  ← 배치 감사 감독 프롬프트
 ├── settings/
+│   ├── ...
+├── chapters/
+├── plot/
+├── summaries/
+└── .claude/
+    ├── commands/
+    │   ├── audit.md              ← /audit — 전수 감사
+    │   └── audit-fix.md          ← /audit-fix — 감사 수정
+    └── agents/
+        ├── writer.md             ← Writer agent (A-F pipeline)
+        ├── unified-reviewer.md   ← Unified reviewer (continuity + quality + Korean proofing)
+        └── full-audit.md         ← Full audit (1M context, single-pass or chunked)
+```
+
+### 에이전트 3종
 │   ├── 01-style-guide.md         ← 문체 가이드
 │   ├── 02-episode-structure.md   ← 에피소드 구조
 │   ├── 03-characters.md          ← 캐릭터 마스터시트
@@ -111,14 +126,13 @@ my-novel/
         └── unified-reviewer.md   ← Unified reviewer (continuity + quality + Korean proofing)
 ```
 
-### 에이전트 2종
-
 | 에이전트 | 역할 |
 |----------|------|
 | **writer** | 전체 파이프라인: compile_brief로 맥락 로딩 → 장면 구성 → 집필 → 인라인 요약 갱신 → 커밋 |
 | **unified-reviewer** | 3가지 모드(`continuity`/`standard`/`full`)로 연속성 + 품질 + 한글 교정을 1회 패스로 처리 |
+| **full-audit** | 1M 컨텍스트 활용 전수 감사. 소규모 소설은 싱글 패스, 대규모는 동적 청킹. `/audit` 커맨드로 실행 |
 
-원본의 reviewer, continuity-checker, korean-proofreader, gemini-feedback 4개 에이전트가 unified-reviewer 1개로 통합되었다. 외부 AI 리뷰(Gemini/GPT/NIM/Ollama)는 `review_episode` MCP 도구가 처리한다.
+원본의 12개 에이전트(reviewer, continuity-checker, korean-proofreader, gemini-feedback, full-audit, audit-verifier, audit-fixer 등)가 3개로 통합되었다.
 
 ---
 

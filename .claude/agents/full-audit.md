@@ -4,11 +4,22 @@
 
 Read-only audit of the entire novel. Produces `summaries/full-audit-report.md`. **Never modifies episode text.**
 
-## Key Difference from Original
+## Design Principle
 
-This agent is designed for **1M context models**. Instead of 10-episode batches with tracker files, it loads settings + all episodes at once and performs a single-pass comprehensive audit. No batching, no tracker file, no resume logic needed.
+This agent is designed for **1M context models**. It estimates total token cost upfront and decides whether to load everything at once or chunk by capacity.
 
-**Capacity**: ~430K tokens of Korean prose ≈ 50-60 episodes of 4,000-char episodes. For novels exceeding this, fall back to arc-boundary chunking (see "Large Novel Handling" below).
+**Token estimation rule**: Korean text ≈ **1.5 characters per token** (Claude tokenizer). So 600K characters ≈ 400K tokens.
+
+**Context budget** (1M model, dynamic calculation):
+1. Measure settings + summaries + prompt overhead (typically 50K–150K tokens)
+2. Reserve output budget: ~60K tokens
+3. Reserve safety margin: 15%
+4. Episode budget = 1M − overhead − output_reserve − safety_margin
+5. Convert to characters: episode_budget_chars = episode_budget_tokens × 1.5
+
+**Static fallback** (when dynamic calc is impractical): **750K characters** (~500K tokens). This is conservative enough for most configurations.
+
+The agent measures total episode character count first, then chooses a strategy.
 
 ---
 
@@ -25,11 +36,29 @@ When settings, text, summaries, and tracker conflict:
 
 ## Procedure
 
-### Phase 1: Load Everything
+### Phase 0: Capacity Check
+
+Before reading any episodes, measure total size:
+
+```bash
+# Count total characters in all episode files
+find chapters/ -name "*.md" -exec cat {} + | wc -c
+```
+
+**Decision table**:
+
+| Total episode chars | Strategy | Description |
+|---------------------|----------|-------------|
+| ≤ episode_budget_chars (fallback: 750K) | **Single-pass** | Load everything at once |
+| > episode_budget_chars | **Chunked** | Greedy episode-by-episode loading until budget, prefer arc boundaries |
+
+For **arc chunking** and **measured chunking**, see "Chunked Audit Procedure" section below.
+
+### Phase 1: Load Context
 
 Read all of the following (skip missing files, note them in report):
 
-**Settings** (read once, keep in context):
+**Settings** (read once, keep in context — ~50K tokens):
 - `CLAUDE.md`
 - `settings/01-style-guide.md` through `settings/08-illustration.md`
 - `plot/foreshadowing.md`
@@ -42,7 +71,7 @@ Read all of the following (skip missing files, note them in report):
 - `summaries/relationship-log.md`
 - `summaries/hanja-glossary.md`
 
-**Episodes** (read ALL in order):
+**Episodes** (single-pass mode: read ALL in order):
 - Recursively collect `chapters/**/*.md`, sort by episode number
 - Read every episode from first to last
 
@@ -94,18 +123,30 @@ With everything in context, read through episodes sequentially. For each episode
 
 **Dialogue rules**: Do NOT correct character speech styles/dialects. Only flag clear typos in dialogue. Speech-style inconsistency goes to Continuity A-6, not proofreading.
 
+#### Evidence Requirements (All Categories)
+
+Every flagged issue MUST include:
+- **Episode reference**: Which episode(s)
+- **Quote or anchor**: Short quote or `"…5chars**problem**5chars…"` locator
+- **Conflict basis**: What it contradicts (settings file, prior episode, glossary, etc.)
+- **Confidence**: `확정` (definite conflict) or `추정` (probable but context-dependent)
+
+Do NOT flag issues without concrete evidence. "Feels off" is not a valid finding.
+
 ### Phase 3: Cross-Novel Pattern Analysis
 
 After reading all episodes, analyze **novel-wide patterns** that per-episode checks can't catch:
 
-1. **Recurring issues (Top 5)** — Most frequent problem types across the novel
-2. **Proper noun inconsistencies** — Same entity spelled differently
-3. **Unresolved foreshadowing** — Threads planted but never paid off
+1. **Recurring issues (Top 5)** — Most frequent problem types, category-based with evidence links
+2. **Proper noun inconsistencies** — Same entity spelled differently (canonical form registry)
+3. **Unresolved foreshadowing** — Threads planted but never paid off. Distinguish `setup pending` (not yet due) vs `abandoned` (past expected payoff)
 4. **Summary vs text discrepancies** — summaries/ content contradicting actual episodes
-5. **Repetitive prose patterns** — Overused phrases, descriptions, reaction patterns (with counts)
-6. **Character voice drift** — Characters who sound different in later arcs vs early arcs
-7. **Protagonist agency trend** — Does the protagonist become more passive over time?
-8. **Tension/pacing curve** — Where does the novel lose momentum?
+5. **Repetitive prose patterns** — Overused phrases, descriptions, reaction patterns (with counts and locations)
+6. **Character voice drift** — Characters who sound different in later arcs vs early arcs (speech register, vocabulary, tone)
+7. **Protagonist agency trend** — Active choices vs passive reception per arc
+8. **Timeline integrity** — Day/night progression, travel feasibility, elapsed-time gaps between episodes
+9. **Dialogue tag analysis** — Ratio of "말했다" vs action-based tags; AI transition word frequency (하지만, 그럼에도 불구하고, 결국)
+10. **Knowledge progression audit** — Who knows what, when. Flag characters acting on unlearned information
 
 ---
 
@@ -171,6 +212,18 @@ Write to `summaries/full-audit-report.md`:
 | 아크 | 능동적 선택 | 수동적 수용 | 비율 |
 |------|-----------|-----------|------|
 
+### 타임라인 무결성
+| 구간 | 작중 시간 | 문제 | 화수 |
+|------|----------|------|------|
+
+### 대화 태그 / AI 전환어 빈도
+| 패턴 | 출현 횟수 | 전체 비율 | 제안 |
+|------|----------|----------|------|
+
+### 캐릭터 지식 상태 위반
+| 캐릭터 | 사용한 정보 | 실제 습득 시점 | 위반 화수 |
+|--------|-----------|-------------|----------|
+
 ### summaries 파일 vs 본문 불일치
 | 파일 | 기록 내용 | 실제 본문 | 화수 |
 |------|----------|----------|------|
@@ -212,17 +265,142 @@ Write to `summaries/full-audit-report.md`:
 
 ---
 
-## Large Novel Handling (60+ episodes)
+## Chunked Audit Procedure (When Single-Pass Exceeds Context)
 
-If the novel exceeds ~60 episodes (or context is insufficient):
+### Step 1: Build chunk plan
 
-1. **Chunk by arc boundaries** — Load settings + one full arc at a time
-2. **Carry forward**: Between arcs, maintain a running state note:
-   - Character locations/states at arc end
-   - Open foreshadowing threads
-   - Proper noun registry
-   - Deceased characters list
-3. **Cross-arc patterns**: After all arcs are audited, generate the "전체 패턴 분석" section by reviewing per-arc reports
+Use **greedy loading**, not average-based calculation:
+
+```
+episode_budget = 750,000  (or dynamically calculated)
+current_chunk = []
+current_size = 0
+
+for each episode in order:
+    ep_size = wc -c of episode file
+    if current_size + ep_size > episode_budget:
+        finalize current_chunk
+        start new chunk (include last 2 episodes of previous chunk as read-only overlap)
+        current_size = overlap_size
+    current_chunk.append(episode)
+    current_size += ep_size
+```
+
+Prefer to break at **arc boundaries**. If an arc exceeds the budget, split at the midpoint.
+
+### Step 2: Process each chunk
+
+For each chunk:
+1. **Re-read settings** (always in context)
+2. **Read carry-forward state** from `summaries/full-audit-carry.md`
+3. **Read overlap episodes** (last 2 of previous chunk, **read-only — do NOT re-audit or re-report**)
+4. **Read all new episodes in this chunk**
+5. **Audit** (Phase 2: per-episode checks — only for NEW episodes in this chunk)
+6. **Append results** to `summaries/full-audit-report.md`
+7. **Update carry-forward state**
+
+> **Overlap ownership rule**: Overlap episodes are read-only context. Only the chunk that FIRST includes an episode may emit findings for it. Use `issue_ledger` IDs to prevent duplicates.
+
+### Step 3: Carry-forward state
+
+Save to `summaries/full-audit-carry.md` in structured format:
+
+```yaml
+# Full Audit Carry-Forward State
+schema_version: 1
+chunk: {N}
+chunk_range: "{start}화-{end}화"
+last_episode_audited: {N}
+
+character_states:
+  - name: {character}
+    location: {place}
+    status: alive|dead|unknown
+    injuries: {description or null}
+    speech_register: {존댓말/반말 current patterns}
+
+deceased:
+  - name: {character}
+    died_episode: {N}
+
+timeline:
+  current_date: "{in-world date at chunk end}"
+  last_time_marker: "{latest explicit time reference}"
+
+open_foreshadowing:
+  - thread: {description}
+    planted: {N}화
+    status: open|hinted|pending
+    expected_payoff: {N}화 or null
+
+canonical_terms:
+  - term: {name/term}
+    spelling: {canonical form}
+    first_seen: {N}화
+    aliases: [{alt spellings if any}]
+
+knowledge_state:
+  - character: {name}
+    knows: [{fact, learned_episode}]
+    does_not_know: [{fact, relevant_since_episode}]
+
+accumulated_counts:
+  errors: {N}
+  warnings: {N}
+  notes: {N}
+
+key_items:
+  - item: {object name}
+    holder: {character or location}
+    since_episode: {N}
+
+pattern_candidates:
+  - phrase: "{overused phrase}"
+    count: {N}
+    locations: [{episode numbers}]
+    promoted: false  # true when count >= 5 (promotion threshold)
+
+issue_ledger:
+  - id: "CONT-{item}-ep{N}"
+    status: reported|carried|confirmed|rejected
+    first_seen_chunk: {N}
+    evidence: "{brief reference}"
+```
+
+### Step 4: Cross-chunk pattern analysis
+
+After all chunks are complete:
+1. Read the full `full-audit-report.md` (per-episode details)
+2. Read final `full-audit-carry.md` (accumulated stats + patterns)
+3. Generate the "전체 패턴 분석" section (items 1-10 from Phase 3)
+4. Insert it at the top of the report
+5. Delete `full-audit-carry.md` (no longer needed)
+
+### Step 5: Verification & Integrity Check
+
+After the report is complete, perform two sub-passes:
+
+**5a. ❌ Error verification** (precision check):
+1. Collect all ❌ Error findings from the report
+2. For each: re-read the cited episode text and referenced settings
+3. Prioritize `settings/` over prior findings — do NOT confirm a systematic misunderstanding
+4. Classify as `확인` (confirmed) / `불확실` (uncertain) / `기각` (false positive)
+5. Remove false positives, downgrade uncertain items to ⚠️
+
+**5b. Boundary & aggregate integrity** (recall check):
+1. Review chunk boundaries: are there continuity gaps at chunk transitions?
+2. Verify accumulated counts match the per-episode details
+3. Check that `issue_ledger` has no duplicate IDs across chunks
+4. Scan for episodes with zero findings that neighbor high-finding episodes (potential missed issues)
+
+> This replaces the original template's separate audit-verifier agent. For maximum rigor, run 5a with a different model if available.
+
+### Resume
+
+If interrupted mid-chunk:
+1. Read `full-audit-carry.md` to find last completed episode
+2. Read existing `full-audit-report.md` to avoid duplicating episodes (scan for `### {N}화:` headers)
+3. Continue from next episode
 
 ---
 
