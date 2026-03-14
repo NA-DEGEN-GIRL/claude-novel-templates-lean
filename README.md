@@ -175,7 +175,7 @@ nohup bash batch-write.sh &    # 백그라운드
 
 | # | 항목 | 방법 |
 |---|------|------|
-| P1 | 요약 정합성 | summary-validator 배치 감사 |
+| P1 | 요약 정합성 | unified-reviewer standard 모드 (S1-S6 검증) |
 | P2 | 복선 회수 시한 | foreshadowing.md 체크 |
 | P3 | 캐릭터 상태 최신성 | character-tracker ↔ 최신 에피소드 |
 | P4 | 미이행 약속 | promise-tracker 체크 |

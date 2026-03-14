@@ -134,9 +134,9 @@ Record in `summaries/illustration-log.md` every time an illustration is generate
 
 ### Illustration Management
 
-Manage illustrations systematically via `.claude/agents/illustration-manager.md`:
-- **Single verification**: Immediately after insertion — 6-item check (image-text match, tag consistency, format, etc.)
-- **Batch audit**: At arc completion — 11-item full review (appearance change reflection, orphan images, broken references, etc.)
-- **Regeneration**: When issues found in audit, modify and regenerate based on existing prompt records
+Manage illustrations systematically:
+- **Single verification**: Immediately after insertion — check image-text match, tag consistency, format
+- **Batch audit**: At arc completion — full review (appearance change reflection, orphan images, broken references)
+- **Regeneration**: When issues found, modify and regenerate based on existing prompt records in `summaries/illustration-log.md`
 
 ---

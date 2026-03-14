@@ -66,8 +66,21 @@ Evaluate from the reader's perspective. Core criterion: **"Does the reader want 
 | 6 | Immersion/pacing | 4 | Boring stretches, unnecessary descriptions, appropriate length |
 | 7 | Foreshadowing/hooks | 3 | New hooks planted, existing hooks utilized, anticipation built |
 
-**Frequent AI psychological violation patterns** (deduct from B2 if found):
-위기 직후 캐주얼 / 감정 점프 (계기 없는 전환) / 메타적 자기 분석 / 과잉 관찰자 시점 / 감정 선언 (Show don't Tell) / 무반응 / 과잉 침착 / 즉시 수용 / 감정의 증발
+**AI Psychological Violation Patterns** — Mandatory yes/no scan for B2. Report location if found.
+
+| # | Pattern | Description |
+|---|---------|-------------|
+| P1 | 위기 직후 캐주얼 | Life-threatening situation → casual dialogue immediately after |
+| P2 | 감정 점프 | Emotional shift without a triggering event |
+| P3 | 메타적 자기 분석 | Character narrates their own psychological state like a therapist |
+| P4 | 과잉 관찰자 시점 | POV character observes details they wouldn't notice in context |
+| P5 | 감정 선언 | "그는 슬펐다" instead of showing through action/dialogue |
+| P6 | 무반응 | Character doesn't react to shocking/important information |
+| P7 | 과잉 침착 | Unnaturally calm in crisis (especially non-combat characters) |
+| P8 | 즉시 수용 | Instantly accepts information that should cause resistance/doubt |
+| P9 | 감정의 증발 | Strong emotion from previous scene completely gone in next scene |
+
+Any pattern found → deduct from B2 + flag as ⚠️ with location and fix suggestion.
 
 **Score interpretation**: 4.5-5.0 Excellent (publish) / 3.5-4.4 Good (minor edits) / 2.5-3.4 Revision needed / Below 2.5 Re-review required
 
@@ -130,7 +143,24 @@ Evaluate when `EDITOR_FEEDBACK_*.md` files exist.
 
 ---
 
-## E. Parallel Cross-Verification — Additional Check for Parallel Writing
+## E. Summary Validation — standard, full Modes
+
+Verify that the writer's inline summary updates accurately reflect the episode text. Check only the summaries modified for this episode.
+
+| # | Item | Check |
+|---|------|-------|
+| S1 | Action attribution | Did the character credited in the summary actually perform the action in the episode? |
+| S2 | Relationship direction | "A helped B" — verify A was the helper, not B |
+| S3 | Knowledge evidence | If knowledge-map says "X learned Y" — verify X actually learned Y in-text |
+| S4 | Dialogue accuracy | Any quoted text in episode-log must match the actual episode |
+| S5 | Foreshadowing status | If foreshadowing.md marks a thread as "회수됨" — verify it was actually resolved |
+| S6 | Character state | character-tracker updates match end-of-episode state |
+
+Summary errors are treated as ❌ (must fix immediately) because they corrupt future compile_brief output.
+
+---
+
+## F. Parallel Cross-Verification — Additional Check for Parallel Writing
 
 When episodes are written in parallel, perform these 7 additional cross-episode checks.
 
@@ -224,6 +254,12 @@ When errors/warnings exist:
 
 | # | 소스 | 카테고리 | 판정 | 수정안/사유 |
 |---|------|----------|------|------------|
+
+### E. 요약 검증 (S1-S6)
+
+| # | 항목 | 상태 | 비고 |
+|---|------|------|------|
+| S1-S6 | {항목명} | ✅/❌ | {오류 시 수정 필요 내용} |
 
 ### 종합 판정
 - [ ] 통과

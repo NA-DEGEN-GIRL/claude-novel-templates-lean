@@ -45,7 +45,7 @@ Any of the following qualifies as "parallel writing":
 
 | # | Item | Method |
 |---|------|--------|
-| P1 | Summary consistency | `summary-validator` **batch audit (mode B)** — targets episodes written since last check |
+| P1 | Summary consistency | `unified-reviewer` in `standard` mode — verify summary accuracy (S1-S6) for episodes since last check |
 | P2 | Foreshadowing deadlines | Check `plot/foreshadowing.md` for threads past their expected resolution point |
 | P3 | Character state freshness | Verify `summaries/character-tracker.md` current state matches **latest episode end state** |
 | P4 | Unfulfilled promises | Check `summaries/promise-tracker.md` for overdue or neglected promises |

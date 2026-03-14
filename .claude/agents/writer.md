@@ -71,16 +71,25 @@ Specialized agent for web novel episode writing. Handles: manuscript → inline 
 
 - [ ] 1. **Call `compile_brief` MCP tool** — Receive current context, character states, foreshadowing, promises, knowledge map, relationships, ending hook tracker, and next-episode goals in one response (~4KB).
   - Fallback if unavailable: Read `summaries/running-context.md` → relevant arc plot → `plot/foreshadowing.md` → `summaries/character-tracker.md` in order.
-- [ ] 2. **Read last 2–3 paragraphs of previous episode** — Verify hook connection + prevent same ending hook type consecutively.
-- [ ] 3. **Cover check (first episode only)**: If `cover.png`/`cover.jpg` doesn't exist, generate via `generate_image`.
-- [ ] 4. **Process user feedback** — If `summaries/user-feedback.md` exists, run `feedback-reviewer` agent. Skip otherwise.
+- [ ] 2. **Arc alignment check** — Read the relevant section of `plot/{arc}.md` and confirm:
+  - Current arc goal and this episode's functional role within it
+  - Next 2–3 episode runway (what must happen before arc end)
+  - Foreshadowing plant/payoff obligations for this episode
+  - If `plot/{arc}.md` doesn't exist, generate it first (reference `plot/master-outline.md`)
+- [ ] 3. **Read last 2–3 paragraphs of previous episode** — Verify hook connection + prevent same ending hook type consecutively.
+- [ ] 4. **Cover check (first episode only)**: If `cover.png`/`cover.jpg` doesn't exist, generate via `generate_image`.
+- [ ] 5. **Process user feedback** — If `summaries/user-feedback.md` exists, run `feedback-reviewer` agent. Skip otherwise.
 
 ### B. Scene Planning
 
 Define {summary, purpose, characters, tone, foreshadowing} for each scene and decide the ending hook type.
 
-- [ ] 5. Draft outlines for 3–5 scenes (confirm each scene's purpose aligns with the episode goal).
-- [ ] 6. Decide ending hook type — Re-verify it differs from the previous episode's type.
+- [ ] 6. Draft outlines for 3–5 scenes (confirm each scene's purpose aligns with the episode goal and arc alignment from A-2).
+- [ ] 7. Decide ending hook type — Re-verify it differs from the previous episode's type.
+- [ ] 8. **Pattern check** — Review compile_brief's ending hook tracker (last 5 episodes). Verify this episode avoids:
+  - Same hook type as previous episode
+  - Same opening pattern (action/dialogue/description) as last 2 episodes
+  - Repeated scene structure (e.g., 3 consecutive episodes ending in combat)
 
 ### C. Writing & Self-Review
 
@@ -88,14 +97,14 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
 > - `novel-hanja`: Must be used for all Hanja naming and annotation. LLM Hanja inference is forbidden.
 > - `novel-calc`: Write the narrative first; use calc only when verification is needed. Calculations must not drive the narrative. Never insert calc results into narration, dialogue, or inner monologue.
 
-- [ ] 8. Write the first draft (within target length range).
-- [ ] 9. **Self-review** (6 items):
-  - [ ] 9-1. Does an ending hook exist + is it a different type from the previous episode?
-  - [ ] 9-2. Do character speech patterns match settings?
-  - [ ] 9-3. Is the length within target range? → Verify with `char_count`.
-  - [ ] 9-4. Were any characters/abilities/locations improvised without being in settings?
-  - [ ] 9-5. Were any CLAUDE.md prohibitions violated?
-  - [ ] 9-6. Does any character speak as if knowing information they shouldn't? (Cross-reference compile_brief's knowledge-map)
+- [ ] 9. Write the first draft (within target length range).
+- [ ] 10. **Self-review** (6 items):
+  - [ ] 10-1. Does an ending hook exist + is it a different type from the previous episode?
+  - [ ] 10-2. Do character speech patterns match settings?
+  - [ ] 10-3. Is the length within target range? → Verify with `char_count`.
+  - [ ] 10-4. Were any characters/abilities/locations improvised without being in settings?
+  - [ ] 10-5. Were any CLAUDE.md prohibitions violated?
+  - [ ] 10-6. Does any character speak as if knowing information they shouldn't? (Cross-reference compile_brief's knowledge-map)
 
 ### D. Inline Summary Update (Post-Writing)
 
@@ -125,9 +134,19 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
 
 > **Hanja glossary** (`summaries/hanja-glossary.md`): If any term was annotated with 한글(漢字) for the first time in this episode, add it.
 
+#### Summary Fact-Check (After Updating)
+
+Before proceeding to review, verify the summary updates against the actual episode text:
+- **Action attribution**: Did character X actually do action Y? (not another character)
+- **Relationship direction**: "A가 B를 구했다" — verify A was the actor, not B
+- **Knowledge evidence**: If knowledge-map says "C learned secret D" — verify C actually learned it in-text
+- **Dialogue accuracy**: Any quoted dialogue in episode-log must match the actual text
+
+If any fact error is found, fix the summary immediately.
+
 ### E. External Feedback & Unified Review
 
-- [ ] 10. **Call `review_episode` MCP** (external AI feedback):
+- [ ] 11. **Call `review_episode` MCP** (external AI feedback):
   ```
   mcp__novel_editor__review_episode(episode_file="{chapter_path}", novel_dir="{novel_dir}", sources="auto")
   ```
@@ -135,7 +154,7 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
   - Skip if all feedback flags are `false` in CLAUDE.md.
   - On failure: log and continue — unified-reviewer will run without external feedback.
 
-- [ ] 11. **Determine review mode** (periodic + change-volume based):
+- [ ] 12. **Determine review mode** (periodic + change-volume based):
 
 | Mode | Trigger (if any condition is met) |
 |------|----------------------------------|
@@ -143,28 +162,32 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
 | `standard` | Every 5th episode **OR**: new key character introduced / relationship reversal·betrayal·reconciliation / secret revealed·misunderstanding resolved / combat-heavy episode / emotional climax / issue found during self-review |
 | `full` | Arc boundary / setting change occurred / immediately before long-term foreshadowing payoff |
 
-- [ ] 12. Call `unified-reviewer` agent:
+- [ ] 13. Call `unified-reviewer` agent:
   ```
   /unified-reviewer mode:{mode} episode:{episode_number}
   ```
-  - unified-reviewer reads `EDITOR_FEEDBACK_*.md` files generated in step 10.
+  - unified-reviewer reads `EDITOR_FEEDBACK_*.md` files generated in step 11.
 
-- [ ] 13. **Apply revisions**:
+- [ ] 14. **Apply revisions** (rule-based escalation):
 
 | Result | Action |
 |--------|--------|
-| Error (❌) / High priority | Must fix immediately |
+| Any continuity ❌ | **Must fix + re-review** with `mode: continuity` |
+| Any summary fact error | **Must fix** summary + re-review |
+| Narrative overall < 2.5 (standard/full) | **Must fix** high-priority items + re-review |
+| Narrative overall 2.5–3.4 | Fix high-priority items only; no re-review |
 | Warning (⚠️) / Medium priority | Fix if possible |
 | Note (💡) / Low priority | May ignore |
-| Overall score < 2.5 or continuity error | Fix then re-review with `mode: continuity` |
 
-- [ ] 14. **If revisions were made, re-update D-step summary files** (skip if no revisions).
+> Maximum 2 re-reviews. If still failing after 2nd, proceed and flag for periodic check.
+
+- [ ] 15. **If revisions were made, re-update D-step summary files** (skip if no revisions).
 
 ### F. Commit
 
-- [ ] 15. git add: Stage manuscript + all updated summary files.
-- [ ] 16. git commit (`{소설명} {N}화 집필`)
-- [ ] 17. git status to check for missed files.
+- [ ] 16. git add: Stage manuscript + all updated summary files.
+- [ ] 17. git commit (`{소설명} {N}화 집필`)
+- [ ] 18. git status to check for missed files.
 
 ---
 
