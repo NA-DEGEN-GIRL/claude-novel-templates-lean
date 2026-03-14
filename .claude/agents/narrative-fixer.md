@@ -91,6 +91,8 @@ Apply the fix using the appropriate strategy (see below). After each episode edi
 
 **Summary fact-check**: After updating, verify the new summary entries match the modified text (same check as writer.md step D).
 
+**Post-fix continuity review**: After all modifications for a fix item are complete, run `unified-reviewer` in `continuity` mode on each modified episode. This catches continuity breaks introduced by the rewrite. If new errors are found, fix them immediately before proceeding to the next item.
+
 ---
 
 ## Rewrite Strategies

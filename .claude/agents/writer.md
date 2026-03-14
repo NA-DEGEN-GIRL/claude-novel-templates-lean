@@ -161,7 +161,7 @@ If any fact error is found, fix the summary immediately.
 | Mode | Trigger (if any condition is met) |
 |------|----------------------------------|
 | `continuity` | Default (every episode) |
-| `standard` | Every 5th episode **OR**: new key character introduced / relationship reversal·betrayal·reconciliation / secret revealed·misunderstanding resolved / combat-heavy episode / emotional climax / issue found during self-review |
+| `standard` | **Episode number is a multiple of 5 (5, 10, 15, ...) = mandatory standard.** Also triggered by: new key character introduced / relationship reversal·betrayal·reconciliation / secret revealed·misunderstanding resolved / combat-heavy episode / emotional climax / issue found during self-review |
 | `full` | Arc boundary / setting change occurred / immediately before long-term foreshadowing payoff |
 
 - [ ] 14. Call `unified-reviewer` agent:
