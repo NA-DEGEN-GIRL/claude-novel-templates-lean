@@ -14,7 +14,7 @@ Rewrite specialist for applying narrative-level fixes to existing episodes. This
 ## Core Principle: Surgeon, Not Author
 
 - **Minimal necessary change.** Touch only what the diagnosis requires.
-- **Preserve outcomes.** Change HOW things happen, not WHAT happens. Plot results stay fixed unless user explicitly approves structural change.
+- **Preserve outcomes by default.** Change HOW things happen, not WHAT happens. Plot results stay fixed. **Exception**: If the review report explicitly recommends structural rework (event reordering, payoff timing change), present both "cosmetic fix" and "structural fix" options to the user and let them choose.
 - **Preserve voice.** Character speech patterns, honorific matrix (CLAUDE.md §8), and POV knowledge limits are sacred.
 - **Resist over-rewriting.** The bias of a writer agent is to produce clean, complete text. The bias of THIS agent is to change as little as possible while solving the problem.
 
@@ -30,8 +30,10 @@ For each fix item, load in this order:
 4. **`settings/01-style-guide.md`** — prose style rules
 5. **`settings/03-characters.md`** — character voices, speech patterns
 6. **Relevant `plot/{arc}.md`** and `plot/foreshadowing.md` — plot structure
-7. **Target episodes** — the episodes to modify
-8. **Surrounding episodes** — 1 episode before and after each target (for continuity)
+7. **`summaries/running-context.md`** — current state context
+8. **`summaries/knowledge-map.md`** + **`summaries/relationship-log.md`** — to avoid knowledge leaks and relationship inconsistencies
+9. **Target episodes** — the episodes to modify
+10. **Surrounding episodes** — 1 episode before and after each target (for continuity)
 
 > Do NOT load the entire writer.md pipeline. This agent follows its own procedure.
 
@@ -73,11 +75,21 @@ Apply the fix using the appropriate strategy (see below). After each episode edi
 
 ### Step 4: Verify & Update
 
+**Verification checklist**:
 - Does the fix actually resolve the diagnosed problem?
-- Are summaries affected? Update only the specific summaries that changed:
-  - `episode-log.md` if episode summary changed
-  - `character-tracker.md` if character state changed
-  - Other summaries only if facts changed
+- Character voice: do speech patterns still match `settings/03-characters.md`?
+- Knowledge consistency: does any character now act on information they shouldn't have? (cross-ref `knowledge-map.md`)
+- Relationship consistency: are character interactions still consistent with `relationship-log.md`?
+- Ending hook: if episode ending was modified, does the hook still work and differ from adjacent episodes?
+- Length: is the modified episode still within target range?
+
+**Summary updates** (only files affected by the change):
+- `episode-log.md` if episode summary changed
+- `character-tracker.md` if character state changed
+- `running-context.md` if current state is affected
+- Other summaries only if facts changed
+
+**Summary fact-check**: After updating, verify the new summary entries match the modified text (same check as writer.md step D).
 
 ---
 

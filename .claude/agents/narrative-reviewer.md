@@ -8,7 +8,7 @@ Strategic developmental editor for entire novels or arc ranges. Focuses on **"Is
 
 **Output**: `summaries/narrative-review-report.md`
 
-**Read-only**: This agent analyzes and reports. It does NOT modify episode text. Fixes are applied via `/narrative-fix` command or by the writer agent referencing this report.
+**Read-only**: This agent analyzes and reports. It does NOT modify episode text. Fixes are applied via `/narrative-fix` command, which invokes the `narrative-fixer` agent.
 
 ---
 
@@ -235,4 +235,4 @@ For novels exceeding context capacity:
 5. **Compare to the novel's own best.** The standard is arc 1 of THIS novel, not some external ideal.
 6. **No factual error checking.** That's full-audit's job. Don't duplicate.
 7. **Boundary with full-audit**: full-audit handles mechanical quality (typos, continuity facts, proofreading). This agent handles artistic quality (engagement, agency, tone, pacing). If full-audit already flagged "repetitive prose patterns" with counts, reference its data rather than recounting.
-8. **Fixes are NOT applied by this agent.** The report is designed to be consumed by the **writer agent** or the user directly. The writer already knows style rules, character voices, and continuity — it's the right tool for applying narrative fixes.
+8. **Fixes are NOT applied by this agent.** The report is consumed by the **narrative-fixer agent** via `/narrative-fix` command.
