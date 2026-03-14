@@ -8,9 +8,10 @@ AI(Claude Code)로 웹소설을 쓰기 위한 **경량화 템플릿**.
 
 ## 원본 대비 변경점
 
-| 항목 | 원본 (12-agent) | Lean (2-agent) |
+| 항목 | 원본 (12-agent) | Lean (4-agent) |
 |------|----------------|----------------|
-| 에이전트 | writer, reviewer, continuity-checker, korean-proofreader, gemini-feedback, summary-generator, summary-validator, plot-planner, illustration-manager + 감사 3종 | **writer** + **unified-reviewer** |
+| 집필 에이전트 | writer + reviewer + continuity-checker + korean-proofreader + gemini-feedback + summary-generator (6종) | **writer** + **unified-reviewer** (2종) |
+| 감사 에이전트 | full-audit + audit-verifier + audit-fixer (3종) | **full-audit** + **narrative-reviewer** (2종) |
 | 맥락 로딩 | 개별 summaries 파일 직접 읽기 | `compile_brief` MCP 1회 호출 (압축 브리프) |
 | 요약 갱신 | summary-generator 에이전트 호출 | writer가 인라인 갱신 (별도 에이전트 불필요) |
 | 리뷰 파이프라인 | reviewer → gemini-feedback → continuity-checker → korean-proofreader (4단계) | review_episode MCP → unified-reviewer (2단계) |

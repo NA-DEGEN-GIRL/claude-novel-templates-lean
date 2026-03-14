@@ -86,9 +86,9 @@ Specialized agent for web novel episode writing. Handles: manuscript → inline 
 Define {summary, purpose, characters, tone, foreshadowing} for each scene and decide the ending hook type.
 
 - [ ] 6. Draft outlines for 3–5 scenes (confirm each scene's purpose aligns with the episode goal and arc alignment from A-2).
-- [ ] {next_number}. **Opening hook check** — Do the first 2-3 sentences of the episode compel continued reading? (in medias res, unresolved question, or arresting image)
-- [ ] 7. Decide ending hook type — Re-verify it differs from the previous episode's type.
-- [ ] 8. **Pattern check** — Review compile_brief's ending hook tracker (last 5 episodes). Verify this episode avoids:
+- [ ] 7. **Opening hook check** — Do the first 2-3 sentences of the episode compel continued reading? (in medias res, unresolved question, or arresting image)
+- [ ] 8. Decide ending hook type — Re-verify it differs from the previous episode's type.
+- [ ] 9. **Pattern check** — Review compile_brief's ending hook tracker (last 5 episodes). Verify this episode avoids:
   - Same hook type as previous episode
   - Same opening pattern (action/dialogue/description) as last 2 episodes
   - Repeated scene structure (e.g., 3 consecutive episodes ending in combat)
@@ -99,14 +99,14 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
 > - `novel-hanja`: Must be used for all Hanja naming and annotation. LLM Hanja inference is forbidden.
 > - `novel-calc`: Write the narrative first; use calc only when verification is needed. Calculations must not drive the narrative. Never insert calc results into narration, dialogue, or inner monologue.
 
-- [ ] 9. Write the first draft (within target length range).
-- [ ] 10. **Self-review** (6 items):
-  - [ ] 10-1. Does an ending hook exist + is it a different type from the previous episode?
-  - [ ] 10-2. Do character speech patterns match settings?
-  - [ ] 10-3. Is the length within target range? → Verify with `char_count`.
-  - [ ] 10-4. Were any characters/abilities/locations improvised without being in settings?
-  - [ ] 10-5. Were any CLAUDE.md prohibitions violated?
-  - [ ] 10-6. Does any character speak as if knowing information they shouldn't? (Cross-reference compile_brief's knowledge-map)
+- [ ] 10. Write the first draft (within target length range).
+- [ ] 11. **Self-review** (6 items):
+  - [ ] 11-1. Does an ending hook exist + is it a different type from the previous episode?
+  - [ ] 11-2. Do character speech patterns match settings?
+  - [ ] 11-3. Is the length within target range? → Verify with `char_count`.
+  - [ ] 11-4. Were any characters/abilities/locations improvised without being in settings?
+  - [ ] 11-5. Were any CLAUDE.md prohibitions violated?
+  - [ ] 11-6. Does any character speak as if knowing information they shouldn't? (Cross-reference compile_brief's knowledge-map)
 
 ### D. Inline Summary Update (Post-Writing)
 
@@ -148,7 +148,7 @@ If any fact error is found, fix the summary immediately.
 
 ### E. External Feedback & Unified Review
 
-- [ ] 11. **Call `review_episode` MCP** (external AI feedback):
+- [ ] 12. **Call `review_episode` MCP** (external AI feedback):
   ```
   mcp__novel_editor__review_episode(episode_file="{chapter_path}", novel_dir="{novel_dir}", sources="auto")
   ```
@@ -156,7 +156,7 @@ If any fact error is found, fix the summary immediately.
   - Skip if all feedback flags are `false` in CLAUDE.md.
   - On failure: log and continue — unified-reviewer will run without external feedback.
 
-- [ ] 12. **Determine review mode** (periodic + change-volume based):
+- [ ] 13. **Determine review mode** (periodic + change-volume based):
 
 | Mode | Trigger (if any condition is met) |
 |------|----------------------------------|
@@ -164,13 +164,13 @@ If any fact error is found, fix the summary immediately.
 | `standard` | Every 5th episode **OR**: new key character introduced / relationship reversal·betrayal·reconciliation / secret revealed·misunderstanding resolved / combat-heavy episode / emotional climax / issue found during self-review |
 | `full` | Arc boundary / setting change occurred / immediately before long-term foreshadowing payoff |
 
-- [ ] 13. Call `unified-reviewer` agent:
+- [ ] 14. Call `unified-reviewer` agent:
   ```
   /unified-reviewer mode:{mode} episode:{episode_number}
   ```
-  - unified-reviewer reads `EDITOR_FEEDBACK_*.md` files generated in step 11.
+  - unified-reviewer reads `EDITOR_FEEDBACK_*.md` files generated in step 12.
 
-- [ ] 14. **Apply revisions** (rule-based escalation):
+- [ ] 15. **Apply revisions** (rule-based escalation):
 
 | Result | Action |
 |--------|--------|
@@ -183,14 +183,14 @@ If any fact error is found, fix the summary immediately.
 
 > Maximum 2 re-reviews. If still failing after 2nd, proceed and flag for periodic check.
 
-- [ ] 15. **If revisions were made, re-update D-step summary files** (skip if no revisions).
+- [ ] 16. **If revisions were made, re-update D-step summary files** (skip if no revisions).
 
 ### F. Commit
 
-- [ ] 16. Update `summaries/editor-feedback-log.md` with review processing results from step E (if external feedback was processed).
-- [ ] 17. git add: Stage manuscript + all updated summary files.
-- [ ] 18. git commit (`{소설명} {N}화 집필`)
-- [ ] 19. git status to check for missed files.
+- [ ] 17. Update `summaries/editor-feedback-log.md` with review processing results from step E (if external feedback was processed).
+- [ ] 18. git add: Stage manuscript + all updated summary files.
+- [ ] 19. git commit (`{소설명} {N}화 집필`)
+- [ ] 20. git status to check for missed files.
 
 ---
 
