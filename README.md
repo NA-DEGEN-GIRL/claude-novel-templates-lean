@@ -58,7 +58,12 @@ mkdir -p $NEW_ID
 cp -r claude-novel-templates-lean/{CLAUDE.md,INIT-PROMPT.md,settings,summaries,chapters,plot} $NEW_ID/
 mkdir -p $NEW_ID/.claude/agents
 cp -r claude-novel-templates-lean/.claude/* $NEW_ID/.claude/
+
+# 권한 설정 (claude -p 배치 실행에 필수)
+cp $NEW_ID/.claude/settings.local.example.json $NEW_ID/.claude/settings.local.json
 ```
+
+> **`settings.local.json` 없이 `claude -p`를 실행하면 도구 사용이 차단됩니다.** 배치 집필/감사 시 반드시 복사해야 합니다. 대화형(`claude`) 실행 시에는 수동 승인이 가능하므로 선택사항입니다.
 
 ### 2. 초기 셋업
 
