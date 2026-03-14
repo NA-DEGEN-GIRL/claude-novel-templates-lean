@@ -100,40 +100,35 @@ my-novel/
 └── .claude/
     ├── commands/
     │   ├── audit.md              ← /audit — 전수 감사
-    │   └── audit-fix.md          ← /audit-fix — 감사 수정
+    │   ├── audit-fix.md          ← /audit-fix — 감사 수정
+    │   ├── narrative-review.md   ← /narrative-review — 서사 리뷰
+    │   └── narrative-fix.md      ← /narrative-fix — 서사 수정
     └── agents/
-        ├── writer.md             ← Writer agent (A-F pipeline)
-        ├── unified-reviewer.md   ← Unified reviewer (continuity + quality + Korean proofing)
-        └── full-audit.md         ← Full audit (1M context, single-pass or chunked)
+        ├── writer.md             ← Writer (A-F pipeline)
+        ├── unified-reviewer.md   ← Unified reviewer (continuity + quality + Korean)
+        ├── full-audit.md         ← Full audit (1M context, single-pass or chunked)
+        └── narrative-reviewer.md ← Narrative reviewer (서사 품질 진단)
 ```
 
-### 에이전트 3종
-│   ├── 01-style-guide.md         ← 문체 가이드
-│   ├── 02-episode-structure.md   ← 에피소드 구조
-│   ├── 03-characters.md          ← 캐릭터 마스터시트
-│   ├── 04-worldbuilding.md       ← 세계관 설정
-│   ├── 05-continuity.md          ← Continuity management
-│   ├── 07-periodic.md            ← Periodic checks (P1-P9)
-│   └── 08-illustration.md        ← Illustration rules
-├── chapters/
-│   ├── prologue/
-│   └── arc-01/
-├── plot/
-├── summaries/
-└── .claude/
-    └── agents/
-        ├── writer.md             ← Writer agent (A-F pipeline)
-        └── unified-reviewer.md   ← Unified reviewer (continuity + quality + Korean proofing)
-```
+### 에이전트 4종
 
-| 에이전트 | 역할 |
-|----------|------|
-| **writer** | 전체 파이프라인: compile_brief로 맥락 로딩 → 장면 구성 → 집필 → 인라인 요약 갱신 → 커밋 |
-| **unified-reviewer** | 3가지 모드(`continuity`/`standard`/`full`)로 연속성 + 품질 + 한글 교정을 1회 패스로 처리 |
-| **full-audit** | 1M 컨텍스트 활용 전수 감사. 소규모 소설은 싱글 패스, 대규모는 동적 청킹. `/audit` 커맨드로 실행 |
-| **narrative-reviewer** | 서사 품질 전체 리뷰. 장르 이탈, 주인공 수동화, 스케일 인플레이션, 감정 클라이맥스 매몰 등 진단. `/narrative-review`로 실행 |
+| 에이전트 | 역할 | 실행 시점 |
+|----------|------|----------|
+| **writer** | 집필 파이프라인: compile_brief → 장면 구성 → 집필 → 요약 갱신 → 커밋 | 매화 |
+| **unified-reviewer** | 연속성 + 품질 + 한글 교정 (3모드: continuity/standard/full) | 매화 (writer가 호출) |
+| **full-audit** | 전수 팩트 체크. 1M 컨텍스트로 싱글 패스 또는 동적 청킹 | 아크/소설 완결 시 |
+| **narrative-reviewer** | 서사 품질 전체 리뷰 (장르 이탈, 주인공 수동화, 스케일 인플레이션 등) | 아크/소설 완결 시 |
 
-원본의 12개 에이전트가 4개로 통합되었다. narrative-reviewer의 수정 적용은 별도 fixer 없이 **writer 에이전트가 보고서를 참조하여 수행**한다.
+### 커맨드 4종
+
+| 커맨드 | 역할 | 산출물 |
+|--------|------|--------|
+| `/audit` | 전수 감사 실행 (읽기 전용) | `full-audit-report.md` |
+| `/audit-fix` | 감사 보고서 기반 오류 수정 (연속성→품질→한글 순) | `full-audit-fix-log.md` |
+| `/narrative-review` | 서사 품질 리뷰 (읽기 전용) | `narrative-review-report.md` |
+| `/narrative-fix` | 서사 리뷰 기반 품질 수정 (사용자 승인 후 실행) | `narrative-fix-log.md` |
+
+원본의 12개 에이전트 + 3개 커맨드가 **4개 에이전트 + 4개 커맨드**로 통합되었다. 수정 커맨드(`/audit-fix`, `/narrative-fix`)는 별도 에이전트 없이 SOP 기반으로 직접 실행한다.
 
 ---
 
