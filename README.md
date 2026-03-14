@@ -111,10 +111,11 @@ my-novel/
         ├── writer.md             ← Writer (A-F pipeline)
         ├── unified-reviewer.md   ← Unified reviewer (continuity + quality + Korean)
         ├── full-audit.md         ← Full audit (1M context, single-pass or chunked)
-        └── narrative-reviewer.md ← Narrative reviewer (서사 품질 진단)
+        ├── narrative-reviewer.md ← Narrative reviewer (서사 품질 진단)
+        └── narrative-fixer.md   ← Narrative fixer (서사 수술적 수정)
 ```
 
-### 에이전트 4종
+### 에이전트 5종
 
 | 에이전트 | 역할 | 실행 시점 |
 |----------|------|----------|
@@ -122,6 +123,7 @@ my-novel/
 | **unified-reviewer** | 연속성 + 품질 + 한글 교정 (3모드: continuity/standard/full) | 매화 (writer가 호출) |
 | **full-audit** | 전수 팩트 체크. 1M 컨텍스트로 싱글 패스 또는 동적 청킹 | 아크/소설 완결 시 |
 | **narrative-reviewer** | 서사 품질 전체 리뷰 (장르 이탈, 주인공 수동화, 스케일 인플레이션 등) | 아크/소설 완결 시 |
+| **narrative-fixer** | 서사 리뷰 기반 수술적 수정 (데이터 덤프 해소, 능동성 복원, 감정 장면 복원 등) | narrative-review 이후 |
 
 ### 커맨드 4종
 
@@ -132,7 +134,7 @@ my-novel/
 | `/narrative-review` | 서사 품질 리뷰 (읽기 전용) | `narrative-review-report.md` |
 | `/narrative-fix` | 서사 리뷰 기반 품질 수정 (사용자 승인 후 실행) | `narrative-fix-log.md` |
 
-원본의 12개 에이전트 + 3개 커맨드가 **4개 에이전트 + 4개 커맨드**로 통합되었다. 수정 커맨드(`/audit-fix`, `/narrative-fix`)는 별도 에이전트 없이 SOP 기반으로 직접 실행한다.
+원본의 12개 에이전트 + 3개 커맨드가 **5개 에이전트 + 4개 커맨드**로 통합되었다. `/audit-fix`는 SOP 기반 커맨드, `/narrative-fix`는 전용 narrative-fixer 에이전트가 처리한다.
 
 ---
 
