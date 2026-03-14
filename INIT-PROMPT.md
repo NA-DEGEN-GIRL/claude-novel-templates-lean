@@ -191,7 +191,7 @@ no-title-[원본 번호]/ 소설의 설정을 복제해서 새 프로젝트를 �
 
 ## 복제 대상
 - 원본: no-title-[번호]
-- 복제할 것: CLAUDE.md, settings/, .claude/agents/ (writer.md, unified-reviewer.md), plot/master-outline.md, plot/foreshadowing.md
+- 복제할 것: CLAUDE.md, settings/, .claude/agents/ (writer.md, unified-reviewer.md, full-audit.md, narrative-reviewer.md), .claude/commands/ 폴더, plot/master-outline.md, plot/foreshadowing.md
 - 복제하지 않을 것: chapters/ (빈 폴더만), summaries/ (빈 템플릿만), EDITOR_FEEDBACK*
 
 ## 변경 사항

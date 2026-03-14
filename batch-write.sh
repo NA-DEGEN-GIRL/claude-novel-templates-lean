@@ -8,8 +8,7 @@
 # NOTE: All novel output is written in Korean.
 #
 # === Lean Changes ===
-# - 4 agents (reviewer, continuity-checker, korean-proofreader, gemini-feedback)
-#   -> single unified-reviewer agent
+# - 2 agents (writer, unified-reviewer) + review_episode MCP for external feedback
 # - compile_brief MCP for prep (instead of reading individual files)
 # - Inline summary updates (instead of summary-generator agent)
 # - ~80% token savings

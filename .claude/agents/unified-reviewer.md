@@ -9,7 +9,7 @@ Performs continuity verification + narrative quality + Korean proofreading + ext
 | Mode | Frequency | Scope |
 |------|-----------|-------|
 | `continuity` | Every episode | 13 continuity items + Korean errors (❌ level only) |
-| `standard` | Every 3-5 episodes | Continuity + 7 narrative items + full Korean proofing |
+| `standard` | Every 5 episodes | Continuity + 7 narrative items + full Korean proofing |
 | `full` | Arc boundary | All items + detailed analysis + direct settings/ reference |
 
 ---

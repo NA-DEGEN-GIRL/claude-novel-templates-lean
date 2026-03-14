@@ -8,7 +8,7 @@ Strategic developmental editor for entire novels or arc ranges. Focuses on **"Is
 
 **Output**: `summaries/narrative-review-report.md`
 
-**Read-only**: This agent analyzes and reports. It does NOT modify episode text. Fixes are applied by `narrative-fixer` agent.
+**Read-only**: This agent analyzes and reports. It does NOT modify episode text. Fixes are applied via `/narrative-fix` command or by the writer agent referencing this report.
 
 ---
 
@@ -39,7 +39,7 @@ Read the entire novel as a reader would. During this pass, track:
 
 Do NOT stop to analyze during this pass. Just read and note.
 
-### Phase 2: Structured Analysis (7 Pillars)
+### Phase 2: Structured Analysis (9 Pillars)
 
 #### P1. Genre & Tone Integrity
 
@@ -122,7 +122,7 @@ Rate each arc and identify trajectory:
 | Arc | Episodes | Rating | Strengths | Weaknesses |
 |-----|----------|--------|-----------|------------|
 
-Ratings: ★★★★★ Excellent / ★★★★ Good / ★★★ Adequate / ★★ Weak / ★ Problematic
+Ratings: Excellent / Good / Adequate / Weak / Problematic
 
 Identify the **inflection point** — where does quality start declining? What caused it?
 

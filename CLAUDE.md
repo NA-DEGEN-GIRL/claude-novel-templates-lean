@@ -66,7 +66,7 @@
 ### 3.1 Preparation (Prep)
 
 1. **Call `compile_brief` MCP tool**: Generates a compressed brief (~4-15KB) from project files (~300KB+). Do NOT read individual files directly.
-   - Fallback if unavailable: `summaries/running-context.md` → arc plot → `summaries/character-tracker.md`.
+   - Fallback if unavailable: `summaries/running-context.md` → relevant arc plot → `plot/foreshadowing.md` → `summaries/character-tracker.md`.
 2. **Read last 2-3 paragraphs of previous episode**: Verify hook connection + prevent same ending hook type consecutively.
 3. **Check editor feedback**: Reference `EDITOR_FEEDBACK_*.md` if unprocessed feedback exists.
 

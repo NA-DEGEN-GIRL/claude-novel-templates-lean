@@ -54,7 +54,7 @@ git clone https://github.com/NA-DEGEN-GIRL/claude-novel-templates-lean.git
 
 NEW_ID="my-novel"
 mkdir -p $NEW_ID
-cp -r claude-novel-templates-lean/{CLAUDE.md,INIT-PROMPT.md,settings,summaries,chapters,plot,compile_brief.py} $NEW_ID/
+cp -r claude-novel-templates-lean/{CLAUDE.md,INIT-PROMPT.md,settings,summaries,chapters,plot} $NEW_ID/
 mkdir -p $NEW_ID/.claude/agents
 cp -r claude-novel-templates-lean/.claude/* $NEW_ID/.claude/
 ```

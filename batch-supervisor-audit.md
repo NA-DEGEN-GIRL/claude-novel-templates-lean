@@ -165,14 +165,14 @@ To determine batch completion, verify all of the following:
 
 1. **Prompt waiting**: `> ` or `>` prompt on the last line of the screen
 2. **Report updated**: `summaries/full-audit-report.md` exists and includes the batch's last episode
-3. **Tracker updated**: `summaries/full-audit-tracker.md` records the batch's last episode
+3. **Tracker updated**: `summaries/full-audit-carry.md` records the batch's last episode
 
 ```bash
 # Check last audited episode in report
 grep -oP '### \K\d+(?=화)' {NOVEL_DIR}/summaries/full-audit-report.md | tail -1
 
 # Check last completed episode in tracker
-grep -oP '마지막 완료.*?(\d+)화' {NOVEL_DIR}/summaries/full-audit-tracker.md
+grep -oP '마지막 완료.*?(\d+)화' {NOVEL_DIR}/summaries/full-audit-carry.md
 ```
 
 #### 4d. Batch Transition Procedure (BATCH_SIZE > 0)

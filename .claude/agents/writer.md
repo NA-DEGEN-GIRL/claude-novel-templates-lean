@@ -78,7 +78,7 @@ Specialized agent for web novel episode writing. Handles: manuscript → inline 
   - If `plot/{arc}.md` doesn't exist, generate it first (reference `plot/master-outline.md`)
 - [ ] 3. **Read last 2–3 paragraphs of previous episode** — Verify hook connection + prevent same ending hook type consecutively.
 - [ ] 4. **Cover check (first episode only)**: If `cover.png`/`cover.jpg` doesn't exist, generate via `generate_image`.
-- [ ] 5. **Process user feedback** — If `summaries/user-feedback.md` exists, run `feedback-reviewer` agent. Skip otherwise.
+- [ ] 5. **Process user feedback** — If `summaries/user-feedback.md` exists, process user feedback before writing. Skip otherwise.
 
 ### B. Scene Planning
 
@@ -185,9 +185,10 @@ If any fact error is found, fix the summary immediately.
 
 ### F. Commit
 
-- [ ] 16. git add: Stage manuscript + all updated summary files.
-- [ ] 17. git commit (`{소설명} {N}화 집필`)
-- [ ] 18. git status to check for missed files.
+- [ ] 16. Update `summaries/editor-feedback-log.md` with review processing results from step E (if external feedback was processed).
+- [ ] 17. git add: Stage manuscript + all updated summary files.
+- [ ] 18. git commit (`{소설명} {N}화 집필`)
+- [ ] 19. git status to check for missed files.
 
 ---
 
