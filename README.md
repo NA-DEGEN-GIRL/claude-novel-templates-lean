@@ -71,11 +71,11 @@ cd my-novel && claude
 ### 3. 집필 시작
 
 ```bash
-# 방법 A: 감독자 배치 (권장 — 자동 연속 집필)
+# 감독자 배치 (자동 연속 집필)
 cd /root/novel && claude
 # → "my-novel/batch-supervisor.md 대로 수행"
 
-# 방법 B: 직접 집필 (한 화씩)
+# 또는 직접 집필 (한 화씩)
 cd my-novel && claude
 # → "1화 작성해줘"
 ```
@@ -88,8 +88,6 @@ cd my-novel && claude
 my-novel/
 ├── CLAUDE.md                  ← Writing Constitution (English + Korean examples)
 ├── INIT-PROMPT.md             ← AI 셋업 프롬프트 (4종)
-├── compile_brief.py           ← 맥락 압축 스크립트 (MCP 서버에서 호출)
-├── batch-write.sh             ← 배치 자동 집필 스크립트
 ├── batch-supervisor.md        ← 배치 집필 감독 프롬프트
 ├── batch-supervisor-audit.md  ← 배치 감사 감독 프롬프트
 ├── settings/
@@ -154,25 +152,13 @@ F. Commit — 본문 + 요약 함께 커밋
 
 ## 배치 자동 집필
 
-### 감독자 방식 (권장): `batch-supervisor.md`
+### 집필 감독: `batch-supervisor.md`
 
 Claude Code가 tmux 세션의 집필 AI를 모니터링. 에러 복구, 질문 응답, 다음 화 전송을 자동 처리한다.
 
 ```bash
 cd /root/novel && claude
 # → "my-novel/batch-supervisor.md 대로 수행"
-```
-
-### 스크립트 방식: `batch-write.sh`
-
-`claude -p`를 5화 단위로 반복 호출. 백그라운드 무인 실행 가능.
-
-```bash
-cd my-novel
-
-bash batch-write.sh            # 전체 범위
-bash batch-write.sh 50 100     # 특정 범위
-nohup bash batch-write.sh &    # 백그라운드
 ```
 
 ### 감사 감독: `batch-supervisor-audit.md`
