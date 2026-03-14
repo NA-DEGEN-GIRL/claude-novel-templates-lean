@@ -50,7 +50,7 @@ Any of the following qualifies as "parallel writing":
 | P3 | Character state freshness | Verify `summaries/character-tracker.md` current state matches **latest episode end state** |
 | P4 | Unfulfilled promises | Check `summaries/promise-tracker.md` for overdue or neglected promises |
 | P5 | running-context | Verify `summaries/running-context.md` is under 200 lines and accurately reflects current state |
-| P6 | Personality drift | Check main character dialogue/actions for consistency with `settings/03-characters.md` |
+| P6 | Personality drift vs growth | (a) **Regression**: character acts contrary to current established state without cause → ❌. (b) **Development**: character changed from baseline with documented in-story cause in `character-tracker.md` → ✅ intentional |
 | P7 | External AI batch review | Call `mcp__novel_editor__batch_review` for episodes since last check. Only target active sources per CLAUDE.md feedback flags (gemini/gpt/nim/ollama). Prioritize episodes with `❌ 실패` records in `editor-feedback-log.md` |
 | P8 | Korean quality check | Only for episodes where P7 produced text modifications — re-check via `unified-reviewer` continuity mode (includes Korean proofreading) |
 | P9 | Meta-reference prohibition | Full scan for in-prose references like "X화에서", "프롤로그에서", "1부에서" (episode number/structure name references) |

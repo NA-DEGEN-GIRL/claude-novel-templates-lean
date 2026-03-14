@@ -71,6 +71,7 @@ Specialized agent for web novel episode writing. Handles: manuscript → inline 
 
 - [ ] 1. **Call `compile_brief` MCP tool** — Receive current context, character states, foreshadowing, promises, knowledge map, relationships, ending hook tracker, and next-episode goals in one response (~4KB).
   - Fallback if unavailable: Read `summaries/running-context.md` → relevant arc plot → `plot/foreshadowing.md` → `summaries/character-tracker.md` in order.
+  - For the first episode of a new novel: skip fallback files that don't exist yet. A2 arc alignment is mandatory (create plot file from master-outline if needed). A3 previous episode check is N/A.
 - [ ] 2. **Arc alignment check** — Read the relevant section of `plot/{arc}.md` and confirm:
   - Current arc goal and this episode's functional role within it
   - Next 2–3 episode runway (what must happen before arc end)
@@ -85,6 +86,7 @@ Specialized agent for web novel episode writing. Handles: manuscript → inline 
 Define {summary, purpose, characters, tone, foreshadowing} for each scene and decide the ending hook type.
 
 - [ ] 6. Draft outlines for 3–5 scenes (confirm each scene's purpose aligns with the episode goal and arc alignment from A-2).
+- [ ] {next_number}. **Opening hook check** — Do the first 2-3 sentences of the episode compel continued reading? (in medias res, unresolved question, or arresting image)
 - [ ] 7. Decide ending hook type — Re-verify it differs from the previous episode's type.
 - [ ] 8. **Pattern check** — Review compile_brief's ending hook tracker (last 5 episodes). Verify this episode avoids:
   - Same hook type as previous episode

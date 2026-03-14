@@ -81,7 +81,7 @@ Determine variables from this file's path:
 ### 1. Session Management
 
 - tmux session name: the `SESSION` inferred above
-- **If session doesn't exist**: Create with `tmux new-session -d -s {SESSION} -x 220 -y 50`, then run `tmux send-keys -t {SESSION} 'cd {NOVEL_DIR} && unset CLAUDECODE && claude' Enter`
+- **If session doesn't exist**: Create with `tmux new-session -d -s {{SESSION}} -x 220 -y 50`, then run `tmux send-keys -t {{SESSION}} 'cd {{NOVEL_DIR}} && unset CLAUDECODE && claude' Enter`
 - **If session exists**: Capture the screen to assess current state and continue
 - **Session size**: Must be 220x50 or larger to prevent capture-pane truncation
 
@@ -89,7 +89,7 @@ Determine variables from this file's path:
 
 #### BATCH_SIZE = -1 (Full Audit)
 
-1. Send `/audit` or `/audit {START_EP}-{END_EP}` prompt to the auditor.
+1. Send `/audit` or `/audit {{START_EP}}-{{END_EP}}` prompt to the auditor.
 2. Supervise until completion. Do not `/clear` (rely on auto-compact).
 
 #### BATCH_SIZE = N (N-Episode Batches)
@@ -104,7 +104,7 @@ Example: START_EP=1, END_EP=35, BATCH_SIZE=10
 -> Batch 4: 31-35 (--resume 35)
 ```
 
-- First batch: `/audit {START_EP}-{first batch end}`
+- First batch: `/audit {{START_EP}}-{first batch end}`
 - Subsequent batches: `/audit --resume {batch end}` (tracker-based resume)
 - Last batch: proceed even if remaining episodes < N
 
@@ -113,13 +113,13 @@ Example: START_EP=1, END_EP=35, BATCH_SIZE=10
 #### 3a. First Batch Prompt
 
 ```
-/audit {START_EP}-{BATCH_END}
+/audit {{START_EP}}-{{BATCH_END}}
 ```
 
 #### 3b. Subsequent Batch Prompt (after /clear)
 
 ```
-/audit --resume {BATCH_END}
+/audit --resume {{BATCH_END}}
 ```
 
 #### 3c. Full Audit Prompt (BATCH_SIZE = -1)
@@ -131,7 +131,7 @@ Example: START_EP=1, END_EP=35, BATCH_SIZE=10
 Or with range:
 
 ```
-/audit {START_EP}-{END_EP}
+/audit {{START_EP}}-{{END_EP}}
 ```
 
 ### 4. Supervision Loop
@@ -139,7 +139,7 @@ Or with range:
 #### 4a. Screen Capture
 
 ```bash
-tmux capture-pane -t {SESSION} -p -S -50
+tmux capture-pane -t {{SESSION}} -p -S -50
 ```
 
 - `-S -50`: Capture only the last 50 lines (token savings)
@@ -151,7 +151,7 @@ tmux capture-pane -t {SESSION} -p -S -50
 | **Working** | No `> ` prompt visible, text being output. Or `Working`, `Thinking`, `Simmering` etc. | Re-check after 2 minutes |
 | **Auto-compact triggered** | `Auto-compact` or `Compacting conversation` message | Normal (expected for BATCH_SIZE=-1). Re-check after 2 minutes |
 | **Stuck asking question** | Line ending with `?` followed by `> ` prompt | Send appropriate answer |
-| **Permission request** | `Allow`, `Deny`, `permission` etc. with input wait | `tmux send-keys -t {SESSION} 'y' Enter` |
+| **Permission request** | `Allow`, `Deny`, `permission` etc. with input wait | `tmux send-keys -t {{SESSION}} 'y' Enter` |
 | **Error occurred** | `Error`, `error`, `FATAL`, `Traceback` etc. | Analyze error cause, send recovery command |
 | **MCP connection failure** | `MCP`, `connection`, `timeout`, `ECONNREFUSED` etc. | Try reconnecting with `/mcp`. If repeated failure, restart session |
 | **Infinite loop** | Same operation repeated 3+ times, or no progress on same episode for 15+ minutes | `/clear` then restart with `--resume` prompt |
@@ -169,10 +169,10 @@ To determine batch completion, verify all of the following:
 
 ```bash
 # Check last audited episode in report
-grep -oP '### \K\d+(?=화)' {NOVEL_DIR}/summaries/full-audit-report.md | tail -1
+grep -oP '### \K\d+(?=화)' {{NOVEL_DIR}}/summaries/full-audit-report.md | tail -1
 
 # Check last completed episode in tracker
-grep -oP '마지막 완료.*?(\d+)화' {NOVEL_DIR}/summaries/full-audit-carry.md
+grep -oP '마지막 완료.*?(\d+)화' {{NOVEL_DIR}}/summaries/full-audit-carry.md
 ```
 
 #### 4d. Batch Transition Procedure (BATCH_SIZE > 0)
@@ -180,7 +180,7 @@ grep -oP '마지막 완료.*?(\d+)화' {NOVEL_DIR}/summaries/full-audit-carry.md
 When a batch completes:
 
 1. **Verify report**: Confirm tracker's last completed episode matches batch end
-2. **Send `/clear`**: `tmux send-keys -t {SESSION} '/clear' Enter`
+2. **Send `/clear`**: `tmux send-keys -t {{SESSION}} '/clear' Enter`
 3. **Wait 3 seconds**: `sleep 3`
 4. **Send next batch prompt**: `/audit --resume {next batch end}`
 5. Repeat until last batch
@@ -216,7 +216,7 @@ After the full audit is complete:
    - Batch-based resumption may cause the summary to only reflect the last batch
    - In that case, ask the auditor to recalculate the summary:
      ```
-     summaries/full-audit-report.md의 상단 요약 테이블과 전체 패턴 분석을 전 범위({START_EP}~{END_EP}화)로 재계산해줘. 본문 내용은 수정하지 말고 요약 통계만 갱신.
+     summaries/full-audit-report.md의 상단 요약 테이블과 전체 패턴 분석을 전 범위({{START_EP}}~{{END_EP}}화)로 재계산해줘. 본문 내용은 수정하지 말고 요약 통계만 갱신.
      ```
 
 #### 5c. Session Crash Recovery
@@ -233,7 +233,7 @@ If the session has completely disappeared:
 The supervisor outputs progress in this format:
 
 ```
-[HH:MM] Batch audit start: {NOVEL_ID} eps {START_EP}~{END_EP}, BATCH_SIZE={BATCH_SIZE}
+[HH:MM] Batch audit start: {{NOVEL_ID}} eps {{START_EP}}~{{END_EP}}, BATCH_SIZE={{BATCH_SIZE}}
 [HH:MM] Batch 1/N: eps {S}-{E} prompt sent
 [HH:MM] Audit in progress (2m)
 [HH:MM] Batch 1/N completed (results: ❌{n} ⚠️{n} 💡{n})
@@ -251,8 +251,8 @@ The supervisor outputs progress in this format:
 - After report integrity check, output final summary:
   ```
   -- Batch audit completed --
-  Novel: {NOVEL_ID}
-  Range: eps {START_EP}~{END_EP}
+  Novel: {{NOVEL_ID}}
+  Range: eps {{START_EP}}~{{END_EP}}
   Batches: {N}
   Total items: ❌ {n}, ⚠️ {n}, 💡 {n}
   Report: summaries/full-audit-report.md
@@ -262,7 +262,7 @@ The supervisor outputs progress in this format:
 
 ### 8. Range
 
-Episodes {START_EP} through {END_EP}, BATCH_SIZE={BATCH_SIZE}.
+Episodes {{START_EP}} through {{END_EP}}, BATCH_SIZE={{BATCH_SIZE}}.
 
 ---
 
@@ -272,13 +272,13 @@ When the supervisor's context is running low, output a handoff prompt in this fo
 
 ```
 Continue batch audit supervision.
-- Novel: {NOVEL_ID}
-- Session: {SESSION}
-- Full range: eps {START_EP}~{END_EP}
-- BATCH_SIZE: {BATCH_SIZE}
+- Novel: {{NOVEL_ID}}
+- Session: {{SESSION}}
+- Full range: eps {{START_EP}}~{{END_EP}}
+- BATCH_SIZE: {{BATCH_SIZE}}
 - Current batch: {K}/{N} (eps {S}-{E}, {state})
 - Last completed: ep {M}
-- Remaining range: {M+1}~{END_EP}
+- Remaining range: {M+1}~{{END_EP}}
 - Notes: {describe if any}
 - Follow batch-supervisor-audit.md rules.
 ```

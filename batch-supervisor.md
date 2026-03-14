@@ -165,6 +165,7 @@ To accurately determine "completed" state, verify all of the following:
 1. **Prompt waiting**: `> ` or `>` prompt on the last line of the screen
 2. **Work artifact exists**: Chapter file exists (`ls {{NOVEL_DIR}}/chapters/{arc}/chapter-{NN}.md`)
 3. **Progress log check**: `tail -1 {{NOVEL_DIR}}/summaries/batch-progress.log` contains the episode number
+   <!-- batch-progress.log is created and maintained by the supervisor. Format: one line per episode, 'EP {N} DONE {timestamp}'. Used for completion tracking and resume. -->
 
 All three conditions must be met for "completed" status. If only the prompt is visible but the file doesn't exist, the episode may have failed silently.
 

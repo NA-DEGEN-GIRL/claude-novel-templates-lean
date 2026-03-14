@@ -120,7 +120,7 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 3. **Update feedback log**: Record 3.3 results in `editor-feedback-log.md`.
 4. **Git commit**: After episode completion (manuscript + summaries). Batch 2-3 eps OK. Message: `{소설명} {N}~{M}화 집필`. Push only on user request.
 
-### 3.6 Parallel Writing & Periodic Checks
+### 3.5 Parallel Writing & Periodic Checks
 
 → See `settings/07-periodic.md`.
 
@@ -147,6 +147,7 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 6. **No renaming proper nouns**: Names defined in settings files cannot be arbitrarily changed.
 7. **No episode structure meta-references in prose**: 금지: "3화에서", "프롤로그에서", "1부에서" in narration/dialogue. Reference past events by date/place/event name. Meta areas (EPISODE_META, plot/, summaries/) are exempt.
 8. **No POV switch spoilers**: 금지: `[시점 전환: 세르반]` meta tags in prose. Use `***` scene break then shift naturally via tone/setting/senses.
+9. **No unearned emotional escalation**: 감정적 클라이맥스(죽음, 고백, 배신, 재회)는 해당 관계나 갈등이 최소 2화 이상 사전 전개된 후에만 허용한다.
 
 ---
 
@@ -223,6 +224,7 @@ next_episode_hook: "{{HOOK}}"
 2. **감정 극단 시 일시적 이탈 허용**: 장면 종료 후 원래로 복귀.
 3. **공적/사적 구분**: 같은 쌍이라도 상황에 따라 다를 수 있다.
 4. **어투 역행 금지**: 반말→존댓말 전환은 특수 사건(배신, 관계 단절 등) 필요.
+5. **대화는 정보 전달만을 위해 존재하지 않는다**: 모든 대화 교환은 정보 전달 외에 최소 하나의 기능(캐릭터 성격 노출, 관계 변화, 서브텍스트, 유머)을 수행해야 한다.
 
 ---
 

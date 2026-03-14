@@ -84,6 +84,8 @@ Any pattern found → deduct from B2 + flag as ⚠️ with location and fix sugg
 
 **Score interpretation**: 4.5-5.0 Excellent (publish) / 3.5-4.4 Good (minor edits) / 2.5-3.4 Revision needed / Below 2.5 Re-review required
 
+**Single-item rule**: If any item scores below its listed minimum, flag it as HIGH priority regardless of overall score.
+
 ---
 
 ## C. Korean Proofreading — Scope Varies by Mode
