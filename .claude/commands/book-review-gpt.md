@@ -12,30 +12,55 @@ Claude book-review와 다른 관점을 제공한다. 두 리뷰를 비교하면 
 
 ### Step 1: 아크 구조 파악
 
-chapters/ 폴더에서 아크별 에피소드 파일을 수집하고, 각 아크의 문자 수를 확인한다.
+chapters/ 폴더에서 아크별 에피소드 파일을 수집한다.
+
+- 각 아크의 문자 수를 확인
+- **아크가 80,000자를 초과하면 반으로 분할** (서사 경계에서 끊기)
+- 소설의 아크 구조(prologue, arc-01, arc-02...)를 기준으로 분할
 
 ### Step 2: 순차 아크 리뷰 (GPT 5.4)
 
-**반드시 순차 실행한다. 병렬 금지.** 이전 아크 요약이 다음 아크의 맥락이 되므로.
+**반드시 순차 실행한다. 병렬 금지.** 이전 아크의 구조화된 요약이 다음 아크의 맥락이 되므로.
 
 각 아크에 대해:
 
 ```bash
 CONTENT=$(cat chapters/{arc}/*.md)
-PREV_SUMMARY="{이전 아크까지의 누적 요약}"
 
 codex exec -m gpt-5.4 "
-You are reviewing a Korean novel arc by arc. This is ARC {N}.
+You are reviewing a Korean novel arc by arc. This is ARC {N} ({arc_name}, episodes {start}-{end}).
 
-Previous arcs summary:
-${PREV_SUMMARY}
+## Previous arcs (structured carry-forward):
+${CARRY_FORWARD}
 
-Read the text below as a READER. After reading, provide:
-1. 아크 요약 (3-4문장)
-2. 읽다가 걸린 순간 (어색하거나 뜬금없었던 것)
-3. 읽다가 빨라진 순간 (몰입된 곳)
-4. 아크 점수 (/10)
-5. 가장 인상적인 대사 1개 인용
+## Instructions:
+Read the text below as a READER. After reading, provide ALL of the following.
+Every finding MUST cite a specific episode number.
+
+### 1. 아크 요약 (3-4문장)
+
+### 2. 구조화된 상태 기록 (다음 아크에 전달됨)
+- 핵심 캐릭터 현재 상태 (이름: 상황 1줄씩)
+- 미해결 갈등/미스터리
+- 주요 관계 변화
+- 이 아크에서 설치된 복선
+
+### 3. 읽다가 걸린 순간 (화수 명시)
+어색하거나, 뜬금없거나, 설득력이 부족했던 것.
+
+### 4. 읽다가 빨라진 순간 (화수 명시)
+몰입이 올라간 구간.
+
+### 5. 읽다가 느려진 순간 (화수 명시)
+지루하거나 건너뛰고 싶었던 구간.
+
+### 6. 캐릭터 일관성
+이전 아크와 비교해 캐릭터 행동/말투에 변화가 있었는가? 자연스러운 변화인가 급변인가?
+
+### 7. 아크 점수 (/10)
+점수 기준: 7=괜찮음, 8=좋음, 9=매우 좋음, 10=걸작. 6 이하는 명확한 결함이 있을 때만.
+
+### 8. 가장 인상적인 대사 1개 (정확히 인용)
 
 Write in Korean. Be honest and specific.
 
@@ -44,9 +69,11 @@ ${CONTENT}
 "
 ```
 
-- 첫 번째 아크: PREV_SUMMARY 없이 실행
-- 두 번째 아크부터: 이전 아크의 "아크 요약"을 PREV_SUMMARY에 누적
-- 마지막 아크: 추가로 "6. 끝나고 남은 감정"도 요청
+**Carry-forward 규칙**:
+- 첫 아크: carry-forward 없이 실행
+- 이후 아크: **이전 아크의 "구조화된 상태 기록"을 전부 누적**하여 전달
+- 누적이므로 후반 아크도 초반 캐릭터/복선 정보를 유지할 수 있음
+- 마지막 아크: 추가로 "9. 끝나고 남은 감정", "10. 초반에 약속한 소설과 후반의 실제 소설이 같은 작품처럼 느껴졌는가?" 요청
 
 ### Step 3: 통합 리뷰 (GPT 5.4)
 
@@ -54,34 +81,41 @@ ${CONTENT}
 
 ```bash
 codex exec -m gpt-5.4 "
-You reviewed the Korean novel '{title}' arc by arc. Here are your arc reviews.
-Now write a UNIFIED book review in Korean.
+You reviewed the Korean novel '{title}' ({total_eps} episodes) arc by arc.
+Here are ALL your arc reviews. Now write a UNIFIED book review in Korean.
 
 {아크별 리뷰 전부}
 
-Write the unified review with:
+Write the unified review with these sections:
 1. 📖 한줄 소개
-2. ⭐ 종합 점수
-3. 🎯 추천 대상 / ⛔ 비추 대상
+2. ⭐ 종합 점수 (7=괜찮음, 8=좋음, 9=매우 좋음 기준)
+3. 🎯 추천 대상 (3개) / ⛔ 비추 대상 (2개)
 4. 💬 한마디 (감정적 독후감 1문장)
 5. 총평 (3문장)
 6. 아크별 점수 테이블
-7. 강점 (top 3, 구체적 인용 포함)
-8. 약점 (top 3)
-9. 읽다가 걸린 순간 vs 빨라진 순간 (전체 통합)
+7. 강점 top 3 (반드시 화수 + 정확한 인용 포함)
+8. 약점 top 3 (반드시 화수 명시)
+9. 읽다가 걸린 순간 vs 빨라진 순간 (전체 통합, 화수 명시)
 10. 비교 작품
-11. 가장 크게 거슬린 문제 1개
+11. 가장 크게 거슬린 문제 1개 (화수 + 구체적 설명)
+12. 점수 자기 검증: 아크별 감정과 종합 점수가 일치하는가?
 
 Write entirely in Korean. Be honest, specific, quote memorable lines.
+Do NOT inflate scores. 8/10 is already a good novel.
 "
 ```
 
 ### Step 4: 저장
 
-결과를 `summaries/book-review-gpt.md`에 저장한다. 아크별 상세 리뷰도 하단에 포함.
+결과를 `summaries/book-review-gpt.md`에 저장한다.
+
+구성:
+1. 통합 리뷰 (Step 3 결과)
+2. 아크별 상세 리뷰 (Step 2 각 결과)
 
 ## 주의
 
 - settings/, plot/, summaries/는 GPT에 보내지 않는다. 본문만.
-- 이전 아크 요약은 GPT가 직접 쓴 것만 사용 (Claude가 요약하지 않음)
-- codex exec 호출이 실패하면 재시도 1회. 2회 실패 시 해당 아크 스킵하고 다음으로.
+- carry-forward는 GPT가 직접 쓴 구조화된 상태 기록만 사용 (Claude가 요약/편집하지 않음)
+- codex exec 호출이 실패하면 재시도 1회. 2회 실패 시 해당 아크를 건너뛰고 다음으로 진행하되, 로그에 기록.
+- 점수 보정: GPT는 Claude보다 관대한 경향이 있음. 통합 리뷰에 "점수 자기 검증" 항목을 포함하여 인지하게 한다.
