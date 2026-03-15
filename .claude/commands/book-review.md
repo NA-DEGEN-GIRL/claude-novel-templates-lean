@@ -2,7 +2,7 @@
 
 ## 사용법
 
-`/review` 또는 `/review arc-01`
+`/book-review` 또는 `/book-review arc-01`
 
 - 인자 없음: 전체 소설 평가
 - 아크 지정: 해당 아크만 평가
