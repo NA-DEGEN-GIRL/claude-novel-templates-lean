@@ -39,6 +39,21 @@ Read the entire novel as a reader would. During this pass, track:
 
 Do NOT stop to analyze during this pass. Just read and note.
 
+### Phase 1.5: WTF Test & Single Biggest Problem
+
+Before structured analysis, answer these TWO questions:
+
+**1. WTF Moments**: List every moment where you thought "wait, what?" or "this came out of nowhere" or "why is this happening?". These are moments where the story lost you as a reader — not technical errors, but **narrative disbelief**. Include:
+- Sudden plot escalations without buildup
+- Characters doing things that contradict their established behavior or the world's rules
+- Scale jumps (personal story suddenly becoming civilization-level)
+- Convenient solutions appearing from nowhere
+- Setting rules being ignored for plot convenience
+
+**2. The Single Biggest Structural Problem**: If you could only fix ONE thing about this novel, what would it be? Force yourself to choose. This must be a structural/story issue, not a prose issue. Write it in 2-3 sentences.
+
+> These two questions MUST be answered before proceeding to Phase 2. They prevent the structured pillars from distributing attention away from the most critical issue.
+
 ### Phase 2: Structured Analysis (9 Pillars)
 
 #### P1. Genre & Tone Integrity
@@ -126,6 +141,20 @@ Ratings: Excellent / Good / Adequate / Weak / Problematic
 
 Identify the **inflection point** — where does quality start declining? What caused it?
 
+### Phase 2.5: Final Arc Coherence Check
+
+Re-read the LAST ARC (or last 20% of episodes) specifically checking:
+
+1. **Buildup test**: Was the climax/resolution foreshadowed at least 3-5 episodes before it happens? Or does it appear suddenly?
+2. **Rules test**: Does the resolution follow the world's established rules? Or does it require characters to bypass rules that were enforced earlier?
+3. **Scale connection test**: Does the final arc's scope connect back to the personal/emotional stakes from arc 1? Or did it become a different (bigger) story?
+4. **Promise vs Execution test**: Would the ending work better as a PROMISE for the future rather than an EXECUTION in this novel? (If yes, this is a critical structural issue)
+5. **Character consistency test**: Do characters in the final arc behave consistently with how they were established? Or do they suddenly gain abilities/make decisions that weren't set up?
+
+> This check exists because models tend to normalize sudden climactic escalation after reading 50+ episodes. By re-reading the final arc in isolation, you can judge it more objectively.
+
+If any test fails, it becomes a CRITICAL item in the report.
+
 ---
 
 ## Phase 3: Generate Report
@@ -138,6 +167,28 @@ Write `summaries/narrative-review-report.md`:
 > 리뷰일: {date}
 > 대상: {novel_name} {range}
 > 리뷰어: {model_name}
+
+---
+
+## 가장 큰 구조 문제 (Phase 1.5)
+
+**단 하나의 구조 문제**: {2-3문장}
+
+**WTF 순간들**:
+1. {화수}: {무엇이 뜬금없었는가}
+2. ...
+
+---
+
+## 최종 아크 정합성 (Phase 2.5)
+
+| 테스트 | 결과 | 상세 |
+|--------|------|------|
+| 복선/예고 | ✅/❌ | {클라이맥스가 사전 예고되었는가} |
+| 세계 규칙 | ✅/❌ | {해결이 기존 규칙을 따르는가} |
+| 스케일 연결 | ✅/❌ | {아크 1의 개인 서사와 연결되는가} |
+| 약속 vs 실행 | ✅/❌ | {실행보다 약속이 더 나은 선택이었는가} |
+| 캐릭터 일관성 | ✅/❌ | {캐릭터가 설정대로 행동하는가} |
 
 ---
 
