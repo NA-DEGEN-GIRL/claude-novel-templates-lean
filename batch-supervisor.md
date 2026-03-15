@@ -35,7 +35,7 @@ Modify these values for your novel before inputting the prompt.
 | `NOVEL_DIR` | Novel absolute path | `/root/novel/no-title-015` |
 | `START_EP` | Starting episode | `1` |
 | `END_EP` | Ending episode | `70` |
-| `CHUNK_SIZE` | /clear interval (in episodes) | `10` |
+| `CHUNK_SIZE` | /clear interval (in episodes). **`-1` = never /clear** (use auto-compact instead) | `10` or `-1` |
 | `WRITER_CMD` | Writer launch command | `claude` (default) |
 | `ARC_MAP` | Arc-to-episode mapping | See below |
 
@@ -194,13 +194,18 @@ After completion verification, the supervisor directly registers the episode in 
 
 #### 5a. Chunk Boundary (/clear)
 
-Reset context every CHUNK_SIZE (default 10) episodes:
+**If `CHUNK_SIZE = -1`**: Skip this step entirely. The writer uses auto-compact, which preserves context better than /clear. This is the recommended setting for 1M context models (Claude Opus).
+
+**If `CHUNK_SIZE > 0`**: Reset context every CHUNK_SIZE episodes:
 
 ```bash
 tmux send-keys -t {{SESSION}} '/clear' Enter
 ```
 
 Wait 3 seconds, then send full prompt (3a).
+
+> **When to use CHUNK_SIZE = -1 (recommended)**: Claude Opus or any model with auto-compact. Auto-compact preserves important context while managing window size.
+> **When to use CHUNK_SIZE > 0**: Models without auto-compact (NIM proxy models, open-source models), or when context window is small (< 200K).
 
 #### 5b. Arc Transition
 
