@@ -133,6 +133,25 @@ Every flagged issue MUST include:
 
 Do NOT flag issues without concrete evidence. "Feels off" is not a valid finding.
 
+### Phase 2.5: Korean Naturalness Pass (Separate)
+
+> **This is a dedicated second pass with DIFFERENT rules from Phase 2.**
+> Phase 2's evidence requirement ("Feels off is not a valid finding") does NOT apply here.
+> In this pass, "feels unnatural to a native Korean speaker" IS a valid finding.
+
+After completing the Phase 2 audit, run a **separate naturalness sweep** using `.claude/agents/korean-naturalness.md`:
+
+1. Re-read each episode's narration/exposition (skip dialogue)
+2. Flag any expression that a Korean native speaker would find unnatural, even if grammatically correct
+3. Use the naturalness checker's output format
+4. Append results to the report under a "### 자연스러움" subsection per episode
+
+This pass catches what Phase 2 C-5 structurally cannot: soft-signal naturalness issues that require "native intuition" rather than rule-based evidence.
+
+**Why separate**: Multi-objective prompts (13 continuity + 5 quality + 9 proofreading simultaneously) suppress detection of "feels wrong but isn't technically wrong" issues. A focused single-objective pass catches them reliably.
+
+---
+
 ### Phase 3: Cross-Novel Pattern Analysis
 
 After reading all episodes, analyze **novel-wide patterns** that per-episode checks can't catch:
@@ -182,6 +201,7 @@ Write to `summaries/full-audit-report.md`:
 | 연속성 | {N} | {N} | {N} |
 | 품질 | {N} | {N} | {N} |
 | 한글 교정 | {N} | {N} | {N} |
+| 자연스러움 | {N} | {N} | {N} |
 | **합계** | **{N}** | **{N}** | **{N}** |
 
 ---
@@ -251,6 +271,12 @@ Write to `summaries/full-audit-report.md`:
 |---|--------|------|------|------|--------|
 
 (없으면 `한글 교정 이상 없음`)
+
+**자연스러움** (Phase 2.5 — korean-naturalness 패스)
+| # | 위치 | 원문 | 왜 어색한가 | 수정안 |
+|---|------|------|-----------|--------|
+
+(없으면 `자연스러움 이상 없음`)
 
 ---
 ```
