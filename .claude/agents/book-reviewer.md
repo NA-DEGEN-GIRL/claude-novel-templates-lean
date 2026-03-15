@@ -53,7 +53,30 @@ Read every episode from first to last, in order, as a reader would. Do not stop 
 
 ### Phase 2: Evaluate
 
-After reading everything, write the review covering these 12 sections:
+After reading everything, write the review. Start with the **추천 카드**, then the 12 detailed sections.
+
+#### 0. 추천 카드 (보고서 맨 앞에 배치)
+
+누군가 "이 소설 어때?"라고 물었을 때 보여줄 수 있는 짧은 소개.
+
+```markdown
+## 📖 한줄 소개
+{소설을 한 문장으로. 설정이 아니라 읽는 경험을 전달.}
+
+## ⭐ 점수: {N}/10
+
+## 🎯 이런 사람에게 추천
+- {구체적 취향 1}
+- {구체적 취향 2}
+- {구체적 취향 3}
+
+## ⛔ 이런 사람은 비추
+- {맞지 않을 취향 1}
+- {맞지 않을 취향 2}
+
+## 💬 한마디
+{독후감 한 문장. 분석이 아닌 감정. "읽고 나서 OO했다" 식.}
+```
 
 #### 1. 총평 (3 sentences max)
 What is this novel? How does it feel to read? One-line verdict.
