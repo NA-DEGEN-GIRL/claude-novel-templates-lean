@@ -115,7 +115,7 @@ With everything in context, read through episodes sequentially. For each episode
 | 2 | Spacing (의존명사, 보조용언) |
 | 3 | Typos and homophone confusion |
 | 4 | Grammar (double passive, irregular conjugation) |
-| 5 | Awkward expressions (translationese, unnecessary demonstratives) |
+| 5 | Awkward expressions (translationese, unnecessary demonstratives) — **Read each sentence as a Korean native speaker. If a subject-verb combination feels unnatural even though grammatically correct, flag it.** Examples: abstract noun + 오다/가다 where Korean would use a different verb (꿈이 왔다→꿈을 꿨다, 미소가 왔다→미소가 번졌다), English-style word order, body-part separation (그의 손이 움직였다→손을 움직였다) |
 | 6 | Particle accuracy (받침-dependent particles) |
 | 7 | Punctuation consistency |
 | 8 | Repetitive expressions (same word within 3 sentences) |
