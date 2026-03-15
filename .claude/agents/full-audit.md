@@ -139,17 +139,16 @@ Do NOT flag issues without concrete evidence. "Feels off" is not a valid finding
 > Phase 2's evidence requirement ("Feels off is not a valid finding") does NOT apply here.
 > In this pass, "feels unnatural to a native Korean speaker" IS a valid finding.
 
-After completing the Phase 2 audit, run a **separate naturalness sweep** using `.claude/agents/korean-naturalness.md`:
+After completing the Phase 2 audit, run naturalness checks using **per-episode Agent invocation** (same method as `/naturalness` command):
 
-1. **1화씩 순차 처리한다. 배치/병렬 금지.** 한 에피소드를 읽고, 검사하고, 결과를 기록한 후 다음으로 넘어간다. 여러 화를 묶으면 주의가 분산되어 어색한 표현을 놓친다.
-2. 각 에피소드의 나레이션/서술을 읽는다 (대사는 캐릭터 말투일 수 있으므로 관대하게)
-3. 원어민이 어색하게 느낄 표현을 찾는다. 문법적으로 맞아도 자연스럽지 않으면 지적한다
-4. korean-naturalness.md의 출력 형식을 사용한다
-5. 결과를 보고서의 에피소드별 "### 자연스러움" 서브섹션에 append한다
+1. **각 에피소드마다 별도 Agent를 호출한다.** 한 Agent가 여러 화를 처리하면 주의력이 떨어져 어색한 표현을 놓친다 (테스트: 연속 처리 0/51 감지, 개별 Agent 3/3 감지).
+2. 각 Agent는 `.claude/agents/korean-naturalness.md`를 읽고, 해당 에피소드 1개만 검사한다.
+3. 동시에 4-8개 Agent를 병렬 실행해도 된다 (각각 1화만 담당).
+4. 각 Agent의 결과를 수집하여 보고서의 에피소드별 "### 자연스러움" 서브섹션에 append한다.
 
 This pass catches what Phase 2 C-5 structurally cannot: soft-signal naturalness issues that require "native intuition" rather than rule-based evidence.
 
-**Why separate**: Multi-objective prompts (13 continuity + 5 quality + 9 proofreading simultaneously) suppress detection of "feels wrong but isn't technically wrong" issues. A focused single-objective pass catches them reliably.
+**Why per-episode Agents**: Sequential processing (1 agent, N episodes) causes attention decay. Multi-objective prompts suppress soft-signal detection. Per-episode isolation solves both.
 
 ---
 
