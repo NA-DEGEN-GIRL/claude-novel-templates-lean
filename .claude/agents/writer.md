@@ -183,14 +183,19 @@ If any fact error is found, fix the summary immediately.
 
 > Maximum 2 re-reviews. If still failing after 2nd, proceed and flag for periodic check.
 
-- [ ] 16. **If revisions were made, re-update D-step summary files** (skip if no revisions).
+- [ ] 16. **Korean naturalness check**: After unified-reviewer revisions are complete, run `korean-naturalness` agent on the final episode text.
+  - Apply only accepted findings — do NOT blindly apply all suggestions
+  - Reject suggestions that would weaken character voice, dialogue style, or intentional literary expression
+  - This check is cheap (~3-4K tokens) and catches issues unified-reviewer misses
+
+- [ ] 17. **If revisions were made (step 15 or 16), re-update D-step summary files** (skip if no changes).
 
 ### F. Commit
 
-- [ ] 17. Update `summaries/editor-feedback-log.md` with review processing results from step E (if external feedback was processed).
-- [ ] 18. git add: Stage manuscript + all updated summary files.
-- [ ] 19. git commit (`{소설명} {N}화 집필`)
-- [ ] 20. git status to check for missed files.
+- [ ] 18. Update `summaries/editor-feedback-log.md` with review processing results from step E (if external feedback was processed).
+- [ ] 19. git add: Stage manuscript + all updated summary files.
+- [ ] 20. git commit (`{소설명} {N}화 집필`)
+- [ ] 21. git status to check for missed files.
 
 ---
 
