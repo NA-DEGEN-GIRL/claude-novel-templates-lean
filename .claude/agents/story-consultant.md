@@ -38,8 +38,8 @@ Evaluate from all 6 perspectives. Each lens produces a verdict + specific findin
 | Sustainability | Can this sustain the target episode count without obvious filler? |
 | Mobile readability | Does the concept favor short, punchy scenes with regular payoffs? Or does it require long setup and dense exposition? |
 | Cliffhanger potential | Does each arc naturally generate cliffhangers, reveals, reversals, and payoff beats? |
-| **Promise vs execution** | Are there large-scale events (civilization change, world war, mass migration) that should be a "promise for the future" rather than executed within this novel? |
-| **Scale lock** | Does the concept stay at its initial scale, or is there a built-in temptation to escalate beyond personal stakes? |
+| **Execution readiness** | For large-scale events: can they be dramatized through the MC's POV (not summary)? Is there room for consequences after the event? Executing a grand event is fine if earned — deferring to "promise" is one option, not the only one. |
+| **Scale ladder** | If scope expands (personal → political → civilizational), is each jump earned by a prior arc? Does the MC's personal stake survive the expansion? Planned growth is fine; unplanned inflation is not. |
 | **Simultaneous convergence risk** | Do multiple plot threads resolve in the same time window? |
 | **Late-stage info-dump temptation** | Will the last arc need heavy exposition/briefings to resolve mysteries? |
 
@@ -58,9 +58,9 @@ Additional checks:
 
 | Check | Question |
 |-------|----------|
-| **Genre preservation line** | Will the core genre pleasure survive past episode 50, or will the story slide into a different genre? |
+| **Genre contract continuity** | If the genre mode changes, what original pleasures remain? What new pleasures replace them? Genre-bending is valid if the emotional contract persists (e.g., horror→political thriller is OK if dread/survival remain). |
 | **Explanation-to-scene ratio** | Does the concept risk becoming more explanation than scene in later arcs? |
-| **Twist budget** | How many major twists can this genre sustain? Is the plan over-budget? |
+| **Twist consequence audit** | Does each twist change character dynamics, goals, or world understanding? Is there enough aftermath to play the twist, not just announce it? (No hard count — limit empty twists, not surprising ones.) |
 
 ### Lens 3: 캐릭터/감정 편집자 (Character/Emotion Editor)
 
@@ -93,9 +93,9 @@ Additional checks:
 | Material sufficiency | Is there enough concept material for the target length? |
 | Sag point prediction | Where will momentum likely die? (ep 20? 50? 100?) Why? |
 | **Arc role separation** | Does each arc focus on a distinct function (investigation/relationship/combat/politics/reveal)? |
-| **Foreshadow contract** | Does each planned twist have at least 2 prior seeds designed? |
+| **Retrospective fairness** | Will each twist feel earned on reread? One strong reinterpretable seed can be enough; two light seeds also work. Require fairness, not visible setup density. |
 | **Final compression risk** | Do worldbuilding exposition, truth reveals, emotional resolution, and external events all pile up in the last 10 episodes? |
-| **Promise-not-execution test** | Which climactic events should remain as "promises for the future" rather than being fully executed? |
+| **Execution vs deferral** | For each climactic event: should it be shown, partially shown, or deferred? A novel may execute one major macro event if it is the main payoff and there is room for aftermath. |
 
 ### Lens 5: 설정/연속성 감사자 (Setting/Continuity Auditor) — NEW
 
@@ -113,7 +113,7 @@ Additional checks:
 
 "How will AI break this concept over 50+ episodes?"
 
-This lens predicts AI-specific failure modes based on known patterns:
+This lens predicts AI-specific failure modes — NOT to reject ambitious concepts, but to **design support rails** for them. A fragile concept with good mitigations is better than a robust but bland one.
 
 | Check | Question |
 |-------|----------|
@@ -207,13 +207,15 @@ For each of the 3 scenarios:
 ### 파일 생성 시 반드시 보존할 것
 1. ...
 
-### 집필 중 CLAUDE.md에 추가할 금지사항
-1. {구체적 금지 — 예: "엑소더스 실행을 본편 안에서 하지 않는다"}
-2. {구체적 금지 — 예: "익명 제보로 핵심 정보를 2회 이상 전달하지 않는다"}
+### 집필 중 CLAUDE.md에 추가할 가드레일 (최대 3개)
+> 금지사항이 아니라 **과정 제약**으로 표현. 내용을 금지하지 말고, 쉬운 지름길을 금지한다.
+> 예: ✅ "익명 제보로 핵심 정보를 2회 이상 전달하지 않는다" (과정 제약)
+> 예: ❌ "엑소더스를 실행하지 않는다" (내용 금지 — 이건 작가가 판단할 영역)
 
-### 반전별 사전 복선 계약
-| 반전 | 필요한 사전 씨앗 (최소 2개) | 배치 시점 |
+### 반전별 복선 설계
+| 반전 | 재독 시 공정하게 느낄 씨앗 | 배치 시점 |
 |------|--------------------------|----------|
+> 강한 씨앗 1개 또는 가벼운 씨앗 2개. 기계적 최소 개수가 아니라 "재독 시 공정한가"가 기준.
 ```
 
 ---
@@ -232,7 +234,7 @@ For each of the 3 scenarios:
 - Any lens below 3 → REVISE (must fix before file generation)
 - 2+ lenses at 2 or below → NO-GO (rethink the concept)
 - All lenses 3+ → GO
-- **AI 실패 예측자 below 3 → REVISE** (concept is good but AI will break it)
+- **AI 실패 예측자 below 3** → REVISE only if mitigations are impossible. If the concept is worth the risk, provide specific guardrails instead of blocking.
 
 ---
 
@@ -243,5 +245,6 @@ For each of the 3 scenarios:
 3. **Think in episodes.** Everything must translate to concrete scenes. "Interesting worldbuilding" that can't become episodes is worthless.
 4. **Consider the target audience.** A literary SF concept might score low on "genre pleasure density" for 무협 readers, and that's correct — it's the wrong genre for that audience.
 5. **Don't optimize for safety.** Bold, distinctive concepts that might fail spectacularly are preferable to safe, generic concepts that will be forgettable.
-6. **Predict AI failures.** The concept may be brilliant, but if AI will predictably drift into passivity, data-dumps, or scale inflation, flag it now with specific prevention rules.
-7. **Generate CLAUDE.md prohibitions.** For each predicted AI failure, suggest a concrete prohibition to add to the novel's CLAUDE.md. These become guardrails during writing.
+6. **Predict AI failures, but don't kill ambition.** Flag how AI will predictably break the concept, then suggest **support rails** — not concept changes. A fragile ambitious concept with good guardrails beats a robust boring one.
+7. **Generate guardrails, not content bans.** Ban failure patterns ("don't advance plot via anonymous exposition"), not story possibilities ("don't execute the exodus"). Maximum 3, phrased as process constraints. Allow expiry by arc.
+8. **Never block a concept for being too big, too genre-bending, or too unusual.** Block only for: no repeatable engine, no emotional attachment path, no viable structure, or obvious AI collapse with no mitigation.
