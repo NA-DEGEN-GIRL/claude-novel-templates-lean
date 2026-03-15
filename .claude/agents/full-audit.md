@@ -141,10 +141,11 @@ Do NOT flag issues without concrete evidence. "Feels off" is not a valid finding
 
 After completing the Phase 2 audit, run a **separate naturalness sweep** using `.claude/agents/korean-naturalness.md`:
 
-1. Re-read each episode's narration/exposition (skip dialogue)
-2. Flag any expression that a Korean native speaker would find unnatural, even if grammatically correct
-3. Use the naturalness checker's output format
-4. Append results to the report under a "### 자연스러움" subsection per episode
+1. **1화씩 순차 처리한다. 배치/병렬 금지.** 한 에피소드를 읽고, 검사하고, 결과를 기록한 후 다음으로 넘어간다. 여러 화를 묶으면 주의가 분산되어 어색한 표현을 놓친다.
+2. 각 에피소드의 나레이션/서술을 읽는다 (대사는 캐릭터 말투일 수 있으므로 관대하게)
+3. 원어민이 어색하게 느낄 표현을 찾는다. 문법적으로 맞아도 자연스럽지 않으면 지적한다
+4. korean-naturalness.md의 출력 형식을 사용한다
+5. 결과를 보고서의 에피소드별 "### 자연스러움" 서브섹션에 append한다
 
 This pass catches what Phase 2 C-5 structurally cannot: soft-signal naturalness issues that require "native intuition" rather than rule-based evidence.
 
