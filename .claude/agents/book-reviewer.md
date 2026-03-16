@@ -64,9 +64,11 @@ After reading everything, write the review. Start with the **추천 카드**, th
 
 누군가 "이 소설 어때?"라고 물었을 때 보여줄 수 있는 짧은 소개.
 
+**FORMAT IS MANDATORY. The web reader parses these exact headings to display review blurbs. Do NOT use tables, numbered headings, or alternative formats. The `##` headings below must appear EXACTLY as written (emoji included, no numbering prefix).**
+
 ```markdown
 ## 📖 한줄 소개
-{소설을 한 문장으로. 설정이 아니라 읽는 경험을 전달.}
+{소설을 한 문장으로. 설정이 아니라 읽는 경험을 전달. 이 줄만 독립적으로 표시될 수 있으므로 한 문장으로 완결되어야 한다.}
 
 ## ⭐ 점수: {N}/10
 
@@ -80,7 +82,7 @@ After reading everything, write the review. Start with the **추천 카드**, th
 - {맞지 않을 취향 2}
 
 ## 💬 한마디
-{독후감 한 문장. 분석이 아닌 감정. "읽고 나서 OO했다" 식.}
+{독후감 한 문장. 분석이 아닌 감정. "읽고 나서 OO했다" 식. 이 줄이 reader에서 대표 인용문으로 표시된다.}
 ```
 
 #### 1. 총평 (3 sentences max)

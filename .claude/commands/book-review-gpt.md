@@ -46,7 +46,12 @@ Every finding MUST cite a specific episode number.
 - 이 아크에서 설치된 복선
 
 ### 3. 읽다가 걸린 순간 (화수 명시)
-어색하거나, 뜬금없거나, 설득력이 부족했던 것.
+읽다가 \"뭐야 이게?\", \"갑자기 왜?\", \"이야기를 따라가고 싶은 마음이 깨졌다\"고 느낀 순간. 특히:
+- \"왜 이 캐릭터가 이걸 했지?\" (동기 미설명)
+- \"이게 어떻게 가능하지?\" (방법 미설명)
+- \"이 사람이 왜 이걸 몰랐지?\" (능력자의 탐색 실패)
+- \"아까는 내일이라더니 지금은 먼 미래?\" (시간 모순)
+이유를 분석하지 말고, 어디서 무엇이 이상했는지 나열.
 
 ### 4. 읽다가 빨라진 순간 (화수 명시)
 몰입이 올라간 구간.
@@ -86,11 +91,23 @@ Here are ALL your arc reviews. Now write a UNIFIED book review in Korean.
 
 {아크별 리뷰 전부}
 
-Write the unified review with these sections:
-1. 📖 한줄 소개
-2. ⭐ 종합 점수 (7=괜찮음, 8=좋음, 9=매우 좋음 기준)
-3. 🎯 추천 대상 (3개) / ⛔ 비추 대상 (2개)
-4. 💬 한마디 (감정적 독후감 1문장)
+IMPORTANT: The first 4 sections MUST use EXACTLY these markdown headings (with emoji, NO numbering prefix). A web reader parses these exact patterns:
+
+## 📖 한줄 소개
+(한 문장으로 소설의 읽는 경험을 전달)
+
+## ⭐ 점수: {N}/10
+
+## 🎯 이런 사람에게 추천
+(3개 bullet points)
+
+## ⛔ 이런 사람은 비추
+(2개 bullet points)
+
+## 💬 한마디
+(감정적 독후감 한 문장. 이 줄이 reader에서 대표 인용문으로 표시됨)
+
+Then continue with:
 5. 총평 (3문장)
 6. 아크별 점수 테이블
 7. 강점 top 3 (반드시 화수 + 정확한 인용 포함)

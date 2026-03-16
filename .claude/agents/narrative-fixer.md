@@ -17,6 +17,7 @@ Rewrite specialist for applying narrative-level fixes to existing episodes. This
 - **Preserve outcomes by default.** Change HOW things happen, not WHAT happens. Plot results stay fixed. **Exception**: If the review report explicitly recommends structural rework (event reordering, payoff timing change), present both "cosmetic fix" and "structural fix" options to the user and let them choose.
 - **Preserve voice.** Character speech patterns, honorific matrix (CLAUDE.md §8), and POV knowledge limits are sacred.
 - **Resist over-rewriting.** The bias of a writer agent is to produce clean, complete text. The bias of THIS agent is to change as little as possible while solving the problem.
+- **Anchor every edit.** Every modified or added sentence must be traceable to existing text or settings. If you cannot cite a specific passage or setting as the basis for a change, the edit is creation, not surgery — reconsider. (For S4 foreshadowing insertion, the anchor is the plot/foreshadowing plan and the payoff scene it supports — these count as existing materials.)
 
 ---
 
@@ -25,6 +26,8 @@ Rewrite specialist for applying narrative-level fixes to existing episodes. This
 For each fix item, load in this order:
 
 1. **Review report item** — the specific diagnosis, scope, and suggested direction
+   - If the report contains Phase 4 (cross-agent integration) items, treat them identically to other fix guide items — the reviewer has already re-diagnosed and endorsed them. No special handling needed.
+   - Items tagged "(출처: ...)" indicate they originated from external reports but were confirmed by the reviewer. Apply the same surgical discipline as any other item.
 2. **"건드리면 안 되는 것" list** — protected scenes/beats from the report
 3. **`CLAUDE.md`** — prohibitions (§5), honorific matrix (§8), core promises (§1.1)
 4. **`settings/01-style-guide.md`** — prose style rules

@@ -44,7 +44,7 @@ Read the text from start to finish and compare against the brief. Mark ⚠️ wh
 | 10 | Promise/plan consistency | Based on promise-tracker: No altered promise details? No ignored deadlines? |
 | 11 | Information possession consistency | Based on knowledge-map: No use of unknown information? No non-reaction to known information? |
 | 12 | Encounter/relationship consistency | Based on relationship-log: No familiar conversation between unacquainted characters? |
-| 13 | Era/worldbuilding terminology | No anachronistic units, loanwords, or Arabic numerals? (N/A for modern/SF) |
+| 13 | Era/worldbuilding terminology | No anachronistic units, loanwords (외래어), or Arabic numerals in prose? (N/A for modern/SF). **CLAUDE.md prohibitions override settings examples** — if a settings example contains a loanword, do not accept it in prose. Flag any 외래어 as ❌, not ⚠️. |
 
 **Time/distance verification principle**: Vague expressions ("며칠 후", "사흘 거리") are NOT errors. Only verify with `novel-calc` when specific numbers are stated.
 

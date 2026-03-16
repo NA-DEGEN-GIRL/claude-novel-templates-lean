@@ -263,7 +263,59 @@ Write `summaries/narrative-review-report.md`:
 상태: ✅ 성공 / ⚠️ 매몰됨 / ❌ 미달
 
 ---
+
+## 교차 검증 통합 (Phase 4)
+
+> Phase 1~3의 독립 판단 완료 후, 외부 보고서를 reviewer의 기준으로 재진단하여 fix guide에 통합한 결과이다.
+
+### 외부 보고서 반영 요약
+| 출처 | 이슈 | 재진단 결과 | fix guide 반영 |
+|------|------|-----------|---------------|
+| {source} | {issue} | confirmed / unconfirmed / intentional-mystery | {C/H/M}{N}에 통합 / 신규 {C/H/M}{N} 추가 / 미반영 |
+
+### 미확인 항목 (외부만 지적, 텍스트에서 확인 불가)
+| 출처 | 이슈 | 미확인 사유 |
+|------|------|-----------|
+
+---
 ```
+
+---
+
+## Phase 4: Cross-Agent Integration (Optional)
+
+**This phase runs ONLY AFTER Phase 3 (report generation) is complete.** Phases 1–3 must be fully independent — the reviewer's own judgments are formed before any external input.
+
+Check if any of these files exist in `summaries/`:
+- `book-review.md` (Claude book review)
+- `book-review-gpt.md` (GPT book review)
+- `why-check-report.md` (WHY-checker report)
+
+**If none exist**: Skip Phase 4 entirely. End the report after Phase 3.
+
+**If any exist**: Read the existing files and integrate findings into the fix guide.
+
+### Procedure
+
+For each finding in the external reports:
+
+1. **Re-diagnose independently**: Go back to the episode text and verify the issue exists using this reviewer's own criteria. Do NOT accept external findings at face value.
+2. **Classify**:
+   - `confirmed`: Issue verified in text → integrate into fix guide
+   - `unconfirmed`: Cannot reproduce from text → list in "미확인 항목" section
+   - `intentional-mystery`: Matches CLAUDE.md §5.1 → exclude
+3. **Integrate confirmed items**:
+   - If it overlaps with an existing fix guide item → **escalate priority** (MEDIUM→HIGH, HIGH→CRITICAL) and add "(교차 검증: {source})" note
+   - If it's a new issue not in fix guide → **add as new item** with appropriate severity, tagged with "(출처: {source}, reviewer 재진단 확인)"
+   - Assign a rewrite strategy (S1–S6) like any other fix guide item
+4. **Phase 1–3 scores and judgments are NOT modified.** Only the fix guide gains items or priority changes.
+
+### Rules
+
+1. **Reviewer owns the final fix guide.** Every item in it — whether originally found or externally sourced — carries the reviewer's endorsement. narrative-fixer treats all items equally.
+2. **Re-diagnosis is mandatory.** "book-review said so" is never sufficient justification. The reviewer must see it in the text.
+3. **Disagreements**: If this review's analysis contradicts an external finding (e.g., why-check flags a gap but this review judges it as intentional ambiguity), note the disagreement in "미확인 항목" with reasoning. Do not suppress the external finding — record it transparently.
+4. **Volume control**: Phase 4 should add at most 3-5 items to the fix guide. If external reports surface 10+ new issues, prioritize and defer the rest to a future review cycle.
 
 ---
 

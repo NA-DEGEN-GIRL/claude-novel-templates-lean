@@ -95,7 +95,7 @@ With everything in context, read through episodes sequentially. For each episode
 | 10 | Promise/plan consistency — cross-reference promise-tracker |
 | 11 | Information possession — cross-reference knowledge-map |
 | 12 | Encounter/relationship — cross-reference relationship-log |
-| 13 | Era/worldbuilding terminology — anachronisms? |
+| 13 | Era/worldbuilding terminology — anachronisms, loanwords (외래어), modern units? **CLAUDE.md prohibitions override settings examples.** |
 
 #### B. Quality (Severe Issues Only)
 

@@ -212,9 +212,28 @@ Wait 3 seconds, then send full prompt (3a).
 When the episode number enters a new arc range:
 
 1. Confirm completion of the last episode of the previous arc
-2. Check if `plot/{arc}.md` exists for the new arc
+2. **Run `/why-check` on the completed arc**: Send the following prompt to the writer session:
+   ```
+   방금 완료한 {prev_arc}({start}~{end}화)에 대해 /why-check을 실행해줘.
+   - .claude/agents/why-checker.md의 절차를 따른다.
+   - 대상: {start}화 ~ {end}화
+   - 산출물: summaries/why-check-report.md
+   - 완료 후 대기.
+   ```
+   Wait for completion. If MISSING items with priority 6+ are found, log them but do NOT block arc transition — they will be addressed in the next narrative-review cycle.
+3. Check if `plot/{arc}.md` exists for the new arc
    - If missing, send plot generation prompt (3c) first
-3. Arc transitions are periodic check triggers, so add to the first episode prompt after transition:
+4. **Run `/why-check plan` on the new arc's plot file**: After plot/{arc}.md is created (or confirmed to exist), send:
+   ```
+   plot/{arc}.md에 대해 /why-check plan을 실행해줘.
+   - .claude/agents/why-checker.md의 Planning Mode 절차를 따른다.
+   - 이전 아크까지의 본문도 참조하여, 이 플롯이 만들 WHY/HOW 질문에 답이 있는지 확인한다.
+   - PLANNING GAP이 발견되면 plot/{arc}.md를 즉시 수정한다.
+   - 산출물: summaries/why-check-plan-{arc}.md
+   - 완료 후 대기.
+   ```
+   Wait for completion. This is the highest-value application of why-checker — fixing a gap in the outline costs one sentence, fixing it in finished prose costs a scene rewrite.
+5. Arc transitions are periodic check triggers, so add to the first episode prompt after transition:
 
 ```
 ※ 아크 전환 시점이므로 settings/07-periodic.md의 정기 점검(P1~P9)을 먼저 수행한 후 집필을 시작한다.
@@ -262,6 +281,7 @@ The supervisor outputs progress in this format:
 ### 7. Termination Conditions
 
 - Supervision ends when all episodes through `END_EP` are completed
+- **On final completion** (last episode of the novel): Run `/why-check full` on the entire novel. This catches long-range accumulated gaps that arc-level checks miss. Log results for the narrative-review cycle.
 - Halt and report to user if 3 consecutive unrecoverable errors occur
 - If the supervisor's own context is running low, summarize current progress and output a handoff prompt for continuation, then terminate
 

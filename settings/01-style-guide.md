@@ -1,6 +1,8 @@
 # 문체 가이드
 
 > 이 소설의 문체 규칙을 정의한다. 모든 에피소드는 이 가이드를 따른다.
+>
+> **When creating or editing this file**: All Korean example sentences (예시) must comply with CLAUDE.md prohibitions (§3.2.7 era-appropriate terminology, §5 prohibitions). If the novel uses a pre-modern setting, examples must NOT contain English loanwords (외래어), metric units, or Arabic numerals. Examples that violate CLAUDE.md are bugs, not style choices.
 
 ---
 

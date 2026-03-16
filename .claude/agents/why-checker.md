@@ -59,6 +59,11 @@ Apply the threshold — generate questions for an element only if it meets at le
 6. A new character is introduced and affects the plot within their introduction episode
 7. A secret is revealed — the explanation of how it was kept is automatically required
 8. A backstory fact is stated (e.g., "37 years ago...", "she had been hiding since...")
+9. **A character's state (injury, exhaustion, curse, equipment) changed in a prior scene but is not reflected in the current scene** — state discontinuity
+10. **An ability, rule, or constraint works differently than it did before** — rule discontinuity
+11. **A character already possesses information (witnessed, told, or logically deducible) but fails to act on it or ask the obvious question** — knowledge obligation
+12. **A major event occurred but no aftermath is shown** — missing consequences (emotional reaction, relationship change, physical traces, cost)
+13. **A character or object moved between scenes without a plausible path** — spatial discontinuity
 
 Do not generate questions for minor background details, aesthetic descriptions, or small character reactions.
 
@@ -71,21 +76,37 @@ For each major element, generate questions from all applicable categories:
 - 왜 [사건]이 발생했는가?
 - 왜 [캐릭터]는 [명백한 대안 행동]을 하지 않았는가?
 - 왜 [상황]이 [기간] 동안 지속되었는가?
+- 왜 [캐릭터]는 이미 가진 정보로 [당연한 질문/의심/대응]을 하지 않았는가? (지식 의무 위반)
+- 왜 [캐릭터]의 감정/태도가 [직전 사건] 이후에도 변하지 않았는가? (감정 연속성 위반)
+- 왜 [세계 규칙/능력 제약]이 이번 장면에서만 다르게 작동하는가? (규칙 연속성 위반)
 
 **H — HOW (Mechanism and Feasibility)**
 - [행동]이 물리적/기술적으로 어떻게 가능했는가?
 - [캐릭터]는 [정보]를 어떻게 알게 되었는가?
 - [캐릭터]는 [자원/장소/인물]에 어떻게 접근할 수 있었는가?
 - [사건]은 [기간] 동안 어떻게 비밀로 유지되었는가?
+- [캐릭터]가 [다른 캐릭터의 이름/명칭/용어]를 사용하는데, 본문에서 그것을 배운 장면이 있었는가? (이름을 모르는데 부르고 있다면 MISSING)
+- [나레이션]이 [용어/고유명사]를 사용하는데, 독자에게 아직 소개되지 않은 것은 아닌가? (POV 캐릭터가 모르는 것은 나레이션에 나올 수 없다)
+- [캐릭터]는 [부상/피로/구속/거리/시간 제약] 상태에서 어떻게 [행동]할 수 있었는가? (상태 연속성)
+- [능력/도구/설정 규칙]의 이번 사용은 이전에 제시된 한계와 어떻게 양립하는가? (규칙 연속성)
+- [캐릭터]는 이미 [목격/대화/증거]를 가졌는데 왜 아직 [핵심 사실]을 모르는가? (지식 의무)
+- [사건/행동] 이후의 흔적, 비용, 목격자, 후유증은 어떻게 처리되었는가? (행동 비용)
+- [캐릭터/물건]은 장면 A에서 장면 B로 어떻게 이동했는가? (공간 연속성)
 
-**W2 — WHEN (Timeline)**
+**W2 — WHEN (Timeline and State)**
 - [사건]은 [다른 사건]과 비교하여 정확히 언제 발생했는가?
 - N화에서 [X]라고 했는데, M화는 [X가 아님]을 암시한다 — 어느 것이 맞는가?
+- [상태 변화 — 회복/화해/배신/생존 확인/규칙 해제]는 정확히 언제 일어났는가?
+- [부상/변장/잠복/비밀 유지]은 이 시간 동안 계속 유지될 수 있었는가?
+- [캐릭터]는 이전에 [사망/실종/불능] 상태였는데, 언제 어떻게 그 상태가 해소되었는가?
 
 **S — SO WHAT (Consequence)**
 - [사건] 때문에 무엇이 바뀌었는가?
 - [사건]이 [캐릭터]에게 왜 중요한가?
 - [사건]이 일어나지 않았다면 무엇이 달랐는가?
+- [사건] 이후 [부상/죽음/배신/폭로]의 후속 반응이 왜 없는가? (후폭풍 누락)
+- [새 정보]를 알게 된 뒤 [캐릭터]의 목표/관계/위험도는 무엇이 바뀌어야 하는가?
+- [규칙 예외/능력 확장]이 가능했다면 앞으로 무엇이 달라져야 하는가? (전례 효과)
 
 #### Working List Format
 

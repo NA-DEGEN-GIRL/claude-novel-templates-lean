@@ -111,6 +111,7 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
   - [ ] 12-3. Is the length within target range? → Verify with `char_count`.
   - [ ] 12-4. Were any characters/abilities/locations improvised without being in settings?
   - [ ] 12-5. Were any CLAUDE.md prohibitions violated?
+  - [ ] 12-5a. **Loanword check** (when CLAUDE.md or worldbuilding specifies a non-modern setting): Scan the draft for English loanwords (외래어) in prose. **CLAUDE.md prohibitions override settings examples** — if an example sentence contains a loanword, do not copy it. Common offenders: 시스템→체계, 패턴→규칙/결, 에너지→기운, 허브→약초, 아우라→기운, 레벨→경지, 밸런스→균형. This list is not exhaustive — any loanword not established as an in-world term is prohibited.
   - [ ] 12-6. Does any character speak as if knowing information they shouldn't? (Cross-reference compile_brief's knowledge-map)
 
 ### D. Inline Summary Update (Post-Writing)
@@ -140,6 +141,8 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
 7. **`summaries/relationship-log.md`** — Only on first meeting, relationship change, or address/title change.
 
 > **Hanja glossary** (`summaries/hanja-glossary.md`): If any term was annotated with 한글(漢字) for the first time in this episode, add it.
+>
+> **Explained concepts**: If `settings/04-worldbuilding.md` has a "Reader Onboarding" section, check the priority table. When a listed concept reaches its deadline (the first scene where misunderstanding would damage comprehension), explain it via a brief in-character monologue (1-2 sentences, dry recognition tone — not a textbook definition). Track status in `summaries/explained-concepts.md`. Do NOT assume readers know what a term means from its Hanja alone.
 
 #### Summary Fact-Check (After Updating)
 
