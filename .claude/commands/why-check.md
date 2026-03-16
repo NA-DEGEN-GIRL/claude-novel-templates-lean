@@ -11,4 +11,5 @@
 
 1. `.claude/agents/why-checker.md`를 읽고 지시에 따른다.
 2. **settings/, plot/, summaries/는 읽지 않는다.** 독자가 아는 것만으로 판단.
-3. 산출물: `summaries/why-check-report.md`
+3. **반드시 1화부터 순서대로 읽는다. 병렬/배치 처리 금지.** 독자가 책을 순서대로 읽듯이, 앞 화의 맥락 위에서 뒷 화의 "왜?"가 생긴다. 병렬로 나누면 앞 화 맥락 없이 질문을 생성하게 되어 부정확해진다.
+4. 산출물: `summaries/why-check-report.md`
