@@ -148,6 +148,8 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 7. **No episode structure meta-references in prose**: 금지: "3화에서", "프롤로그에서", "1부에서" in narration/dialogue. Reference past events by date/place/event name. Meta areas (EPISODE_META, plot/, summaries/) are exempt.
 8. **No POV switch spoilers**: 금지: `[시점 전환: 세르반]` meta tags in prose. Use `***` scene break then shift naturally via tone/setting/senses.
 9. **No unearned emotional escalation**: 감정적 클라이맥스(죽음, 고백, 배신, 재회)는 해당 관계나 갈등이 최소 2화 이상 사전 전개된 후에만 허용한다.
+10. **No costless victories**: 주요 성과를 "무상 보상"처럼 처리하지 말 것. 희생·트레이드오프·후속 부담은 같은 화에 드러날 수도 있고, 복선으로 유예되었다가 이후 큰 대가로 회수될 수도 있다. 어떤 경우에도 성과가 장기적으로 긴장과 균형을 깨는 순이익으로만 남아서는 안 된다.
+11. **No finale overload**: 마지막 아크에서 설명, 감정 결산, 클라이맥스 액션을 한 화에 과밀하게 압축하지 않는다. 독자가 전개를 따라가고 감정과 사건을 각각 소화할 여백을 확보한다. 적정 분량은 전체 길이·장르·리듬에 맞게 조정. 스릴러 등 압축이 미덕인 장르에서는 의도된 고밀도 전개를 허용한다.
 
 ---
 

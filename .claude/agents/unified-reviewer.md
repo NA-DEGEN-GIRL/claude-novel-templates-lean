@@ -79,6 +79,7 @@ Evaluate from the reader's perspective. Core criterion: **"Does the reader want 
 | P7 | 과잉 침착 | Unnaturally calm in crisis (especially non-combat characters) |
 | P8 | 즉시 수용 | Instantly accepts information that should cause resistance/doubt |
 | P9 | 감정의 증발 | Strong emotion from previous scene completely gone in next scene |
+| P10 | 증거 없는 성장 | 인물의 중요한 성장이나 입장 변화가 서사 안에서 체감되지 않고 선언만 앞설 때. 누적된 선택·관계·행동 차이로도 입증 가능. 성장 동력은 고통뿐 아니라 기쁨·연결·깨달음도 된다. |
 
 Any pattern found → deduct from B2 + flag as ⚠️ with location and fix suggestion.
 

@@ -42,6 +42,7 @@ Evaluate from all 6 perspectives. Each lens produces a verdict + specific findin
 | **Scale ladder** | If scope expands (personal → political → civilizational), is each jump earned by a prior arc? Does the MC's personal stake survive the expansion? Planned growth is fine; unplanned inflation is not. |
 | **Simultaneous convergence risk** | Do multiple plot threads resolve in the same time window? |
 | **Late-stage info-dump temptation** | Will the last arc need heavy exposition/briefings to resolve mysteries? |
+| **Tone sustainability** | 작품의 길이에 비추어, 의도한 톤이 정서적 단조로움 없이 유지·변주될 수 있는가? 장편이면 장기 지속 가능성을, 중단편이면 해당 분량 안의 밀도와 변주를 본다. 공포·스릴러처럼 높은 강도 유지가 장르 핵심인 경우, '강도 완화'보다 리듬·정보 배치·긴장 방식의 변주가 있는지를 우선 점검한다. |
 
 ### Lens 2: 장르 전문가 (Genre Specialist)
 
@@ -96,6 +97,7 @@ Additional checks:
 | **Retrospective fairness** | Will each twist feel earned on reread? One strong reinterpretable seed can be enough; two light seeds also work. Require fairness, not visible setup density. |
 | **Final compression risk** | Do worldbuilding exposition, truth reveals, emotional resolution, and external events all pile up in the last 10 episodes? |
 | **Execution vs deferral** | For each climactic event: should it be shown, partially shown, or deferred? A novel may execute one major macro event if it is the main payoff and there is room for aftermath. |
+| **Arc conflict progression** | 각 아크의 갈등이 무엇을 새롭게 전진시키는가? 같은 축을 반복해도 관계/맥락/비용/실패 방식이 달라지며 긴장이 심화되면 유효. 문제는 "같은 유형의 충돌이 이름만 바꿔 반복되어 서사적 차이가 체감되지 않을 때"다. |
 
 ### Lens 5: 설정/연속성 감사자 (Setting/Continuity Auditor) — NEW
 

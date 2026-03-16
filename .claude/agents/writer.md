@@ -85,7 +85,7 @@ Specialized agent for web novel episode writing. Handles: manuscript → inline 
 
 Define {summary, purpose, characters, tone, foreshadowing} for each scene and decide the ending hook type.
 
-- [ ] 6. Draft outlines for 3–5 scenes (confirm each scene's purpose aligns with the episode goal and arc alignment from A-2).
+- [ ] 6. Draft outlines for 3–5 scenes. For each scene: (a) purpose aligns with episode goal and arc alignment from A-2. (b) At least one scene in the episode has a concrete emotional anchor — a moment where a character's personal stake becomes visible. Not every scene needs explicit emotion; in atmosphere/mystery/action/horror scenes, restrained or absent emotional reaction is valid if intentional.
 - [ ] 7. **Opening hook check** — Do the first 2-3 sentences of the episode compel continued reading? (in medias res, unresolved question, or arresting image)
 - [ ] 8. Decide ending hook type — Re-verify it differs from the previous episode's type.
 - [ ] 9. **Pattern check** — Review compile_brief's ending hook tracker (last 5 episodes). Verify this episode avoids:
