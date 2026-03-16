@@ -163,7 +163,7 @@ After reading all episodes, analyze **novel-wide patterns** that per-episode che
 5. **Repetitive prose patterns** — Overused phrases, descriptions, reaction patterns (with counts and locations)
 6. **Character voice drift** — Characters who sound different in later arcs vs early arcs (speech register, vocabulary, tone)
 7. **Protagonist agency trend** — Active choices vs passive reception per arc
-8. **Timeline integrity** — Day/night progression, travel feasibility, elapsed-time gaps between episodes
+8. **Timeline integrity** — Day/night progression, travel feasibility, elapsed-time gaps between episodes. **상대 시간 호환성**: "D-1(내일 출발)", "먼 미래", "수십 년 후" 같은 상대 표현이 같은 사건을 가리키면서 호환되지 않으면 ❌.
 9. **Dialogue tag analysis** — Ratio of "말했다" vs action-based tags; AI transition word frequency (하지만, 그럼에도 불구하고, 결국)
 10. **Knowledge progression audit** — Who knows what, when. Flag characters acting on unlearned information
 

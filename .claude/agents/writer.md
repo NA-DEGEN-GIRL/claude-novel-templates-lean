@@ -86,9 +86,14 @@ Specialized agent for web novel episode writing. Handles: manuscript → inline 
 Define {summary, purpose, characters, tone, foreshadowing} for each scene and decide the ending hook type.
 
 - [ ] 6. Draft outlines for 3–5 scenes. For each scene: (a) purpose aligns with episode goal and arc alignment from A-2. (b) At least one scene in the episode has a concrete emotional anchor — a moment where a character's personal stake becomes visible. Not every scene needs explicit emotion; in atmosphere/mystery/action/horror scenes, restrained or absent emotional reaction is valid if intentional.
-- [ ] 7. **Opening hook check** — Do the first 2-3 sentences of the episode compel continued reading? (in medias res, unresolved question, or arresting image)
-- [ ] 8. Decide ending hook type — Re-verify it differs from the previous episode's type.
-- [ ] 9. **Pattern check** — Review compile_brief's ending hook tracker (last 5 episodes). Verify this episode avoids:
+- [ ] 7. **Reader objection preflight** — List up to 3 plot-critical WHY/HOW questions this episode's planned scenes create. Ignore minor atmosphere/details. For each, mark:
+  - `답변됨`: answered in this episode's text
+  - `미스터리 유예`: intentionally deferred for later
+  - `답 없음`: needs an answer but none planned → **add answer to text or adjust plot**
+
+- [ ] 8. **Opening hook check** — Do the first 2-3 sentences of the episode compel continued reading? (in medias res, unresolved question, or arresting image)
+- [ ] 9. Decide ending hook type — Re-verify it differs from the previous episode's type.
+- [ ] 10. **Pattern check** — Review compile_brief's ending hook tracker (last 5 episodes). Verify this episode avoids:
   - Same hook type as previous episode
   - Same opening pattern (action/dialogue/description) as last 2 episodes
   - Repeated scene structure (e.g., 3 consecutive episodes ending in combat)
@@ -99,14 +104,14 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
 > - `novel-hanja`: Must be used for all Hanja naming and annotation. LLM Hanja inference is forbidden.
 > - `novel-calc`: Write the narrative first; use calc only when verification is needed. Calculations must not drive the narrative. Never insert calc results into narration, dialogue, or inner monologue.
 
-- [ ] 10. Write the first draft (within target length range).
-- [ ] 11. **Self-review** (6 items):
-  - [ ] 11-1. Does an ending hook exist + is it a different type from the previous episode?
-  - [ ] 11-2. Do character speech patterns match settings?
-  - [ ] 11-3. Is the length within target range? → Verify with `char_count`.
-  - [ ] 11-4. Were any characters/abilities/locations improvised without being in settings?
-  - [ ] 11-5. Were any CLAUDE.md prohibitions violated?
-  - [ ] 11-6. Does any character speak as if knowing information they shouldn't? (Cross-reference compile_brief's knowledge-map)
+- [ ] 11. Write the first draft (within target length range).
+- [ ] 12. **Self-review** (6 items):
+  - [ ] 12-1. Does an ending hook exist + is it a different type from the previous episode?
+  - [ ] 12-2. Do character speech patterns match settings?
+  - [ ] 12-3. Is the length within target range? → Verify with `char_count`.
+  - [ ] 12-4. Were any characters/abilities/locations improvised without being in settings?
+  - [ ] 12-5. Were any CLAUDE.md prohibitions violated?
+  - [ ] 12-6. Does any character speak as if knowing information they shouldn't? (Cross-reference compile_brief's knowledge-map)
 
 ### D. Inline Summary Update (Post-Writing)
 
@@ -148,7 +153,7 @@ If any fact error is found, fix the summary immediately.
 
 ### E. External Feedback & Unified Review
 
-- [ ] 12. **Call `review_episode` MCP** (external AI feedback):
+- [ ] 13. **Call `review_episode` MCP** (external AI feedback):
   ```
   mcp__novel_editor__review_episode(episode_file="{chapter_path}", novel_dir="{novel_dir}", sources="auto")
   ```
@@ -156,7 +161,7 @@ If any fact error is found, fix the summary immediately.
   - Skip if all feedback flags are `false` in CLAUDE.md.
   - On failure: log and continue — unified-reviewer will run without external feedback.
 
-- [ ] 13. **Determine review mode** (periodic + change-volume based):
+- [ ] 14. **Determine review mode** (periodic + change-volume based):
 
 | Mode | Trigger (if any condition is met) |
 |------|----------------------------------|
@@ -164,13 +169,13 @@ If any fact error is found, fix the summary immediately.
 | `standard` | **Episode number is a multiple of 5 (5, 10, 15, ...) = mandatory standard.** Also triggered by: new key character introduced / relationship reversal·betrayal·reconciliation / secret revealed·misunderstanding resolved / combat-heavy episode / emotional climax / issue found during self-review |
 | `full` | Arc boundary / setting change occurred / immediately before long-term foreshadowing payoff |
 
-- [ ] 14. Call `unified-reviewer` agent:
+- [ ] 15. Call `unified-reviewer` agent:
   ```
   /unified-reviewer mode:{mode} episode:{episode_number}
   ```
-  - unified-reviewer reads `EDITOR_FEEDBACK_*.md` files generated in step 12.
+  - unified-reviewer reads `EDITOR_FEEDBACK_*.md` files generated in step 13.
 
-- [ ] 15. **Apply revisions** (rule-based escalation):
+- [ ] 16. **Apply revisions** (rule-based escalation):
 
 | Result | Action |
 |--------|--------|
@@ -183,19 +188,19 @@ If any fact error is found, fix the summary immediately.
 
 > Maximum 2 re-reviews. If still failing after 2nd, proceed and flag for periodic check.
 
-- [ ] 16. **Korean naturalness check**: After unified-reviewer revisions are complete, run `korean-naturalness` agent on the final episode text.
+- [ ] 17. **Korean naturalness check**: After unified-reviewer revisions are complete, run `korean-naturalness` agent on the final episode text.
   - Apply only accepted findings — do NOT blindly apply all suggestions
   - Reject suggestions that would weaken character voice, dialogue style, or intentional literary expression
   - This check is cheap (~3-4K tokens) and catches issues unified-reviewer misses
 
-- [ ] 17. **If revisions were made (step 15 or 16), re-update D-step summary files** (skip if no changes).
+- [ ] 18. **If revisions were made (step 16 or 17), re-update D-step summary files** (skip if no changes).
 
 ### F. Commit
 
-- [ ] 18. Update `summaries/editor-feedback-log.md` with review processing results from step E (if external feedback was processed).
-- [ ] 19. git add: Stage manuscript + all updated summary files.
-- [ ] 20. git commit (`{소설명} {N}화 집필`)
-- [ ] 21. git status to check for missed files.
+- [ ] 19. Update `summaries/editor-feedback-log.md` with review processing results from step E (if external feedback was processed).
+- [ ] 20. git add: Stage manuscript + all updated summary files.
+- [ ] 21. git commit (`{소설명} {N}화 집필`)
+- [ ] 22. git status to check for missed files.
 
 ---
 
