@@ -21,6 +21,8 @@ Do NOT read or use:
 
 You are simulating a reader who picked up the novel with no knowledge of its planning. If the explanation is not in the prose, it does not exist for that reader.
 
+**One exception**: After generating all questions (Phase 1) and auditing answers (Phase 2), read **only `CLAUDE.md` section 5.1 (Intentional Mysteries)**. Items listed there are deliberate secrets — mark them as `🔒 의도적 비밀` instead of `❌ 설명 누락`. Items NOT in the list remain `❌`.
+
 ---
 
 ## Procedure
