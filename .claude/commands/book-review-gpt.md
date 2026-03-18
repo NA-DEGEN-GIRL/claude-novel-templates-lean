@@ -91,7 +91,7 @@ Here are ALL your arc reviews. Now write a UNIFIED book review in Korean.
 
 {아크별 리뷰 전부}
 
-IMPORTANT: The first 4 sections MUST use EXACTLY these markdown headings (with emoji, NO numbering prefix). A web reader parses these exact patterns:
+IMPORTANT: The first 5 sections MUST use EXACTLY these markdown headings (with emoji, NO numbering prefix). A web reader parses these exact patterns:
 
 ## 📖 한줄 소개
 (한 문장으로 소설의 읽는 경험을 전달)
@@ -106,6 +106,17 @@ IMPORTANT: The first 4 sections MUST use EXACTLY these markdown headings (with e
 
 ## 💬 한마디
 (감정적 독후감 한 문장. 이 줄이 reader에서 대표 인용문으로 표시됨)
+
+SPOILER RULES for the 5 sections above (📖/⭐/🎯/⛔/💬):
+- These are shown to POTENTIAL READERS who have NOT read the novel.
+- ONLY mention: genre, tone, prose style, emotional texture, early-arc setup.
+- Do NOT reveal: plot twists, identity reveals, character deaths, relationship outcomes, ending details, or mid/late-story events.
+- Do NOT use: 마지막, 결말, 엔딩, 반전, 정체, 드러난다, 밝혀진다, 사실은, 알고 보니
+- Do NOT quote specific lines from the novel in these sections.
+- Bad: '주인공이 사라진다', '반전이 세 겹', '마지막 문장이 첫 문장을 뒤집는다'
+- Good: '건조한 문체가 서서히 온기를 머금는 작품', '억눌린 감정이 오래 남는다'
+- 🎯/⛔: Describe reader preferences only (pace, tone, genre taste). No plot hints.
+- Sections AFTER 💬 (총평, 강점/약점 등) are author-only — spoilers and quotes OK there.
 
 Then continue with:
 5. 총평 (3문장)
