@@ -284,11 +284,25 @@ The supervisor outputs progress in this format:
 
 - Supervision ends when all episodes through `END_EP` are completed
 - **On final completion** (last episode of the novel), run the full verification pipeline:
+
+  **Phase A: 독립 분석 (병렬 가능)**
   1. `/why-check full` — entire novel, long-range gap detection
-  2. `/book-review` + `/book-review-gpt` — independent reader evaluations (can run in parallel)
+  2. `/book-review` + `/book-review-gpt` — independent reader evaluations (parallel)
+
+  **Phase B: 통합 진단**
   3. `/narrative-review` — full narrative quality analysis. Phase 4 automatically references why-check-report, book-review, and book-review-gpt if they exist.
-  4. `/narrative-fix` — apply fix guide items from narrative-review (includes any why-check MISSING items that Phase 4 confirmed)
-  5. Optionally: `/narrative-fix --source why-check` for any remaining MISSING items not covered by narrative-review
+
+  **Phase C: 서사 수정**
+  4. `/narrative-fix` — apply fix guide items from narrative-review (S1~S6)
+
+  **Phase D: 수정 후 재검증**
+  5. `/why-check full` 재실행 — 수정된 텍스트 기준으로 재검증. ④에서 해결된 항목은 resolved, 새로 생긴 문제는 new, 여전한 문제는 still-missing으로 분류.
+  6. `/narrative-fix --source why-check` — still-missing 항목만 경량 패치 (E1~E4). **④ 이전의 구 보고서를 쓰지 않는다.**
+
+  **Phase E: 사실 검증 + 교정**
+  7. `/audit` — factual continuity, proper nouns, timeline, worldbuilding rules
+  8. `/audit-fix` — audit 결과 기반 오류 수정 (필요 시)
+  9. `/naturalness` — Korean naturalness check (선택, 출판 목표 시 권장)
 
   **Conflict priority** (when reports disagree): factual consistency > explicit contradiction > explanation gap > narrative quality > reader preference.
 - Halt and report to user if 3 consecutive unrecoverable errors occur
