@@ -296,7 +296,7 @@ The supervisor outputs progress in this format:
   4. `/narrative-fix` — apply fix guide items from narrative-review (S1~S6)
 
   **Phase D: 수정 후 재검증**
-  5. `/why-check full` 재실행 — 수정된 텍스트 기준으로 재검증. ④에서 해결된 항목은 resolved, 새로 생긴 문제는 new, 여전한 문제는 still-missing으로 분류.
+  5. `/why-check` delta-check — ④에서 수정된 화수 + 인접 1화만 재검증 (전체 재실행 불필요). 해결된 항목은 resolved, 새로 생긴 문제는 new, 여전한 문제는 still-missing으로 분류.
   6. `/narrative-fix --source why-check` — still-missing 항목만 경량 패치 (E1~E4). **④ 이전의 구 보고서를 쓰지 않는다.**
 
   **Phase E: 사실 검증 + 교정**
