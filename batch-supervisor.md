@@ -220,7 +220,9 @@ When the episode number enters a new arc range:
    - 산출물: summaries/why-check-report.md
    - 완료 후 대기.
    ```
-   Wait for completion. If MISSING items with priority 6+ are found, log them but do NOT block arc transition — they will be addressed in the next narrative-review cycle.
+   Wait for completion. If MISSING items with priority 6+ are found:
+   - Items fixable in 1-3 sentences → send `/narrative-fix --source why-check --scope priority-6+` to apply quick patches before proceeding
+   - Items requiring structural changes → log as HOLD, defer to next `/narrative-review` cycle
 3. Check if `plot/{arc}.md` exists for the new arc
    - If missing, send plot generation prompt (3c) first
 4. **Run `/why-check plan` on the new arc's plot file**: After plot/{arc}.md is created (or confirmed to exist), send:

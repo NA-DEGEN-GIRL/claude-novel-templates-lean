@@ -178,6 +178,62 @@ When sections drag or feel compressed:
 
 ---
 
+## WHY-CHECK Mode (`--source why-check`)
+
+When invoked with `--source why-check`, this agent operates under stricter constraints. The input is `summaries/why-check-report.md` instead of `narrative-review-report.md`.
+
+### WHY-CHECK Mode Rules
+
+1. **Target**: MISSING items only (INFERABLE only with `--promote`)
+2. **Skip**: Items matching CLAUDE.md §5.1 (intentional mysteries) → auto-skip with 🔒
+3. **Skip**: Items already in narrative-review fix guide as `confirmed` → narrative-fix owns those
+4. **Limit**: 1-3 sentences per item, single episode, existing scene only
+5. **Escalate to HOLD**: If fix requires new scene, multi-episode changes, setting additions, or plot changes
+
+### WHY-CHECK Strategies (E1-E4)
+
+#### E1. Explanation Reinforcement (설명 보강)
+Add 1-2 sentences of character's dry monologue explaining a mechanism/rule/reason.
+- Insert after the phenomenon is shown, before the scene moves on.
+
+#### E2. Reaction Addition (반응 추가)
+Add 1-2 sentences showing consequence/reaction that should follow an event but is missing.
+
+#### E3. Connection Sentence (연결 문장)
+Add 1 sentence connecting two existing facts that the reader should link but can't.
+
+#### E4. Repositioning (재배치)
+Move existing explanation to where the reader needs it. No new content.
+
+### WHY-CHECK Fix Log
+
+Write `summaries/why-fix-log.md` (separate from narrative-fix-log):
+
+```markdown
+# WHY-Fix 수정 로그
+
+> 수정일: {date}
+> 기반 보고서: {why-check-report filename}
+
+## 수정 내역
+
+| MISS-ID | 우선순위 | 화수 | 전략 | 추가 문장 수 | 상태 |
+|---------|---------|------|------|-------------|------|
+| MISS-01 | 6 | {N}화 | E{n} | {N}문장 | ✅ 완료 / ⏸️ 보류 / 🔒 스킵 |
+
+## 보류 항목 (→ /narrative-review 이관)
+
+| MISS-ID | 보류 사유 |
+|---------|----------|
+
+## 스킵 항목
+
+| MISS-ID | 스킵 사유 |
+|---------|----------|
+```
+
+---
+
 ## Fix Log
 
 After all fixes, write `summaries/narrative-fix-log.md`:
