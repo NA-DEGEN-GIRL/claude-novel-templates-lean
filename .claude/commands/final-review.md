@@ -14,7 +14,7 @@
 ```
 Phase A~B (analyze):  why-check full + book-review 2종 + narrative-review
 Phase C~D (fix):      narrative-fix + why-check delta + why-fix
-Phase E (audit):      audit + audit-fix + naturalness
+Phase E (audit):      audit + audit-fix
 ```
 
 ## 실행
@@ -63,13 +63,12 @@ Phase E (audit):      audit + audit-fix + naturalness
 **전제**: fix 완료.
 
 **Phase E: 사실 검증 + 교정**
-8. `/audit` 실행 → `summaries/full-audit-report.md`
+8. `/audit` 실행 → `summaries/full-audit-report.md` (Korean naturalness는 audit Phase 2.5에 내장)
 9. `/audit-fix` 실행 (이슈 있을 때만)
-10. `/naturalness` 실행 → `summaries/naturalness-report.md`
 
 **완료 후**: `final-review-state.md`에 "audit: DONE" 기록. 전체 완료 보고.
 
-> ✅ 완료 기준: full-audit-report 존재 + naturalness-report 존재
+> ✅ 완료 기준: full-audit-report 존재
 
 ## 상태 파일
 
@@ -90,7 +89,6 @@ Phase E (audit):      audit + audit-fix + naturalness
 - narrative-review-report.md: ✅
 - narrative-fix-log.md: ✅
 - full-audit-report.md: ✅
-- naturalness-report.md: ✅
 ```
 
 ## 주의

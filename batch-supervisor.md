@@ -299,10 +299,9 @@ The supervisor outputs progress in this format:
   5. `/why-check` delta-check — ④에서 수정된 화수 + 인접 1화만 재검증 (전체 재실행 불필요). 해결된 항목은 resolved, 새로 생긴 문제는 new, 여전한 문제는 still-missing으로 분류.
   6. `/narrative-fix --source why-check` — still-missing 항목만 경량 패치 (E1~E4). **④ 이전의 구 보고서를 쓰지 않는다.**
 
-  **Phase E: 사실 검증 + 교정**
-  7. `/audit` — factual continuity, proper nouns, timeline, worldbuilding rules
+  **Phase E: 사실 검증**
+  7. `/audit` — factual continuity, proper nouns, timeline, worldbuilding rules. Includes Korean naturalness check (Phase 2.5 내장).
   8. `/audit-fix` — audit 결과 기반 오류 수정 (필요 시)
-  9. `/naturalness` — Korean naturalness check (선택, 출판 목표 시 권장)
 
   **Conflict priority** (when reports disagree): factual consistency > explicit contradiction > explanation gap > narrative quality > reader preference.
 - Halt and report to user if 3 consecutive unrecoverable errors occur
