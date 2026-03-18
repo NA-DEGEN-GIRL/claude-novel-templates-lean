@@ -222,7 +222,7 @@ When the episode number enters a new arc range:
    ```
    Wait for completion. If MISSING items with priority 6+ are found:
    - Items fixable in 1-3 sentences → send `/narrative-fix --source why-check --scope priority-6+` to apply quick patches before proceeding
-   - Items requiring structural changes → log as HOLD, defer to next `/narrative-review` cycle
+   - Items requiring structural changes → log as HOLD, defer to next `/narrative-review` cycle. HOLD is released when narrative-review Phase 4 re-diagnoses the item as `confirmed` (integrated into fix guide) or `unconfirmed` (dismissed with reasoning).
 3. Check if `plot/{arc}.md` exists for the new arc
    - If missing, send plot generation prompt (3c) first
 4. **Run `/why-check plan` on the new arc's plot file**: After plot/{arc}.md is created (or confirmed to exist), send:
@@ -283,7 +283,14 @@ The supervisor outputs progress in this format:
 ### 7. Termination Conditions
 
 - Supervision ends when all episodes through `END_EP` are completed
-- **On final completion** (last episode of the novel): Run `/why-check full` on the entire novel. This catches long-range accumulated gaps that arc-level checks miss. Log results for the narrative-review cycle.
+- **On final completion** (last episode of the novel), run the full verification pipeline:
+  1. `/why-check full` — entire novel, long-range gap detection
+  2. `/book-review` + `/book-review-gpt` — independent reader evaluations (can run in parallel)
+  3. `/narrative-review` — full narrative quality analysis. Phase 4 automatically references why-check-report, book-review, and book-review-gpt if they exist.
+  4. `/narrative-fix` — apply fix guide items from narrative-review (includes any why-check MISSING items that Phase 4 confirmed)
+  5. Optionally: `/narrative-fix --source why-check` for any remaining MISSING items not covered by narrative-review
+
+  **Conflict priority** (when reports disagree): factual consistency > explicit contradiction > explanation gap > narrative quality > reader preference.
 - Halt and report to user if 3 consecutive unrecoverable errors occur
 - If the supervisor's own context is running low, summarize current progress and output a handoff prompt for continuation, then terminate
 

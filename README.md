@@ -8,10 +8,11 @@ AI(Claude Code)로 웹소설을 쓰기 위한 **경량화 템플릿**.
 
 ## 원본 대비 변경점
 
-| 항목 | 원본 (12-agent) | Lean (4-agent) |
+| 항목 | 원본 (12-agent) | Lean (9-agent) |
 |------|----------------|----------------|
 | 집필 에이전트 | writer + reviewer + continuity-checker + korean-proofreader + gemini-feedback + summary-generator (6종) | **writer** + **unified-reviewer** (2종) |
-| 감사 에이전트 | full-audit + audit-verifier + audit-fixer (3종) | **full-audit** + **narrative-reviewer** (2종) |
+| 감사/리뷰 에이전트 | full-audit + audit-verifier + audit-fixer (3종) | **full-audit** + **narrative-reviewer** + **narrative-fixer** + **book-reviewer** + **why-checker** (5종) |
+| 셋업/검증 에이전트 | — | **story-consultant** + **korean-naturalness** (2종) |
 | 맥락 로딩 | 개별 summaries 파일 직접 읽기 | `compile_brief` MCP 1회 호출 (압축 브리프) |
 | 요약 갱신 | summary-generator 에이전트 호출 | writer가 인라인 갱신 (별도 에이전트 불필요) |
 | 리뷰 파이프라인 | reviewer → gemini-feedback → continuity-checker → korean-proofreader (4단계) | review_episode MCP → unified-reviewer (2단계) |
@@ -74,6 +75,17 @@ cd my-novel && claude
 # INIT-PROMPT.md에서 원하는 프롬프트를 복사하여 붙여넣기
 ```
 
+셋업 흐름 요약 (프롬프트 1 기준):
+
+1. **시나리오 제안** — 장르/키워드로 3개 시나리오 생성
+2. **전문가 컨셉 평가** — story-consultant 에이전트가 6개 관점에서 GO/REVISE/NO-GO 판정
+3. **선택 & 확장** — 캐릭터, 아크 설계, 핵심 약속, 세계관 규칙
+4. **확장 컨셉 재평가** — story-consultant 재실행, GO 후 진행
+5. **프로젝트 생성** — 템플릿 기반 전체 파일 자동 생성
+6. **플롯 사전 검증** (`/why-check plan`) — master-outline, arc-01에 대해 WHY/HOW/WHEN/SO-WHAT 질문. PLANNING GAP 발견 시 즉시 수정
+7. **교차 검증** — 3팀(사실 관계/서사 실현성/표기 일관성) 병렬 검증. 4단계에서 plot 수정 시 why-check plan 재실행
+8. **git commit** — 소설 폴더 독립 레포 + 상위 레포 등록
+
 ### 3. 집필 시작
 
 ```bash
@@ -101,40 +113,97 @@ my-novel/
 ├── chapters/
 ├── plot/
 ├── summaries/
+├── reference/
+│   └── name-table.md         ← 이름 레퍼런스 (~590항목, 12개 문화권)
 └── .claude/
-    ├── commands/
-    │   ├── audit.md              ← /audit — 전수 감사
-    │   ├── audit-fix.md          ← /audit-fix — 감사 수정
-    │   ├── narrative-review.md   ← /narrative-review — 서사 리뷰
-    │   └── narrative-fix.md      ← /narrative-fix — 서사 수정
-    └── agents/
-        ├── writer.md             ← Writer (A-F pipeline)
-        ├── unified-reviewer.md   ← Unified reviewer (continuity + quality + Korean)
-        ├── full-audit.md         ← Full audit (1M context, single-pass or chunked)
-        ├── narrative-reviewer.md ← Narrative reviewer (서사 품질 진단)
-        └── narrative-fixer.md   ← Narrative fixer (서사 수술적 수정)
+    ├── commands/              ← 9종 (아래 표 참조)
+    └── agents/                ← 9종 (아래 표 참조)
 ```
 
-### 에이전트 5종
+### 에이전트 9종
 
 | 에이전트 | 역할 | 실행 시점 |
 |----------|------|----------|
 | **writer** | 집필 파이프라인: compile_brief → 장면 구성 → 집필 → 요약 갱신 → 커밋 | 매화 |
 | **unified-reviewer** | 연속성 + 품질 + 한글 교정 (3모드: continuity/standard/full) | 매화 (writer가 호출) |
+| **story-consultant** | 컨셉 사전 평가: 6개 관점(연재 편집자, 장르 전문가, 캐릭터/감정, 구조, AI 실행 리스크 등)에서 GO/REVISE/NO-GO 판정 | 초기 셋업 시 (INIT-PROMPT 1~2.5단계) |
 | **full-audit** | 전수 팩트 체크. 1M 컨텍스트로 싱글 패스 또는 동적 청킹 | 아크/소설 완결 시 |
-| **narrative-reviewer** | 서사 품질 전체 리뷰 (장르 이탈, 주인공 수동화, 스케일 인플레이션 등) | 아크/소설 완결 시 |
-| **narrative-fixer** | 서사 리뷰 기반 수술적 수정 (데이터 덤프 해소, 능동성 복원, 감정 장면 복원 등) | narrative-review 이후 |
+| **narrative-reviewer** | 서사 품질 전체 리뷰 (장르 이탈, 주인공 수동화, 스케일 인플레이션 등). Phase 4에서 교차 검증 통합 | 아크/소설 완결 시 |
+| **narrative-fixer** | 서사 리뷰 기반 수술적 수정 (S1~S6) 또는 WHY-CHECK 경량 패치 (E1~E4) | narrative-review 또는 why-check 이후 |
+| **book-reviewer** | 독자/비평가 관점 작품 평가. settings/plot/summaries 읽지 않음 — 본문만으로 판단 | 아크/소설 완결 시 |
+| **why-checker** | "왜?" "어떻게?" 질문 생성 → 본문에서 답 검색. 설정 구멍/플롯 홀 탐지. Planning Mode로 플롯 사전 검증도 수행 | 아크 전환 시, 소설 완결 시, 초기 셋업 시 |
+| **korean-naturalness** | 한국어 자연스러움 전수 검사. 문법이 맞더라도 원어민 감각에 어색하면 지적 | 완결 후 또는 품질 점검 시 |
 
-### 커맨드 4종
+### 커맨드 9종
 
 | 커맨드 | 역할 | 산출물 |
 |--------|------|--------|
 | `/audit` | 전수 감사 실행 (읽기 전용) | `full-audit-report.md` |
 | `/audit-fix` | 감사 보고서 기반 오류 수정 (연속성→품질→한글 순) | `full-audit-fix-log.md` |
-| `/narrative-review` | 서사 품질 리뷰 (읽기 전용) | `narrative-review-report.md` |
-| `/narrative-fix` | 서사 리뷰 기반 품질 수정 (사용자 승인 후 실행) | `narrative-fix-log.md` |
+| `/narrative-review` | 서사 품질 리뷰 (읽기 전용). Phase 4에서 book-review/why-check 교차 검증 | `narrative-review-report.md` |
+| `/narrative-fix` | 서사 리뷰 기반 품질 수정. 기본 모드(S1~S6) 또는 WHY-CHECK 모드(E1~E4) | `narrative-fix-log.md` 또는 `why-fix-log.md` |
+| `/book-review` | 독자/비평가 관점 작품 평가 (Claude). 본문만 읽고 판단 | `book-review.md` |
+| `/book-review-gpt` | GPT로 독자 관점 리뷰. Claude와 다른 시각 제공. 두 리뷰 비교로 균형 잡힌 평가 | `book-review-gpt.md` |
+| `/naturalness` | 한국어 자연스러움 전수 검사. 에피소드별 개별 Agent 호출 (주의력 유지) | 인라인 보고서 |
+| `/naturalness-fix` | naturalness 보고서의 지적 사항을 맥락 기반 선별 수정. 의도적 문체/말투 오탐 필터링 | 수정된 에피소드 |
+| `/why-check` | WHY/HOW 질문 생성 + 본문 답 검색. 아크/범위/full/plan 모드 지원 | `why-check-report.md` |
 
-원본의 12개 에이전트 + 3개 커맨드가 **5개 에이전트 + 4개 커맨드**로 통합되었다. `/audit-fix`는 SOP 기반 커맨드, `/narrative-fix`는 전용 narrative-fixer 에이전트가 처리한다.
+---
+
+## 검증/리뷰 파이프라인
+
+소설의 품질 검증은 시점에 따라 다른 도구 조합으로 수행한다.
+
+### 집필 시 (매화)
+
+```
+writer → unified-reviewer (continuity/standard/full 모드 자동 결정)
+```
+
+### 아크 전환 시
+
+```
+/why-check (완료 아크 사후 검증)
+    ↓
+/why-check plan (다음 아크 플롯 사전 검증)
+    ↓  PLANNING GAP 발견 시 즉시 수정
+/narrative-fix --source why-check (우선도 6+ 경량 패치, 1~3문장)
+```
+
+> 플롯 단계에서 구멍 1개를 막는 비용은 문장 1개다. 같은 구멍이 집필 후 발견되면 장면 재작성이 필요하다.
+
+### 완결 시 (전체 검증)
+
+```
+/why-check full (전체 소설 WHY/HOW 검증)
+    ↓
+/book-review + /book-review-gpt (독립적 작품 평가 2건)
+    ↓
+/narrative-review (Phase 1~3 독립 분석 + Phase 4 교차 검증)
+    ↓
+/narrative-fix (통합 fix guide 실행)
+```
+
+### 교차 검증 시스템
+
+`/narrative-review`의 **Phase 4**가 교차 검증의 핵심이다.
+
+1. Phase 1~3에서 narrative-reviewer가 **독립적으로** 서사 품질을 분석하고 fix guide를 생성한다
+2. Phase 4에서 `book-review.md`, `book-review-gpt.md`, `why-check-report.md`가 존재하면 읽는다
+3. 각 외부 보고서의 이슈를 **텍스트에서 재진단**한다 (외부 판단을 그대로 수용하지 않음)
+4. 확인된 이슈는 기존 fix guide 항목의 우선도를 올리거나 신규 항목으로 추가한다
+5. Phase 1~3의 점수와 판단은 변경하지 않는다 — fix guide만 보강된다
+
+> 원칙: **판단은 reviewer, 실행은 fixer.** narrative-fixer는 단일 fix guide만 받아서 실행한다.
+
+### `/narrative-fix` 이중 모드
+
+| 모드 | 입력 | 전략 | 범위 |
+|------|------|------|------|
+| **기본** (narrative-review 기반) | `narrative-review-report.md` | S1~S6 (구조적 서사 수정) | 다화 수정, 장면 재구성 가능 |
+| **WHY-CHECK** (`--source why-check`) | `why-check-report.md` | E1~E4 (경량 설명 보강) | 항목당 1~3문장, 단일 화수, 기존 장면 내부 삽입만 |
+
+WHY-CHECK 모드는 아크 전환 시 빠른 패치용이다. 한도 초과 항목은 HOLD 처리되어 다음 `/narrative-review` 사이클로 이관된다.
 
 ---
 
@@ -169,9 +238,24 @@ cd /root/novel && claude
 # → "my-novel/batch-supervisor.md 대로 수행"
 ```
 
+아크 전환 시 감독자가 자동으로 수행하는 추가 작업:
+
+1. 완료 아크에 `/why-check` 실행
+2. 우선도 6+ 항목에 `/narrative-fix --source why-check` 경량 패치
+3. 다음 아크 플롯 파일에 `/why-check plan` 실행 (PLANNING GAP 즉시 수정)
+4. 정기 점검(P1~P9) 지시
+
 ### 감사 감독: `batch-supervisor-audit.md`
 
 전수 감사(`/audit`)를 N화 배치로 자동 감독한다.
+
+---
+
+## `reference/` 디렉토리
+
+| 파일 | 내용 |
+|------|------|
+| `reference/name-table.md` | 이름 레퍼런스 (~590항목, 12개 문화권). 셋업 시 캐릭터 이름 선택에 활용 |
 
 ---
 
