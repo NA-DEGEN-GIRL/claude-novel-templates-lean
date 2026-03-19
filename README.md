@@ -8,7 +8,7 @@ AI(Claude Code)로 웹소설을 쓰기 위한 **경량화 템플릿**.
 
 ## 원본 대비 변경점
 
-| 항목 | 원본 (12-agent) | Lean (9-agent) |
+| 항목 | 원본 (12-agent) | Lean (10-agent) |
 |------|----------------|----------------|
 | 집필 에이전트 | writer + reviewer + continuity-checker + korean-proofreader + gemini-feedback + summary-generator (6종) | **writer** + **unified-reviewer** (2종) |
 | 감사/리뷰 에이전트 | full-audit + audit-verifier + audit-fixer (3종) | **full-audit** + **narrative-reviewer** + **narrative-fixer** + **book-reviewer** + **why-checker** (5종) |
@@ -104,10 +104,12 @@ cd my-novel && claude
 
 ```
 my-novel/
-├── CLAUDE.md                  ← Writing Constitution (English + Korean examples)
-├── INIT-PROMPT.md             ← AI 셋업 프롬프트 (4종)
-├── batch-supervisor.md        ← 배치 집필 감독 프롬프트
-├── batch-supervisor-audit.md  ← 배치 감사 감독 프롬프트
+├── CLAUDE.md                  ← Writing Constitution
+├── INIT-PROMPT.md             ← 새 소설 셋업 (4종)
+├── MIGRATION-PROMPT.md        ← 기존→lean 전환 (12단계)
+├── REBUILD-PROMPT.md          ← 재구축 (8 Phase)
+├── batch-supervisor.md        ← 배치 집필 감독
+├── batch-supervisor-audit.md  ← 배치 감사 감독
 ├── settings/
 │   ├── ...
 ├── chapters/
@@ -116,9 +118,18 @@ my-novel/
 ├── reference/
 │   └── name-table.md         ← 이름 레퍼런스 (~590항목, 12개 문화권)
 └── .claude/
-    ├── commands/              ← 9종 (아래 표 참조)
+    ├── commands/              ← 10종 (아래 표 참조)
     └── agents/                ← 9종 (아래 표 참조)
 ```
+
+### 프롬프트 파일 4종
+
+| 파일 | 용도 | 사용 시점 |
+|------|------|----------|
+| [INIT-PROMPT.md](./INIT-PROMPT.md) | 새 소설 프로젝트 생성 (4가지 프롬프트) | 처음 시작 시 |
+| [MIGRATION-PROMPT.md](./MIGRATION-PROMPT.md) | 기존 12-agent 소설을 lean으로 전환 (12단계) | 기존 프로젝트 전환 시 |
+| [REBUILD-PROMPT.md](./REBUILD-PROMPT.md) | lean 전환 후 세계관/플롯 재정립 + 재집필 (8 Phase) | 설정 재구축 시 |
+| [batch-supervisor.md](./batch-supervisor.md) | 배치 자동 집필 감독 | 연속 집필 시 |
 
 ### 에이전트 9종
 
@@ -134,7 +145,7 @@ my-novel/
 | **why-checker** | "왜?" "어떻게?" 질문 생성 → 본문에서 답 검색. 설정 구멍/플롯 홀 탐지. Planning Mode로 플롯 사전 검증도 수행 | 아크 전환 시, 소설 완결 시, 초기 셋업 시 |
 | **korean-naturalness** | 한국어 자연스러움 전수 검사. 문법이 맞더라도 원어민 감각에 어색하면 지적 | 완결 후 또는 품질 점검 시 |
 
-### 커맨드 9종
+### 커맨드 10종
 
 | 커맨드 | 역할 | 산출물 |
 |--------|------|--------|
@@ -147,6 +158,7 @@ my-novel/
 | `/naturalness` | 한국어 자연스러움 전수 검사. 에피소드별 개별 Agent 호출 (주의력 유지) | 인라인 보고서 |
 | `/naturalness-fix` | naturalness 보고서의 지적 사항을 맥락 기반 선별 수정. 의도적 문체/말투 오탐 필터링 | 수정된 에피소드 |
 | `/why-check` | WHY/HOW 질문 생성 + 본문 답 검색. 아크/범위/full/plan 모드 지원 | `why-check-report.md` |
+| `/final-review` | 완결 후 최종 검증 파이프라인. `analyze` → `fix` → `audit` 3단계 실행 | `final-review-state.md` |
 
 ---
 
@@ -172,17 +184,25 @@ writer → unified-reviewer (continuity/standard/full 모드 자동 결정)
 
 > 플롯 단계에서 구멍 1개를 막는 비용은 문장 1개다. 같은 구멍이 집필 후 발견되면 장면 재작성이 필요하다.
 
-### 완결 시 (전체 검증)
+### 완결 시 (전체 검증) — `/final-review`
 
 ```
-/why-check full (전체 소설 WHY/HOW 검증)
-    ↓
-/book-review + /book-review-gpt (독립적 작품 평가 2건)
-    ↓
-/narrative-review (Phase 1~3 독립 분석 + Phase 4 교차 검증)
-    ↓
-/narrative-fix (통합 fix guide 실행)
+Phase A~B: /final-review analyze
+  ① /why-check full
+  ② /book-review + /book-review-gpt (병렬)
+  ③ /narrative-review (Phase 4: ①② 참조)
+
+Phase C~D: /final-review fix
+  ④ /narrative-fix (S1~S6 구조적 수정)
+  ⑤ /why-check delta (수정된 화수만 재검증)
+  ⑥ /narrative-fix --source why-check (still-missing만)
+
+Phase E: /final-review audit
+  ⑦ /audit (factual continuity, naturalness Phase 2.5 내장)
+  ⑧ /audit-fix (필요 시)
 ```
+
+> `/final-review` 커맨드로 3단계 순차 실행. 각 단계는 독립 세션에서 실행 가능 (상태 파일로 재개).
 
 ### 교차 검증 시스템
 
@@ -248,6 +268,21 @@ cd /root/novel && claude
 ### 감사 감독: `batch-supervisor-audit.md`
 
 전수 감사(`/audit`)를 N화 배치로 자동 감독한다.
+
+### 완결 후 최종 검증: `/final-review`
+
+소설 완결 후 전체 검증+수정 파이프라인을 3단계로 실행한다.
+
+```bash
+cd my-novel && claude
+
+/final-review              # 현재 상태 확인 + 다음 단계 안내
+/final-review analyze      # Phase A~B: 분석 + 리뷰 + 통합 진단 (~2시간)
+/final-review fix          # Phase C~D: 수정 + 재검증 (~1시간, 사용자 승인 필요)
+/final-review audit        # Phase E: 팩트 검증 + 교정 (~1시간)
+```
+
+상태 파일(`summaries/final-review-state.md`)로 진행 상태를 추적하며, 세션이 끊겨도 재개 가능.
 
 ---
 
