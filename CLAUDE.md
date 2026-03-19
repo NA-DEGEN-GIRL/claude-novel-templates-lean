@@ -90,7 +90,17 @@
        - Count: 서넛/대여섯/열댓/스무 남짓
      - **Emotional state affects precision**: 평온→정돈된 어림, 긴장→단순화, 패닉→수치 대신 감각("미쳤다", "또 나갔다")
      - **Character expertise exception**: 장사꾼/회계사/수학자/천재 캐릭터는 더 촘촘한 어림이 허용되나, 그래도 "계산기 출력 복사"가 아닌 **"더 좋은 어림"**이다. settings/03-characters.md에 해당 캐릭터의 수치 정밀도를 명시할 것.
-     - **Exact display exception**: In-world displays, documents, system readouts, ledgers, instruments MAY show exact numbers. But the character's REACTION must be approximate/emotional.
+     - **When exact numbers ARE natural** (do NOT force approximation here):
+       - Reading a price tag, receipt, menu, scoreboard, clock, calendar ("1,990원입니다")
+       - Repeating a number someone just told them ("삼백 냥이라고?")
+       - Quoting official data, addresses, phone numbers, test scores
+       - In-world displays, documents, system readouts, ledgers, instruments
+     - **When approximation IS natural** (this is the rule's main target):
+       - Mental arithmetic ("내 돈이 얼마 남았더라...")
+       - Estimating distance, time, quantity from memory
+       - Emotional reactions to numbers (even after reading exact display)
+     - **Key distinction**: "읽거나 듣는 것" = exact OK. "머릿속으로 계산/추정하는 것" = human approximation. "읽은 뒤 해석/판단하는 것" = approximation.
+     - **Edge case**: 여러 가격을 보고 합산 → 개별 가격은 정확, 합계는 어림 ("대충 한 5만 원어치 샀나"). 캐릭터가 평소 외우고 있는 숫자(월세, 비밀번호, 시험 등급)는 정확 허용.
    - **Use calc when**: dates are plot-critical, travel distance/time may cause contradiction, economy/supply is core conflict, checking word count.
    - **Skip calc when**: vague time expressions, atmospheric approximations, mundane travel/trade, combat distances/speeds.
    - Tools: dates(`date_calc`/`weekday`/`d_plus`/`date_diff`) | arithmetic(`calculate`) | travel(`speed_distance_time`/`travel_estimate`) | units(`unit_convert`/`convert_time`) | economy(`currency_calc`/`supply_calc`/`growth_calc`) | length(`char_count`)
