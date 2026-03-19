@@ -112,6 +112,7 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
   - [ ] 12-4. Were any characters/abilities/locations improvised without being in settings?
   - [ ] 12-5. Were any CLAUDE.md prohibitions violated?
   - [ ] 12-5a. **Loanword check** (when CLAUDE.md or worldbuilding specifies a non-modern setting): Scan the draft for English loanwords (외래어) in prose. **CLAUDE.md prohibitions override settings examples** — if an example sentence contains a loanword, do not copy it. Common offenders: 시스템→체계, 패턴→규칙/결, 에너지→기운, 허브→약초, 아우라→기운, 레벨→경지, 밸런스→균형. This list is not exhaustive — any loanword not established as an in-world term is prohibited.
+  - [ ] 12-5b. **Calc precision check**: Do any character dialogue/monologue/close-POV lines contain tool-derived exact numbers? Characters estimate like humans — convert exact calc results to human-scale approximations per CLAUDE.md §3.2.4.
   - [ ] 12-6. Does any character speak as if knowing information they shouldn't? (Cross-reference compile_brief's knowledge-map)
 
 ### D. Inline Summary Update (Post-Writing)

@@ -48,6 +48,8 @@ Read the text from start to finish and compare against the brief. Mark ⚠️ wh
 
 **Time/distance verification principle**: Vague expressions ("며칠 후", "사흘 거리") are NOT errors. Only verify with `novel-calc` when specific numbers are stated.
 
+**Calc precision leakage check**: Flag any character dialogue/monologue/close-POV narration that contains suspiciously exact numbers (원/백원 단위 금액, 소수점 비율, 정확한 거리/시간). Characters estimate like humans — tool-derived precision in character voice is ❌. Exception: in-world displays, documents, instruments showing exact readouts. See CLAUDE.md §3.2.4.
+
 **3-level classification**: Clear conflict with settings → ❌ / High probability of contradiction → ⚠️ / Low probability of contradiction → ✅
 
 ---

@@ -23,8 +23,8 @@
 - **Target Audience**: {{TARGET_AUDIENCE}}
 - **One-line Summary**: {{ONE_LINE_SUMMARY}}
 - **gemini_feedback**: true  <!-- set false to disable Gemini review -->
-- **nim_feedback**: false  <!-- set true to enable NIM proofreading -->
-- **nim_feedback_model**: "mistralai/mistral-large-3-675b-instruct-2512"
+- **nim_feedback**: true  <!-- set true to enable NIM proofreading -->
+- **nim_feedback_model**: "openai/gpt-oss-120b"
 - **ollama_feedback**: false  <!-- set true to enable Ollama proofreading -->
 - **ollama_feedback_model**: "gpt-oss:120b"
 - **gpt_feedback**: true  <!-- set false to disable GPT review -->
@@ -77,7 +77,20 @@
 3. Target length: {{TARGET_LENGTH}}
 4. **`novel-calc` MCP is for narrative verification only. Calculations must NOT drive the narrative.**
    - Write prose naturally first. Then verify numerical consistency with calc only if needed.
-   - Calc results allowed in: (1) unified-reviewer evidence, (2) summaries/ updates, (3) in-world UI/popup numbers. NEVER insert calc results into narration, dialogue, or inner monologue.
+   - Calc results allowed in: (1) unified-reviewer evidence, (2) summaries/ updates, (3) in-world UI/popup/display numbers. NEVER insert calc results into narration, dialogue, or inner monologue.
+   - **Characters do mental math like humans, not computers.** Exact tool outputs are for author/model reasoning only. Do NOT copy exact results into character dialogue, monologue, or close-POV narration. Convert to human estimates, rounded quantities, sensory scale, or emotional interpretation.
+     - ❌ "잔여 공간이 구 할 삼 푼" → ✅ "한 할도 남지 않았다"
+     - ❌ "사흘 뒤면 정확히 삼백 이십 리" → ✅ "사흘이면 닿겠지"
+     - ❌ "58,110원 남았네" → ✅ "6만 원도 안 남았나"
+     - **Approximation guide** (default human scale):
+       - Money: 천/만 단위 반올림 ("한 5만 원쯤", "~도 안 된다")
+       - Distance: 반나절/하루길/사흘쯤/몇 리/한참
+       - Ratio/remaining: 거의 없다/한 할도/절반쯤/얼마 안 남았다
+       - Time: 한 시진 남짓/두어 시간/사나흘/열흘 남짓
+       - Count: 서넛/대여섯/열댓/스무 남짓
+     - **Emotional state affects precision**: 평온→정돈된 어림, 긴장→단순화, 패닉→수치 대신 감각("미쳤다", "또 나갔다")
+     - **Character expertise exception**: 장사꾼/회계사/수학자/천재 캐릭터는 더 촘촘한 어림이 허용되나, 그래도 "계산기 출력 복사"가 아닌 **"더 좋은 어림"**이다. settings/03-characters.md에 해당 캐릭터의 수치 정밀도를 명시할 것.
+     - **Exact display exception**: In-world displays, documents, system readouts, ledgers, instruments MAY show exact numbers. But the character's REACTION must be approximate/emotional.
    - **Use calc when**: dates are plot-critical, travel distance/time may cause contradiction, economy/supply is core conflict, checking word count.
    - **Skip calc when**: vague time expressions, atmospheric approximations, mundane travel/trade, combat distances/speeds.
    - Tools: dates(`date_calc`/`weekday`/`d_plus`/`date_diff`) | arithmetic(`calculate`) | travel(`speed_distance_time`/`travel_estimate`) | units(`unit_convert`/`convert_time`) | economy(`currency_calc`/`supply_calc`/`growth_calc`) | length(`char_count`)
