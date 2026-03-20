@@ -97,6 +97,7 @@ Define {summary, purpose, characters, tone, foreshadowing} for each scene and de
   - Same hook type as previous episode
   - Same opening pattern (action/dialogue/description) as last 2 episodes
   - Repeated scene structure (e.g., 3 consecutive episodes ending in combat)
+  - Too similar in overall tone/atmosphere to the previous episode without narrative reason
 
 ### C. Writing & Self-Review
 
