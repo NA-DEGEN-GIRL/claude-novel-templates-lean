@@ -29,7 +29,7 @@ For each fix item, load in this order:
    - If the report contains Phase 4 (cross-agent integration) items, treat them identically to other fix guide items — the reviewer has already re-diagnosed and endorsed them. No special handling needed.
    - Items tagged "(출처: ...)" indicate they originated from external reports but were confirmed by the reviewer. Apply the same surgical discipline as any other item.
 2. **"건드리면 안 되는 것" list** — protected scenes/beats from the report
-3. **`CLAUDE.md`** — prohibitions (§5), honorific matrix (§8), core promises (§1.1)
+3. **`CLAUDE.md`** — prohibitions (§5), honorific matrix (§8), core promises (§1.1). Note: settings/ specific rules take precedence over CLAUDE.md general principles per §4.
 4. **`settings/01-style-guide.md`** — prose style rules
 5. **`settings/03-characters.md`** — character voices, speech patterns
 6. **Relevant `plot/{arc}.md`** and `plot/foreshadowing.md` — plot structure
@@ -92,7 +92,7 @@ Apply the fix using the appropriate strategy (see below). After each episode edi
 - `running-context.md` if current state is affected
 - Other summaries only if facts changed
 
-**Summary fact-check**: After updating, verify the new summary entries match the modified text (same check as writer.md step D).
+**Summary fact-check**: After updating, verify the new summary entries match the modified text (same check as writer.md steps 8-9).
 
 **Post-fix continuity review**: After all modifications for a fix item are complete, run `unified-reviewer` in `continuity` mode on each modified episode. This catches continuity breaks introduced by the rewrite. If new errors are found, fix them immediately before proceeding to the next item.
 
@@ -107,7 +107,7 @@ When episodes deliver information through narration/reports instead of story:
 1. Identify what information MUST be conveyed
 2. Split into pieces delivered through:
    - **Dialogue with conflict** — characters disagree about what the information means
-   - **Discovery through action** — protagonist finds evidence, not reads a briefing
+   - **Discovery through action** — focal character finds evidence, not reads a briefing
    - **Sensory/environmental detail** — show the consequence, not the fact
 3. Distribute across 2-3 episodes if one episode is overloaded
 4. Cut information that serves no immediate plot purpose
@@ -116,15 +116,15 @@ When episodes deliver information through narration/reports instead of story:
 
 ### S2. Agency Recovery (주인공 능동성 복원)
 
-When the protagonist passively receives information or follows instructions:
+When the focal character passively receives information or follows instructions:
 
 1. Find the decision point in the episode
 2. Change "character is told" → "character deduces/discovers"
 3. Change "character follows orders" → "character makes a choice" (even if the action is the same)
-4. Add 1-2 sentences of internal reasoning before action — the protagonist DECIDES, then ACTS
+4. Add 1-2 sentences of internal reasoning before action — the focal character DECIDES, then ACTS
 5. Ensure the choice has visible consequences (even small ones)
 
-**Constraint**: Plot outcome stays identical. Only the protagonist's path to it changes.
+**Constraint**: Plot outcome stays identical. Only the focal character's path to it changes.
 
 ### S3. Emotional Scene Recovery (감정 장면 복원)
 
@@ -132,7 +132,7 @@ When emotional climaxes are buried under technical/logistical content:
 
 1. Identify the core emotional beat
 2. Relocate surrounding technical content to adjacent episodes
-3. Create an uninterrupted emotional runway — at least 500 chars of sustained focus
+3. Create an uninterrupted emotional runway — sustained focus appropriate to the genre and pacing
 4. Slow the prose: more sensory detail, shorter sentences, physical reactions
 5. Remove status updates, percentages, and system descriptions from the emotional zone
 
@@ -193,7 +193,7 @@ When invoked with `--source why-check`, this agent operates under stricter const
 ### WHY-CHECK Strategies (E1-E4)
 
 #### E1. Explanation Reinforcement (설명 보강)
-Add 1-2 sentences of character's dry monologue explaining a mechanism/rule/reason.
+Add 1-2 sentences of brief in-character explanation matching the POV character's voice and tone.
 - Insert after the phenomenon is shown, before the scene moves on.
 
 #### E2. Reaction Addition (반응 추가)
@@ -266,7 +266,7 @@ Git commit: `{소설명} 서사 수정 반영 ({N}건)`
 
 ## Prohibitions
 
-1. **Do NOT run the writer pipeline (A-F).** This agent does not plan scenes, generate new content, or run unified-reviewer.
+1. **Do NOT run the writer pipeline (steps 1-12).** This agent does not plan scenes or generate new content. Exception: post-fix `unified-reviewer` in `continuity` mode is required (step 4 of this agent's procedure).
 2. **Do NOT modify "건드리면 안 되는 것" items.** If unavoidable, mark as `보류`.
 3. **Do NOT change plot outcomes** without explicit user approval.
 4. **Do NOT add new characters, abilities, or worldbuilding** that aren't in settings.

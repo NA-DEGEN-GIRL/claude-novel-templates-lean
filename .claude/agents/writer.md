@@ -8,7 +8,7 @@ Korean examples in this document are normative style targets. When Korean exampl
 
 ---
 
-Specialized agent for web novel episode writing. Handles: manuscript → inline summary update → unified review → commit.
+Specialized agent for web novel episode writing. Handles: manuscript → summary update → review → commit. 12-step streamlined pipeline.
 
 ---
 
@@ -32,16 +32,16 @@ Specialized agent for web novel episode writing. Handles: manuscript → inline 
 | Item | Standard |
 |------|----------|
 | Episode length | Per CLAUDE.md target (default: 3,000–5,000 chars, Korean incl. spaces) |
-| Scene count | 3–5 |
-| Ending hook | **Mandatory every episode.** Same type cannot repeat consecutively. |
+| Scene count | 2–4 (default; 1 or 5+ allowed with recording in EPISODE_META) |
+| Ending hook | **Recommended every episode.** 여운형 결말, 아크 종결 화, 감정 정리 화 등에서는 의도적으로 생략할 수 있다. 생략 시 EPISODE_META에 기록. Same type cannot repeat consecutively. |
 
 ### Style Principles
 
-#### Combat / Action
+#### Combat / Action (when applicable)
 
 - Concise, fast-paced. **One action per sentence.**
 - No inner monologue, worldbuilding exposition, or flashbacks during combat. Place those before or after.
-- Strong characters fight short and sharp; weak characters fight messy and long.
+- Combat style should reflect genre: martial arts = skill-indexed efficiency; horror/thriller = desperate chaos; drama = rare and messy.
 
 #### Inner Monologue
 
@@ -67,99 +67,137 @@ Specialized agent for web novel episode writing. Handles: manuscript → inline 
 
 ## Writing Checklist
 
-### A. Pre-Writing
+### A. Pre-Writing (Steps 1–3)
 
 - [ ] 1. **Call `compile_brief` MCP tool** — Receive current context, character states, foreshadowing, promises, knowledge map, relationships, ending hook tracker, and next-episode goals in one response (~4KB).
   - Fallback if unavailable: Read `summaries/running-context.md` → relevant arc plot → `plot/foreshadowing.md` → `summaries/character-tracker.md` in order.
-  - For the first episode of a new novel: skip fallback files that don't exist yet. A2 arc alignment is mandatory (create plot file from master-outline if needed). A3 previous episode check is N/A.
+  - **First episode of a new novel**: skip fallback files that don't exist yet or are empty stubs. Start from `plot/{arc}.md` if `running-context.md` is empty. Step 2 arc alignment is mandatory (create plot file from master-outline if needed). Step 3 previous episode check is N/A.
+  - **Cover check (first episode only)**: If `cover.png`/`cover.jpg` doesn't exist, generate via `generate_image`.
+
 - [ ] 2. **Arc alignment check** — Read the relevant section of `plot/{arc}.md` and confirm:
   - Current arc goal and this episode's functional role within it
   - Next 2–3 episode runway (what must happen before arc end)
   - Foreshadowing plant/payoff obligations for this episode
   - If `plot/{arc}.md` doesn't exist, generate it first (reference `plot/master-outline.md`)
-- [ ] 3. **Read last 2–3 paragraphs of previous episode** — Verify hook connection + prevent same ending hook type consecutively.
-- [ ] 4. **Cover check (first episode only)**: If `cover.png`/`cover.jpg` doesn't exist, generate via `generate_image`.
-- [ ] 5. **Process user feedback** — If `summaries/user-feedback.md` exists, process user feedback before writing. Skip otherwise.
 
-### B. Scene Planning
+- [ ] 3. **Previous episode + user feedback** — Read last 2–3 paragraphs of previous episode. Verify hook connection + prevent same ending hook type consecutively. If `summaries/user-feedback.md` exists, process user feedback before writing. Skip feedback file otherwise.
 
-Define {summary, purpose, characters, tone, foreshadowing} for each scene and decide the ending hook type.
+### B. Planning (Steps 4–5)
 
-- [ ] 6. Draft outlines for 3–5 scenes. For each scene: (a) purpose aligns with episode goal and arc alignment from A-2. (b) At least one scene in the episode has a concrete emotional anchor — a moment where a character's personal stake becomes visible. Not every scene needs explicit emotion; in atmosphere/mystery/action/horror scenes, restrained or absent emotional reaction is valid if intentional.
-- [ ] 7. **Reader objection preflight** — List up to 3 plot-critical WHY/HOW questions this episode's planned scenes create. Ignore minor atmosphere/details. For each, mark:
+- [ ] 4. **Planning gate** — Draft outlines for 2–4 scenes (per episode structure settings; 1 or 5+ allowed with recording). For each scene define: {summary, purpose, characters, tone, foreshadowing}. Ensure:
+  - (a) Purpose aligns with episode goal and arc alignment from step 2.
+  - (b) At least one scene has a concrete emotional anchor — a moment where a character's personal stake becomes visible. Not every scene needs explicit emotion; in atmosphere/mystery/action/horror scenes, restrained or absent emotional reaction is valid if intentional.
+  - (c) Opening approach: Do the first 2–3 sentences compel continued reading? (in medias res, unresolved question, or arresting image)
+  - (d) Ending hook type decided. Re-verify it differs from the previous episode's type.
+  - (e) **Pattern check** — Review compile_brief's recent episode details + ending hook tracker (last 5 episodes). Verify this episode avoids: same hook type as previous episode; same opening pattern (action/dialogue/description) as last 2 episodes; repeated scene structure (e.g., 3 consecutive episodes ending in combat); too similar in overall tone/atmosphere to the previous episode without narrative reason.
+  - (f) **Thematic function** — How does this episode advance the novel's thematic statement (CLAUDE.md §1.2)? Write one line: "이번 화는 [주제]를 [방식]으로 진전시킨다." This can be direct (character confronts the theme), indirect (world reveals a facet of the theme), or preparatory (positions characters for a thematic moment later). If no thematic connection is apparent, reconsider the episode's purpose.
+
+  **Planning flags** (set yes/no for each):
+  ```
+  - flashback_present: does this episode contain flashback/backstory?
+  - new_danger: does a character learn new threat/enemy/critical info?
+  - new_setting_claim: does the episode introduce, revise, or materially rely on a world rule?
+  - calc_used: will novel-calc be used for numerical verification?
+  ```
+  These flags determine which self-review items activate in step 7. **When unsure, set yes** — false negatives are worse than false positives.
+
+- [ ] 5. **Reader objection preflight** — List up to 3 plot-critical WHY/HOW questions this episode's planned scenes create. Ignore minor atmosphere/details. For each, mark:
   - `답변됨`: answered in this episode's text
   - `미스터리 유예`: intentionally deferred for later
   - `답 없음`: needs an answer but none planned → **add answer to text or adjust plot**
+  - If `flashback_present=yes`, at least 1 question must verify past-tense claims against settings (ages, family status, timeline, affiliations).
+  - **Obligatory action check** (always check; mandatory detail if `new_danger=yes`): If a character learns new danger, discovers a hidden enemy, or has a loved one at risk, the plan must include a proportional response (warn, protect, investigate, flee, conceal). If omitted, the plan must include why they don't act (constraint, cost, deliberate gamble) or mark it as intentional narrative withholding. Mere concern without action or reason does not count.
 
-- [ ] 8. **Opening hook check** — Do the first 2-3 sentences of the episode compel continued reading? (in medias res, unresolved question, or arresting image)
-- [ ] 9. Decide ending hook type — Re-verify it differs from the previous episode's type.
-- [ ] 10. **Pattern check** — Review compile_brief's recent episode details + ending hook tracker (last 5 episodes). Verify this episode avoids:
-  - Same hook type as previous episode
-  - Same opening pattern (action/dialogue/description) as last 2 episodes
-  - Repeated scene structure (e.g., 3 consecutive episodes ending in combat)
-  - Too similar in overall tone/atmosphere to the previous episode without narrative reason
-
-### C. Writing & Self-Review
+### C. Writing & Self-Review (Steps 6–7)
 
 > **MCP Tool Guidelines**:
-> - `novel-hanja`: Must be used for all Hanja naming and annotation. LLM Hanja inference is forbidden.
+> - `novel-hanja`: When the novel uses Hanja naming (per CLAUDE.md §3.2.5), use this tool. LLM Hanja inference is forbidden. Skip for modern/SF settings without Hanja naming.
 > - `novel-calc`: Write the narrative first; use calc only when verification is needed. Calculations must not drive the narrative. Never insert calc results into narration, dialogue, or inner monologue.
 
-- [ ] 11. Write the first draft (within target length range).
-- [ ] 12. **Self-review** (6 items):
-  - [ ] 12-1. Does an ending hook exist + is it a different type from the previous episode?
-  - [ ] 12-2. Do character speech patterns match settings?
-  - [ ] 12-3. Is the length within target range? → Verify with `char_count`.
-  - [ ] 12-4. Were any characters/abilities/locations improvised without being in settings?
-  - [ ] 12-5. Were any CLAUDE.md prohibitions violated?
-  - [ ] 12-5a. **Loanword check** (when CLAUDE.md or worldbuilding specifies a non-modern setting): Scan the draft for English loanwords (외래어) in prose. **CLAUDE.md prohibitions override settings examples** — if an example sentence contains a loanword, do not copy it. Common offenders: 시스템→체계, 패턴→규칙/결, 에너지→기운, 허브→약초, 아우라→기운, 레벨→경지, 밸런스→균형. This list is not exhaustive — any loanword not established as an in-world term is prohibited.
-  - [ ] 12-5b. **Calc precision check**: Do any character dialogue/monologue/close-POV lines contain tool-derived exact numbers? Characters estimate like humans — convert exact calc results to human-scale approximations per CLAUDE.md §3.2.4.
-  - [ ] 12-6. Does any character speak as if knowing information they shouldn't? (Cross-reference compile_brief's knowledge-map)
-  - [ ] 12-7. **B-7 reverse check**: For each `답변됨` from step B-7, verify the answer actually appears in the draft text. If missing, add it before proceeding.
+- [ ] 6. **Write the first draft** (within target length range).
 
-### D. Inline Summary Update (Post-Writing)
+- [ ] 7. **Self-review**:
+
+  **Always (every episode):**
+  - [ ] 7-1. Do character speech patterns match settings?
+  - [ ] 7-2. Is the length within target range? → Verify with `char_count`.
+  - [ ] 7-3. Were any characters/abilities/locations improvised without being in settings?
+  - [ ] 7-4. Were any CLAUDE.md prohibitions violated?
+  - [ ] 7-5. **Dialogue grammar check**: ❌ 평서형 종결(`-다/-는다/-했다/-있다`) + `?`로 의문문 만들기 (되물음·혼잣말 제외). ❌ 종결어미에 `요` 기계적 덧붙이기 (`가라요/마라요/그러냐요`).
+  - [ ] 7-6. **Ending hook verification**: Does the draft's actual ending deliver the hook planned in step 4(d)? Is the type different from the previous episode? (If intentionally omitted, record in EPISODE_META.)
+  - [ ] 7-7. **Loanword check** (pre-modern/historical settings only — skip for modern/SF): Scan the draft for English loanwords (외래어) in prose. Common offenders: 시스템→체계, 패턴→규칙/결, 에너지→기운, 허브→약초, 아우라→기운, 레벨→단계/등급, 밸런스→균형. Choose replacements fitting your novel's register.
+
+  **Triggered by planning flags:**
+  - If `flashback_present=yes`:
+    - [ ] 7-8. **Flashback/setting consistency** — Any flashback/backstory claim (age, family alive/dead, origin, affiliation, injury, dates) must match settings and current timeline. Do not fill gaps with genre conventions. Cross-ref knowledge-map.
+  - If `new_danger=yes`:
+    - [ ] 7-9. **Obligatory action check** — If a character learned new danger/enemy/critical info, the draft must show a proportional response given their goals and loved ones. If absent, BOTH must hold: (a) the text contains at least a minimal signal (character notices but is forced to defer, or a visible constraint prevents action), AND (b) the deliberate withholding is recorded in EPISODE_META intentional_deviations or summaries/decision-log.md. Internal record alone without any textual signal = plot hole.
+  - If `calc_used=yes`:
+    - [ ] 7-10. **Calc precision check** — Do any character dialogue/monologue/close-POV lines contain tool-derived exact numbers? Characters estimate like humans — convert exact calc results to human-scale approximations per CLAUDE.md §3.2.4.
+  - If `new_setting_claim=yes`:
+    - [ ] 7-11. **New setting claim check** — Any new world rule or setting claim must not contradict established worldbuilding in `settings/04-worldbuilding.md`. Cross-ref knowledge-map for character information boundaries.
+
+### D. Summary Update (Steps 8–9)
 
 > **Mandatory every episode.** The just-written manuscript is in context, so update directly without a separate agent call.
 
-#### Required (Every Episode)
+- [ ] 8. **Inline summary update**:
 
-1. **`summaries/running-context.md`** update:
-   - Add new episode to recent episode details (location, per-scene summary, ending hook)
-   - Merge the oldest episode into the compressed overall flow (keep only the most recent 5–6 episodes in detail)
-   - Update character state table (changed characters only)
-   - Update foreshadowing table (only if changes occurred)
-   - Update next-episode preview
-   - Update ending hook tracker (last 5 episodes)
-   - Verify line count limit
+  #### Required (Every Episode)
 
-2. **`summaries/episode-log.md`** — Add per-episode summary (2–3 sentence summary, location, characters appeared, key events (min 1 per scene), foreshadowing, character changes, ending hook). Maintain existing format.
+  1. **`summaries/running-context.md`** update:
+     - Add new episode to recent episode details (location, per-scene summary, ending hook)
+     - Merge the oldest episode into the compressed overall flow (keep only the most recent 5–6 episodes in detail)
+     - Update character state table (changed characters only)
+     - Update foreshadowing table (only if changes occurred)
+     - Update next-episode preview
+     - Update ending hook tracker (last 5 episodes)
+     - Verify line count limit
 
-3. **`summaries/character-tracker.md`** — Update only characters with state changes (location/injury/ability/emotion/relationship/knowledge changes).
+  2. **`summaries/episode-log.md`** — Add per-episode summary (2–3 sentence summary, location, characters appeared, key events (min 1 per scene), foreshadowing, character changes, ending hook). Maintain existing format.
 
-#### Conditional (Only When Relevant Changes Occur)
+  3. **`summaries/character-tracker.md`** — Update only characters with state changes (location/injury/ability/emotion/relationship/knowledge changes).
 
-4. **`plot/foreshadowing.md`** — Only when foreshadowing is planted/hinted/resolved.
-5. **`summaries/promise-tracker.md`** — Only when new promises are made or existing ones progress/fulfill/invalidate.
-6. **`summaries/knowledge-map.md`** — Only when a character acquires new information, transfers knowledge, or a misunderstanding occurs.
-7. **`summaries/relationship-log.md`** — Only on first meeting, relationship change, or address/title change.
+  #### Conditional (Only When Relevant Changes Occur)
 
-> **Hanja glossary** (`summaries/hanja-glossary.md`): If any term was annotated with 한글(漢字) for the first time in this episode, add it.
->
-> **Explained concepts**: If `settings/04-worldbuilding.md` has a "Reader Onboarding" section, check the priority table. When a listed concept reaches its deadline (the first scene where misunderstanding would damage comprehension), explain it via a brief in-character monologue (1-2 sentences, dry recognition tone — not a textbook definition). Track status in `summaries/explained-concepts.md`. Do NOT assume readers know what a term means from its Hanja alone.
+  4. **`plot/foreshadowing.md`** — Only when foreshadowing is planted/hinted/resolved.
+  5. **`summaries/promise-tracker.md`** — Only when new promises are made or existing ones progress/fulfill/invalidate.
+  6. **`summaries/knowledge-map.md`** — Only when a character acquires new information, transfers knowledge, or a misunderstanding occurs.
+  7. **`summaries/relationship-log.md`** — Only on first meeting, relationship change, or address/title change.
+  8. **`summaries/decision-log.md`** — Only when a new project-wide rule deviation is established (not per-episode one-offs, which go in EPISODE_META).
 
-#### Summary Fact-Check (After Updating)
+  > **Hanja glossary** (`summaries/hanja-glossary.md`): If any term was annotated with 한글(漢字) for the first time in this episode, add it.
+  >
+  > **Explained concepts**: If `settings/04-worldbuilding.md` has a "Reader Onboarding" section, check the priority table. When a listed concept reaches its deadline (the first scene where misunderstanding would damage comprehension), explain it via a brief in-character monologue (1-2 sentences, dry recognition tone — not a textbook definition). Track status in `summaries/explained-concepts.md`. Do NOT assume readers know what a term means from its Hanja alone.
 
-Before proceeding to review, verify the summary updates against the actual episode text:
-- **Action attribution**: Did character X actually do action Y? (not another character)
-- **Relationship direction**: "A가 B를 구했다" — verify A was the actor, not B
-- **Knowledge evidence**: If knowledge-map says "C learned secret D" — verify C actually learned it in-text
-- **Dialogue accuracy**: Any quoted dialogue in episode-log must match the actual text
+- [ ] 9. **Summary fact-check** — Verify the summary updates against the actual episode text before proceeding:
+  - **Action attribution**: Did character X actually do action Y? (not another character)
+  - **Relationship direction**: "A가 B를 구했다" — verify A was the actor, not B
+  - **Knowledge evidence**: If knowledge-map says "C learned secret D" — verify C actually learned it in-text
+  - **Dialogue accuracy**: Any quoted dialogue in episode-log must match the actual text
+  - If any fact error is found, fix the summary immediately.
 
-If any fact error is found, fix the summary immediately.
+### E. Review (Step 10)
 
-### E. External Feedback & Unified Review
+- [ ] 10. **Determine review mode and execute**:
 
-- [ ] 13. **Call `review_episode` MCP** (external AI feedback):
+  **Default: continuity mode** — 13 continuity items + critical Korean errors (❌) + 반복표현/번역투/호응오류. No external review.
+
+  **Risk escalation to standard** (if any condition is met, upgrade):
+  - New key character introduced
+  - Relationship reversal / betrayal / reconciliation
+  - Secret revealed or misunderstanding resolved
+  - Combat-heavy episode
+  - Emotional climax
+  - Self-review (step 7) flagged an issue
+  - Episode number triggers periodic check per `settings/07-periodic.md` (default every 5, flexible up to 8)
+
+  **Risk escalation to full** (rare):
+  - Arc boundary
+  - Setting change occurred
+  - Long-term foreshadowing payoff
+
+  **When standard or full**: Call `review_episode` MCP for external AI feedback:
   ```
   mcp__novel_editor__review_episode(episode_file="{chapter_path}", novel_dir="{novel_dir}", sources="auto")
   ```
@@ -167,52 +205,44 @@ If any fact error is found, fix the summary immediately.
   - Skip if all feedback flags are `false` in CLAUDE.md.
   - On failure: log and continue — unified-reviewer will run without external feedback.
 
-- [ ] 14. **Determine review mode** (periodic + change-volume based):
-
-| Mode | Trigger (if any condition is met) |
-|------|----------------------------------|
-| `continuity` | Default (every episode) |
-| `standard` | **Episode number is a multiple of 5 (5, 10, 15, ...) = mandatory standard.** Also triggered by: new key character introduced / relationship reversal·betrayal·reconciliation / secret revealed·misunderstanding resolved / combat-heavy episode / emotional climax / issue found during self-review |
-| `full` | Arc boundary / setting change occurred / immediately before long-term foreshadowing payoff |
-
-- [ ] 15. Call `unified-reviewer` agent:
+  Then run unified-reviewer in the determined mode:
   ```
   /unified-reviewer mode:{mode} episode:{episode_number}
   ```
-  - unified-reviewer reads `EDITOR_FEEDBACK_*.md` files generated in step 13.
+  - unified-reviewer reads `EDITOR_FEEDBACK_*.md` files if generated.
 
-- [ ] 16. **Apply revisions** (rule-based escalation):
+  **Apply revisions** (rule-based escalation):
 
-| Result | Action |
-|--------|--------|
-| Any continuity ❌ | **Must fix + re-review** with `mode: continuity` |
-| Any summary fact error | **Must fix** summary + re-review |
-| Narrative overall < 2.5 (standard/full) | **Must fix** high-priority items + re-review |
-| Narrative overall 2.5–3.4 | Fix high-priority items only; no re-review |
-| Warning (⚠️) / Medium priority | Fix if possible |
-| Note (💡) / Low priority | May ignore |
+  | Result | Action |
+  |--------|--------|
+  | Any continuity ❌ | **Must fix + re-review** with `mode: continuity` |
+  | Any summary fact error | **Must fix** summary + re-review |
+  | Narrative overall < 2.5 (standard/full) | **Must fix** high-priority items + re-review |
+  | Narrative overall 2.5–3.4 | Fix high-priority items only; no re-review |
+  | Warning (⚠️) / Medium priority | Fix if possible |
+  | Note (💡) / Low priority | May ignore |
 
-> Maximum 2 re-reviews. If still failing after 2nd, proceed and flag for periodic check.
+  > Maximum 2 re-reviews. If still failing after 2nd, proceed and flag for periodic check.
 
-- [ ] 17. **Korean naturalness check**: After unified-reviewer revisions are complete, run `korean-naturalness` agent on the final episode text.
+  **Korean naturalness check**: After unified-reviewer revisions are complete, run `korean-naturalness` agent on the final episode text.
   - Apply only accepted findings — do NOT blindly apply all suggestions
   - Reject suggestions that would weaken character voice, dialogue style, or intentional literary expression
   - This check is cheap (~3-4K tokens) and catches issues unified-reviewer misses
 
-- [ ] 18. **If revisions were made (step 16 or 17), re-update D-step summary files** (skip if no changes).
+  **If revisions were made, re-update step 8 summary files** (skip if no changes).
 
-### F. Commit
+### F. Finalize (Steps 11–12)
 
-- [ ] 19. Update `summaries/editor-feedback-log.md` with review processing results from step E (if external feedback was processed).
-- [ ] 20. git add: Stage manuscript + all updated summary files.
-- [ ] 21. git commit (`{소설명} {N}화 집필`)
-- [ ] 22. git status to check for missed files.
+- [ ] 11. **Insert EPISODE_META** — Append metadata block at the end of the episode using the format defined in CLAUDE.md "에피소드 메타데이터". Include `intentional_deviations` if any rule was deliberately bypassed. Record planning flags used in this episode.
+  - Update `summaries/editor-feedback-log.md` with review processing results from step 10 (if external feedback was processed).
+
+- [ ] 12. **Git commit** — Stage manuscript + all updated summary files. Commit message: `{소설명} {N}화 집필`. Run git status to check for missed files.
 
 ---
 
 ## Ending Hook Rules
 
-5 types: 위기형 (physical danger) / 반전형 (information that subverts expectations) / 질문형 (curiosity) / 결심형 (major decision) / 재회형 (past acquaintance). Per-novel customization is allowed.
+5 types: 위기형 (danger — physical, emotional, or situational) / 반전형 (information that subverts expectations) / 질문형 (curiosity) / 결심형 (major decision) / 재회형 (past acquaintance). Per-novel customization is allowed.
 
 1. Record the last 5 episodes' hook types in running-context.
 2. **Using the same type as the immediately previous episode is forbidden.** Cycle through diverse types within 5 episodes.

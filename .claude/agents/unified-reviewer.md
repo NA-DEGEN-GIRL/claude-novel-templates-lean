@@ -9,7 +9,7 @@ Performs continuity verification + narrative quality + Korean proofreading + ext
 | Mode | Frequency | Scope |
 |------|-----------|-------|
 | `continuity` | Every episode | 13 continuity items + Korean errors (❌ level only) |
-| `standard` | Every 5 episodes | Continuity + 7 narrative items + full Korean proofing |
+| `standard` | Per settings/07-periodic.md trigger rule (default every 5, flexible up to 8) | Continuity + 7 narrative items + full Korean proofing |
 | `full` | Arc boundary | All items + detailed analysis + direct settings/ reference |
 
 ---
@@ -23,6 +23,7 @@ Performs continuity verification + narrative quality + Korean proofreading + ext
 5. **(When external feedback exists)** `EDITOR_FEEDBACK_*.md` files.
 
 > The brief contains all necessary information, so do NOT read CLAUDE.md, settings/, or summaries/ separately (except in full mode).
+> If compile_brief output or previous-episode text is no longer in context, the caller must refresh them before invoking this agent.
 
 ---
 
@@ -34,17 +35,17 @@ Read the text from start to finish and compare against the brief. Mark ⚠️ wh
 |---|------|-------|
 | 1 | Location continuity | Does it start from the previous episode's ending location? Is the movement physically possible? |
 | 2 | Injury/physical state | Are prior injuries reflected? Is the recovery pace consistent with settings? |
-| 3 | Ability/power level | No use of unlearned skills? No power exceeding established settings? |
+| 3 | Ability/competence | No use of unestablished skills or capabilities? (For novels without a power system, check professional expertise, physical limits, or knowledge boundaries instead.) |
 | 4 | Timeline | Is the time progression within/between episodes natural? Verify specific dates with calc. |
 | 5 | Foreshadowing conflicts | No contradiction with existing foreshadowing? No reappearance of resolved conflicts? |
 | 6 | Dialogue tone/speech style | Does each character's speech style and honorifics match settings/matrix? |
 | 7 | Proper nouns/ability names | Are character names, place names, and skill names accurate? No typo variants? |
-| 8 | Deceased characters | No reappearance of dead characters? Past tense when mentioned? |
+| 8 | Deceased characters | No reappearance of dead characters? Past tense when mentioned? (세계관 규칙과 사전 단서가 있는 재등장 — 부활, 회귀, 빙의, 환영, 꿈, 복제, 영혼 등 — 은 허용. settings/03-characters.md 규칙 4 참조) |
 | 9 | Emotional/relationship continuity | Do relationships reflect prior events? No unexplained emotional shifts? |
 | 10 | Promise/plan consistency | Based on promise-tracker: No altered promise details? No ignored deadlines? |
 | 11 | Information possession consistency | Based on knowledge-map: No use of unknown information? No non-reaction to known information? |
 | 12 | Encounter/relationship consistency | Based on relationship-log: No familiar conversation between unacquainted characters? |
-| 13 | Era/worldbuilding terminology | No anachronistic units, loanwords (외래어), or Arabic numerals in prose? (N/A for modern/SF). **CLAUDE.md prohibitions override settings examples** — if a settings example contains a loanword, do not accept it in prose. Flag any 외래어 as ❌, not ⚠️. |
+| 13 | Era/worldbuilding terminology | **Pre-modern/historical**: No anachronistic loanwords or Arabic numerals in prose? **Modern/SF**: N/A — loanwords and modern units are natural. **CLAUDE.md prohibitions override settings examples** — if a settings example contains a loanword, do not accept it in prose. Flag any 외래어 as ❌, not ⚠️. |
 
 **Time/distance verification principle**: Vague expressions ("며칠 후", "사흘 거리") are NOT errors. Only verify with `novel-calc` when specific numbers are stated.
 
@@ -60,7 +61,7 @@ Evaluate from the reader's perspective. Core criterion: **"Does the reader want 
 
 | # | Item | Minimum | Key Evaluation Points |
 |---|------|---------|----------------------|
-| 1 | Style consistency | 4 | Character speech differentiation, narration tone uniformity, prohibited expressions |
+| 1 | Style consistency | 4 | Character speech differentiation, narration tone uniformity, prohibited expressions. **(full mode)** Voice anchor: does narration register match `01-style-guide.md` §0 (emotional temperature, voice priorities, representative prose)? Departure OK when scene-driven; flag unexplained drift. |
 | 2 | Character consistency | 4 | Motivation-action alignment, psychological plausibility (see AI pattern check below) |
 | 3 | Structural completeness | 4 | Hook (first 3 sentences), conflict focus, scene transitions |
 | 4 | Ending hook | 3 | Impact, different type from previous episode, "click next episode within 3 seconds" |
@@ -68,7 +69,7 @@ Evaluate from the reader's perspective. Core criterion: **"Does the reader want 
 | 6 | Immersion/pacing | 4 | Boring stretches, unnecessary descriptions, appropriate length |
 | 7 | Foreshadowing/hooks | 3 | New hooks planted, existing hooks utilized, anticipation built |
 
-**AI Psychological Violation Patterns** — Mandatory yes/no scan for B2. Report location if found.
+**AI Psychological Violation Patterns** — In `standard` mode, report only patterns actually found during reading. In `full` mode, perform exhaustive P1-P10 audit.
 
 | # | Pattern | Description |
 |---|---------|-------------|
@@ -122,7 +123,7 @@ Do NOT correct intentional non-standard text (character speech style/dialect). P
 |------|------|
 | AI 습관 단어 | 강력 비권장(번역투 4패턴) + 사용 제한(화당 2회 이하 8패턴) |
 | 줄임표 남용 | 서술에서 의미 없는 줄임표 반복. 대화/독백 내 심리 표현은 유지 |
-| 한자 병기 | 음훈 불일치("반 자(尺)" → "반 척(尺)"), 고유어/한자어 수사 혼용 |
+| 한자 병기 | (Only when the novel uses Hanja notation) 음훈 불일치("반 자(尺)" → "반 척(尺)"), 고유어/한자어 수사 혼용 |
 | 구문 패턴 | "~때문이었다" 과다, 이중 부정 남용, 접속사 문두 과다 |
 
 ---
@@ -148,7 +149,9 @@ Evaluate when `EDITOR_FEEDBACK_*.md` files exist.
 
 ---
 
-## E. Summary Validation — standard, full Modes
+## E. Summary Validation — Conditional
+
+> Run when: (a) review-driven revisions modified summaries, (b) periodic audit, or (c) external feedback changed event interpretation. Skip if writer step 9 already verified and no revisions occurred.
 
 Verify that the writer's inline summary updates accurately reflect the episode text. Check only the summaries modified for this episode.
 
@@ -166,6 +169,8 @@ Summary errors are treated as ❌ (must fix immediately) because they corrupt fu
 ---
 
 ## F. Parallel Cross-Verification — Additional Check for Parallel Writing
+
+> This section applies only when multiple consecutive episodes are reviewed together or settings/07-periodic.md parallel-writing criteria are met. Not part of single-episode review.
 
 When episodes are written in parallel, perform these 7 additional cross-episode checks.
 
@@ -303,6 +308,7 @@ Append the following to the standard output:
 - 반복 패턴: {최근 10화 내 과도 반복 여부}
 - 캐릭터 성장 곡선: {설정 대비 평가}
 - 다음 아크 연결부: {확인 결과}
+- **Voice Profile Freshness**: `01-style-guide.md` §0.3 대표 문단이 현재 서술 목소리와 일치하는가? `[provisional]` 태그가 남아있으면 교체 권고.
 
 ### 개선 제안 (상세)
 - **[높음]** {제안 + 구체적 대안 텍스트}
@@ -341,7 +347,7 @@ Append the following to the standard output:
 4. **Respect intentional non-standard text**: Do NOT correct character speech styles or dialects in dialogue.
 5. **No over-correction**: Rules must not override creative intent. Preserve ellipses, repetition, etc. when they serve a deliberate narrative purpose.
 6. **Report settings file contradictions**: If a contradiction is found within settings files themselves, report it separately.
-7. **Priority when external feedback conflicts**: CLAUDE.md > settings/ > prior episode text > Gemini=GPT (by domain) > NIM/Ollama
-8. **Update editor-feedback-log.md**: Always record external feedback processing results in the log.
+7. **Priority when rules conflict**: CLAUDE.md explicit prohibitions > novel-specific settings rules (when more specific) > CLAUDE.md general principles > prior episode text > summaries > external feedback (by domain expertise)
+8. **Update editor-feedback-log.md**: Record external feedback processing results when external feedback was actually processed (standard/full modes with active feedback flags).
 
 ---

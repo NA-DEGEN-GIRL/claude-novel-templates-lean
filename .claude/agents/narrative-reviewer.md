@@ -54,7 +54,7 @@ Before structured analysis, answer these TWO questions:
 
 > These two questions MUST be answered before proceeding to Phase 2. They prevent the structured pillars from distributing attention away from the most critical issue.
 
-### Phase 2: Structured Analysis (9 Pillars)
+### Phase 2: Structured Analysis (10 Pillars)
 
 #### P1. Genre & Tone Integrity
 
@@ -104,6 +104,8 @@ Identify the novel's **best emotional moments** (preserve these) and **failed em
 
 #### P6. Prose Pattern Analysis
 
+> P6 is a novel-wide pattern diagnosis, not a per-episode rule check. If `full-audit` or `01-style-guide.md` repetition rules already produced data, reference that data rather than recounting from scratch.
+
 Novel-wide scan for:
 
 | Pattern Type | What to Track |
@@ -141,11 +143,19 @@ Ratings: Excellent / Good / Adequate / Weak / Problematic
 
 Identify the **inflection point** — where does quality start declining? What caused it?
 
+#### P10. Thematic Coherence
+
+- What is the novel's thematic statement (CLAUDE.md §1.2)?
+- Does each arc advance or complicate the theme?
+- Where does the theme go silent for too long?
+- Does the final arc deliver a thematic resolution (or deliberate irresolution) that resonates?
+- Flag "thematic drift" — episodes that are plot-functional but thematically empty.
+
 ### Phase 2.5: Final Arc Coherence Check
 
 Re-read the LAST ARC (or last 20% of episodes) specifically checking:
 
-1. **Buildup test**: Was the climax/resolution foreshadowed at least 3-5 episodes before it happens? Or does it appear suddenly?
+1. **Buildup test**: Was the climax/resolution foreshadowed with sufficient prior accumulation (typically 3-5 episodes; shorter arcs may have proportionally less, but buildup must still be present)? Or does it appear suddenly?
 2. **Rules test**: Does the resolution follow the world's established rules? Or does it require characters to bypass rules that were enforced earlier?
 3. **Scale connection test**: Does the final arc's scope connect back to the personal/emotional stakes from arc 1? Or did it become a different (bigger) story?
 4. **Promise vs Execution test**: Would the ending work better as a PROMISE for the future rather than an EXECUTION in this novel? (If yes, this is a critical structural issue)
@@ -264,9 +274,19 @@ Write `summaries/narrative-review-report.md`:
 
 ---
 
-## 교차 검증 통합 (Phase 4)
+## 주제 일관성 (P10)
 
-> Phase 1~3의 독립 판단 완료 후, 외부 보고서를 reviewer의 기준으로 재진단하여 fix guide에 통합한 결과이다.
+- **주 주제**: {CLAUDE.md §1.2에서}
+- **부 주제**: {있다면}
+- **주제 진전 구간**: {주제가 강하게 작동하는 아크/화수}
+- **주제 침묵 구간**: {주제와 무관한 연속 구간}
+- **최종 아크의 주제 해결**: {주제적 결론이 있는가, 열린 결말인가}
+
+---
+
+## 교차 검증 통합 (Phase 4) — 외부 보고서가 있을 때만 포함
+
+> Phase 1~3의 독립 판단 완료 후, 외부 보고서를 reviewer의 기준으로 재진단하여 fix guide에 통합한 결과이다. 외부 보고서가 없으면 이 섹션을 생략한다.
 
 ### 외부 보고서 반영 요약
 | 출처 | 이슈 | 재진단 결과 | fix guide 반영 |

@@ -27,10 +27,12 @@ The agent measures total episode character count first, then chooses a strategy.
 
 When settings, text, summaries, and tracker conflict:
 
-1. **`settings/`** — World rules, character profiles (highest)
-2. **`CLAUDE.md`** — Writing constitution
+1. **`settings/`** — World rules, character profiles (highest for mechanics)
+2. **`CLAUDE.md`** — Writing constitution (explicit prohibitions override settings general principles; settings specific rules override CLAUDE.md general principles)
 3. **Lower-numbered episode text** — Established facts take priority
 4. **`summaries/`** — Reference only; text wins on conflict
+
+> **Reinterpretation exception**: When episode text reveals new context about a world rule's origin or intent (without changing its mechanics), this is an allowed recontextualization per `settings/04-worldbuilding.md`, not a settings contradiction.
 
 ---
 

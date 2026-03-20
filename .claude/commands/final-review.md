@@ -29,7 +29,7 @@ Phase E (audit):      audit + audit-fix
 ### `/final-review analyze` (Phase A~B)
 
 **Phase A: 독립 분석 (병렬)**
-1. `/why-check full` 실행 → `summaries/why-check-report-final.md`
+1. `/why-check full` 실행 → `summaries/why-check-report.md`
 2. `/book-review` 실행 → `summaries/book-review.md`
 3. `/book-review-gpt` 실행 → `summaries/book-review-gpt.md`
    - 1~3은 가능하면 병렬 (Agent 활용)
@@ -83,7 +83,7 @@ Phase E (audit):      audit + audit-fix
 | audit | DONE / PENDING | {timestamp} |
 
 ## 산출물
-- why-check-report-final.md: ✅
+- why-check-report.md: ✅
 - book-review.md: ✅
 - book-review-gpt.md: ✅
 - narrative-review-report.md: ✅

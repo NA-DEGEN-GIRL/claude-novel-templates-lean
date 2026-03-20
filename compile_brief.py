@@ -172,8 +172,8 @@ def _filter_character_tracker(
                 elif any(
                     k in stripped
                     for k in [
-                        "현재 위치", "상태", "정신 상태",
-                        "핵심 동기", "미해결",
+                        "현재 위치", "위치", "상태", "정신 상태",
+                        "경지", "부상", "핵심 동기", "미해결",
                     ]
                 ):
                     # 200자 제한
@@ -574,7 +574,7 @@ def _extract_last_n_episodes(
 
 
 def _extract_claude_md_rules(content: str) -> str:
-    """CLAUDE.md에서 금지사항 + 호칭/어투 매트릭스 섹션을 추출한다."""
+    """CLAUDE.md에서 금지사항 + §5.1 의도적 미스터리 + 호칭/어투 매트릭스를 추출한다."""
     if not content:
         return "(파일 없음)"
 
@@ -582,10 +582,17 @@ def _extract_claude_md_rules(content: str) -> str:
 
     # 금지사항 섹션 — 번호 항목만 추출 (설명 제거)
     prohib_match = re.search(
-        r"## 5\. 금지 사항\s*\n(.*?)(?=\n## \d|$)",
+        r"## 5\. 금지 사항\s*\n(.*?)(?=\n### 5\.1|$)",
         content,
         re.DOTALL,
     )
+    if not prohib_match:
+        # §5.1이 없는 경우 원래 패턴으로 폴백
+        prohib_match = re.search(
+            r"## 5\. 금지 사항\s*\n(.*?)(?=\n## \d|$)",
+            content,
+            re.DOTALL,
+        )
     if prohib_match:
         prohib_lines = []
         for line in prohib_match.group(1).strip().splitlines():
@@ -598,6 +605,27 @@ def _extract_claude_md_rules(content: str) -> str:
                 else:
                     prohib_lines.append(f"- {stripped[:60]}")
         parts.append("### 금지사항\n\n" + "\n".join(prohib_lines))
+
+    # §5.1 Intentional Mysteries — 테이블 전체를 추출
+    # 의도적 미스터리를 브리프에 포함해야 작가가 플롯 홀로 오인하지 않는다
+    mystery_match = re.search(
+        r"### 5\.1 Intentional Mysteries.*?\n(.*?)(?=\n## \d|\n---\n|$)",
+        content,
+        re.DOTALL,
+    )
+    if mystery_match:
+        mystery_text = mystery_match.group(1).strip()
+        # 테이블 행만 추출 (설명 blockquote 포함)
+        mystery_lines = []
+        for line in mystery_text.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("|") or stripped.startswith(">"):
+                mystery_lines.append(stripped)
+        if mystery_lines:
+            parts.append(
+                "### 의도적 미스터리 (플롯홀 아님)\n\n"
+                + "\n".join(mystery_lines)
+            )
 
     # 호칭/어투 매트릭스 — 테이블만 추출
     speech_match = re.search(
@@ -619,13 +647,27 @@ def _extract_claude_md_rules(content: str) -> str:
 def _extract_style_rules(content: str) -> str:
     """settings/01-style-guide.md에서 핵심 규칙만 추출한다.
 
-    시점, 문장 리듬 기본 원칙, 대화문 규칙 형식만 가져온다.
-    예시(코드블록 안의 예문)는 건너뛴다.
+    Voice Profile (§0), 시점, 문장 리듬 기본 원칙을 가져온다.
+    대표 문단(§0.3)은 verbatim 포함 — 요약하면 보이스 앵커링 효과가 사라진다.
     """
     if not content:
         return ""
 
     parts: list[str] = []
+
+    # Voice Profile §0 — 서술 온도 + 보이스 우선순위 + 대표 문단 (verbatim)
+    voice_match = re.search(
+        r"## 0\. Voice Profile.*?\n(.*?)(?=\n## 1\.|$)",
+        content,
+        re.DOTALL,
+    )
+    if voice_match:
+        voice_text = voice_match.group(1).strip()
+        # HTML 주석 제거 (예시 블록)
+        voice_text = re.sub(r"<!--.*?-->", "", voice_text, flags=re.DOTALL)
+        # placeholder 미채워진 경우 건너뜀 ({{가 본문에 남아있으면 skip)
+        if voice_text and "{{" not in voice_text:
+            parts.append("### Voice Profile\n\n" + voice_text)
 
     # 시점 섹션
     pov_match = re.search(
@@ -966,6 +1008,20 @@ def _compile_brief(
     turning_points = _extract_relationship_turning_points(relationship_log)
     if turning_points:
         global_parts.append(turning_points)
+    # 프로젝트 단위 의도적 규칙 이탈 기록
+    decision_log = _safe_read(summaries / "decision-log.md")
+    if decision_log:
+        # 테이블 행이 있는 경우만 포함 (빈 템플릿 제외)
+        table_rows = [
+            line for line in decision_log.splitlines()
+            if line.startswith("|") and not all(c in "-| " for c in line)
+            and "규칙" not in line  # 헤더 제외
+        ]
+        if table_rows:
+            global_parts.append(
+                "### 프로젝트 규칙 이탈\n\n"
+                + decision_log.split("\n\n", 1)[-1].strip()
+            )
     if global_parts:
         sections.append(
             "## 전역 컨텍스트\n\n" + "\n\n".join(global_parts)

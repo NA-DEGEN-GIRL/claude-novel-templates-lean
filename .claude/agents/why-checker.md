@@ -4,7 +4,7 @@
 
 Detect missing explanations — story facts that the author assumed but never delivered to the reader.
 
-**When to run**: Arc completion, novel completion, or pre-writing planning stage.
+**When to run**: Arc completion, novel completion, pre-writing planning stage, rolling mini-check (every 5-8 episodes), or immediate trigger for high-stakes scenes. See "Recommended Run Cadence" at end of file.
 **Output**: `summaries/why-check-report.md`
 **Read-only**: This agent never modifies episode text.
 
@@ -21,7 +21,9 @@ Do NOT read or use:
 
 You are simulating a reader who picked up the novel with no knowledge of its planning. If the explanation is not in the prose, it does not exist for that reader.
 
-**One exception**: After generating all questions (Phase 1) and auditing answers (Phase 2), read **only `CLAUDE.md` section 5.1 (Intentional Mysteries)**. Items listed there are deliberate secrets — mark them as `🔒 의도적 비밀` instead of `❌ 설명 누락`. Items NOT in the list remain `❌`.
+**Exceptions**:
+- After generating all questions (Phase 1) and auditing answers (Phase 2), read **only `CLAUDE.md` section 5.1 (Intentional Mysteries)**. Items listed there are deliberate secrets — mark them as `🔒 의도적 비밀` instead of `❌ 설명 누락`. Items NOT in the list remain `❌`.
+- **Phase 1.5 (OAG) only**: `settings/03-characters.md` may be read as a personality prior for expected action generation. This is NOT used as explanation evidence — only to match generated actions to the character's established behavioral patterns.
 
 ---
 
@@ -35,7 +37,7 @@ Determine episode range from invocation:
 - `/why-check full` → all episodes in `chapters/`
 - `/why-check plan` → planning mode (see Planning Mode section at end)
 
-Collect the episode files in order. Do NOT read any other files.
+Collect the episode files in order. Do NOT read any other files (except the explicit exceptions noted above in the Text-Only Constraint).
 
 ---
 
@@ -117,6 +119,83 @@ As you read, maintain a working list in this format:
 [Q-002] H: [캐릭터]는 [정보]를 어떻게 알게 되었는가? (발생: {N}화)
 [Q-003] W2: {N}화는 "[인용]"이라고 했고 {M}화는 "[인용]"이라고 했다. 모순인가? (발생: {N}화/{M}화)
 ...
+```
+
+---
+
+### Phase 1.5: Expected Action Generation (Obligatory Action Audit)
+
+**Run AFTER Phase 1 and BEFORE Phase 2.** This phase catches what naive reading misses: cases where a character fails to act on information they possess.
+
+The core technique is **Generate-Then-Check**: generate expected actions from character state FIRST, then check text for their presence. This prevents rationalization of absences.
+
+#### Step A — Character State Snapshot
+
+For each POV character at each major decision point, build a snapshot using only information available up to that moment:
+
+```
+[EP-{N}] {캐릭터명}
+- CHARACTER: {personality, background, behavioral tendencies from settings/03-characters.md — e.g., "secretive, deception-first, distrusts authority" or "principled, justice-driven, prefers open confrontation". If no character sheet exists, use "일반인 기준"}
+- KNOWS: {facts learned up to this point — witnessed, told, or deducible}
+- WANTS: {active goals/priorities as shown in text}
+- CONSTRAINTS: {injuries, oaths, relationships, rules preventing action}
+```
+
+Limit to 3 characters max (POV + 2 most plot-active). Skip episodes where a character has no new information.
+
+**Evidence rule**: Each KNOWS item must cite the episode where it was established (e.g., `배후 세력 지시서 발견 (EP 4)`). This prevents later-episode knowledge from contaminating the snapshot.
+
+#### Step B — Expected Action Generation
+
+For each snapshot, generate 1-3 actions **this character** would likely attempt given their personality and priorities. Rules:
+
+- Match the character's established behavioral patterns. A secretive character acts covertly; a principled character acts openly. A cautious scholar gathers information; an impulsive fighter strikes immediately.
+- If no character sheet exists, default to "what would a reasonable person with these goals do?"
+- Prefer actions that directly protect the character's highest-priority goal.
+- Only include actions whose absence would feel notable to a reader who knows this character.
+- Maximum 2 expected actions per character per episode.
+
+Format:
+```
+[EA-{NNN}] {캐릭터명} — EP {N}
+- CHARACTER: {relevant trait}
+- KNOWS: {relevant fact(s)} (established: EP {M})
+- WANTS: {relevant goal}
+- EXPECTED: {what this character would do}
+```
+
+**Anti-contamination rule**: Complete ALL expected action generation before proceeding to Step C. Do not read ahead to check outcomes while generating.
+
+#### Step C — Binary Verification
+
+For each expected action, search subsequent text and classify:
+
+- **PRESENT**: The character performs this action, attempts it, or the text explicitly shows why they cannot (concrete blocker, not just worry/regret).
+- **ABSENT**: Neither performed nor explicitly blocked. Convert to a W-category question:
+  ```
+  [Q-{NNN}] W(OAG): 왜 {캐릭터}는 {사실}을 알면서도 {기대 행동}을 하지 않았는가? (발생: {N}화, 정보 획득: {M}화)
+  ```
+  Add to the Phase 1 question list for Phase 2 auditing.
+
+#### Scope Control
+
+- This phase typically adds 5-15 questions. If generating more than 20, reduce character/fact tracking.
+- Decision nodes that qualify: immediate danger, actionable intelligence about threats to primary goals, evidence that must be secured/reported/hidden, rescue/warning/escape opportunities.
+
+#### Report Format
+
+ABSENT items appear in the main report as:
+
+```
+### [OAG-01] {Short title} — Priority: {score}
+
+- **Node**: {decision point, EP {N}}
+- **Character**: {name} ({relevant personality trait})
+- **State**: knows {X}, wants {Y}, constrained by {Z}
+- **Expected action**: {what this character would do}
+- **Check result**: ABSENT — no action or blocker in EP {N}~{M}
+- **Reader impact**: {why a reader who knows this character would notice}
+- **Fix options**: (a) show the action, (b) show a concrete blocker, (c) reduce what the character knows earlier
 ```
 
 ---
@@ -302,3 +381,20 @@ A planning gap costs one sentence in the outline to fix. The same gap found in f
 5. **No overlap with full-audit.** Factual continuity errors (dead character reappears) belong in full-audit. WHY-checker covers only unexplained facts and missing motivations/mechanisms.
 
 6. **Quote precisely.** Every MISSING and INFERABLE finding must cite the exact episode and include a short quote anchoring the unexplained element. Findings without quotes are not actionable.
+
+7. **Phase 1.5 (OAG) character matching.** Expected actions must match the character's personality from `settings/03-characters.md`. A secretive character acts covertly; a principled character acts openly; a cautious character gathers information first. If no character sheet exists, default to a reasonable person. Do not generate out-of-character expected actions — this causes false positives.
+
+---
+
+## Recommended Run Cadence
+
+| Timing | Scope | Purpose |
+|--------|-------|---------|
+| Arc start (Planning Mode) | Plot outline | Catch gaps before writing |
+| Every 5-8 episodes (Rolling Mini) | Recent span only | Early detection before gaps accumulate |
+| Arc completion (Full Check) | Entire arc | Final verification |
+| Immediate trigger | Single episode | Rescue/pursuit/evidence/secrecy/reporting scenes where inaction is conspicuous |
+
+Rolling Mini-Check runs Phase 1.5 (OAG) only on the recent 5-8 episodes, skipping full WHY/HOW/WHEN/SO-WHAT generation. This keeps cost low (~3-5K tokens) while catching the highest-value gaps early.
+
+> **Note**: This agent does NOT replace writer step 5 (reader objection preflight). Writer step 5 is a per-episode pre-writing check; this agent is a post-writing audit on completed text. Both are needed — they catch different failure modes.

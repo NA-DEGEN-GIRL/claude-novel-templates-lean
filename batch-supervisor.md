@@ -98,30 +98,41 @@ Given episode number N, determine the arc and zero-padded filename from this map
 ```
 {N}화를 집필해줘.
 [지침]
-- .claude/agents/writer.md의 자율 집필 마스터 체크리스트(A~F)를 빠짐없이 수행한다.
-- 플롯: plot/{arc}.md 참조
-- 집필 전 compile_brief(novel_dir="{{NOVEL_DIR}}", episode_number={N}) MCP 도구를 호출하여 현재 맥락을 확인한다. 개별 summaries/settings 파일을 직접 읽지 않는다. compile_brief 실패 시만 폴백(running-context -> 아크 플롯 -> character-tracker).
+- .claude/agents/writer.md의 steps 1-12를 순서대로 수행한다.
+- 집필 시작 시 compile_brief(novel_dir="{{NOVEL_DIR}}", episode_number={N}) MCP 도구를 먼저 호출하여 현재 맥락을 확인한다.
+- compile_brief 실패 시에만 writer.md step 1의 폴백 순서를 따른다.
+- plot/{arc}.md를 확인하여 이번 화의 아크 역할과 다음 2~3화 런웨이를 맞춘다.
+- 직전 화 마지막 2~3문단을 확인하여 오프닝 연결과 엔딩 훅 중복을 방지한다.
+- planning flags(flashback_present, new_danger, new_setting_claim, calc_used)를 step 4에서 먼저 결정하고, step 7 자가 리뷰는 해당 플래그에 따라 조건부 항목까지 수행한다.
 - 파일명: chapters/{arc}/chapter-{NN}.md
 [리뷰]
-1. mcp__novel_editor__review_episode(episode_file="{{NOVEL_DIR}}/chapters/{arc}/chapter-{NN}.md", novel_dir="{{NOVEL_DIR}}", sources="auto") 호출하여 외부 AI 편집 리뷰를 먼저 수행한다 (EDITOR_FEEDBACK_*.md 생성).
-2. unified-reviewer 에이전트를 실행한다 (모드: 주기+변화량 기반 자동 결정). EDITOR_FEEDBACK 파일을 참조하여 통합 리뷰.
-3. 리뷰 결과 반영 후 수정사항이 있으면 요약 파일도 재갱신한다.
+1. 기본 리뷰 모드는 continuity다.
+2. 새 핵심 인물 등장, 관계 반전/배신/화해, 비밀 공개, 전투 비중 큼, 감정 클라이맥스, 자가 리뷰 이슈, 정기 점검 타이밍이면 standard로 승격한다.
+3. 아크 경계, 설정 변경, 장기 복선 회수면 full로 승격한다.
+4. standard 또는 full일 때만 mcp__novel_editor__review_episode(episode_file="{{NOVEL_DIR}}/chapters/{arc}/chapter-{NN}.md", novel_dir="{{NOVEL_DIR}}", sources="auto")를 호출한다.
+5. unified-reviewer를 결정된 모드로 실행한다. 외부 리뷰 생성 시에만 EDITOR_FEEDBACK 파일을 참조한다.
+6. 수정 발생 시 summary 파일을 재갱신하고 검증한다.
 [후처리]
-- 요약 파일 인라인 갱신 (writer.md D단계)
+- writer.md steps 8-9에 따라 요약 파일 인라인 갱신 및 summary fact-check를 수행한다.
+- step 11에서 EPISODE_META를 삽입하고, 리뷰를 처리한 경우 editor-feedback-log까지 갱신한다.
 - config.json은 건드리지 않는다 (감독자가 처리).
 - git commit은 현재 소설 폴더 파일만. push 안 함.
 [자율 실행]
 - 무인 배치이다. 질문하지 말고 모든 단계를 자율 완료한다.
-- 정기 점검 조건 충족 시 바로 수행한다.
+- 정기 점검/리스크 승격 조건을 만나면 해당 모드와 후속 단계를 즉시 수행한다.
 ```
 
 #### 3b. Continuation Prompt Within Chunk (previous episode context still loaded)
 
 ```
-이어서 {N}화를 집필해줘. writer.md 체크리스트(A~F) 동일 수행.
+이어서 {N}화를 집필해줘.
+- .claude/agents/writer.md의 steps 1-12를 동일하게 수행한다.
+- compile_brief(novel_dir="{{NOVEL_DIR}}", episode_number={N})로 현재 상태를 먼저 확인한다.
+- compile_brief를 우선 사용하되, writer.md step 2-3에 필요한 범위의 plot/{arc}.md와 직전 화 마지막 2~3문단은 직접 확인한다.
+- step 4에서 planning flags를 먼저 결정하고, step 7 자가 리뷰는 해당 플래그 기반 조건부 항목까지 수행한다.
+- 리뷰는 기본 continuity, 리스크 있으면 standard, 아크 경계/설정 변경/장기 복선 회수면 full로 승격한다.
+- 외부 AI 리뷰는 standard 또는 full일 때만 호출한다.
 - 파일명: chapters/{arc}/chapter-{NN}.md
-- 편집 리뷰: mcp__novel_editor__review_episode(episode_file="{{NOVEL_DIR}}/chapters/{arc}/chapter-{NN}.md", novel_dir="{{NOVEL_DIR}}", sources="auto")
-- compile_brief를 호출하여 현재 상태를 확인한다. 개별 파일 직접 읽기 금지.
 ```
 
 #### 3c. Plot Generation Prompt (when the arc's plot file doesn't exist)
@@ -219,6 +230,7 @@ After completion verification, the supervisor directly registers the episode in 
    ```
 3. Match `totalEpisodes` to the actual registered count
 4. If earlier episodes are missing, register them together
+5. If the chapter's EPISODE_META contains `intentional_deviations`, note them in the supervision log.
 
 #### 4e. Supervision Intervals
 
@@ -256,15 +268,15 @@ When the episode number enters a new arc range:
 1. Confirm completion of the last episode of the previous arc
 2. **Run `/why-check` on the completed arc**: Send the following prompt to the writer session:
    ```
-   방금 완료한 {prev_arc}({start}~{end}화)에 대해 /why-check을 실행해줘.
-   - .claude/agents/why-checker.md의 절차를 따른다.
+   방금 완료한 {prev_arc}({start}~{end}화)에 대해 /why-check text를 실행해줘.
+   - .claude/agents/why-checker.md의 Text Mode 절차를 따른다.
    - 대상: {start}화 ~ {end}화
    - 산출물: summaries/why-check-report.md
    - 완료 후 대기.
    ```
    Wait for completion. If MISSING items with priority 6+ are found:
    - Items fixable in 1-3 sentences → send `/narrative-fix --source why-check --scope priority-6+` to apply quick patches before proceeding
-   - Items requiring structural changes → log as HOLD, defer to next `/narrative-review` cycle. HOLD is released when narrative-review Phase 4 re-diagnoses the item as `confirmed` (integrated into fix guide) or `unconfirmed` (dismissed with reasoning).
+   - Items requiring structural changes → log as HOLD in `summaries/why-check-report.md` (add `[HOLD]` tag to the item), defer to next `/narrative-review` cycle. HOLD is released when narrative-review Phase 4 re-diagnoses the item as `confirmed` (integrated into fix guide) or `unconfirmed` (dismissed with reasoning).
 3. Check if `plot/{arc}.md` exists for the new arc
    - If missing, send plot generation prompt (3c) first
 4. **Run `/why-check plan` on the new arc's plot file**: After plot/{arc}.md is created (or confirmed to exist), send:
@@ -283,13 +295,14 @@ When the episode number enters a new arc range:
 ※ 아크 전환 시점이므로 settings/07-periodic.md의 정기 점검(P1~P9)을 먼저 수행한 후 집필을 시작한다.
 ```
 
-#### 5c. Periodic Check (Every 5 Episodes)
+#### 5c. Periodic Check
 
-When a multiple-of-5 episode completes, add to the next episode prompt:
+Trigger: 5화 단위를 기본으로 하되, settings/07-periodic.md에 따라 앞당기거나 늦출 수 있다 (최대 8화). When triggered, add to the next episode prompt:
 
 ```
-※ 5화 단위 정기 점검 시점이다. settings/07-periodic.md의 P1~P9를 수행한 후 집필을 시작한다.
+※ 정기 점검 시점이다. settings/07-periodic.md의 P1~P9를 수행한 후 집필을 시작한다.
 ※ P7(외부 AI 일괄 리뷰)은 CLAUDE.md의 피드백 플래그(gemini_feedback, gpt_feedback 등)가 true인 소스만 대상으로 mcp__novel_editor__batch_review를 호출한다.
+※ 정기 점검과 별도로, why-checker의 Rolling Mini-Check(Phase 1.5 OAG)는 batch-supervisor가 아닌 /why-check 명령으로 수동 실행한다. 자동 집필 중에는 아크 전환 시점의 why-check만 수행.
 ```
 
 #### 5d. Session Crash Recovery
@@ -318,7 +331,7 @@ The supervisor outputs progress in this format:
 [HH:MM] Ep {N} error detected: {error summary} -> attempting recovery
 [HH:MM] /clear performed (chunk boundary)
 [HH:MM] Arc transition: {prev arc} -> {new arc}
-[HH:MM] Periodic check instructed (every 5 eps)
+[HH:MM] Periodic check instructed (per 07-periodic.md trigger)
 [HH:MM] Plot generation instructed: plot/{arc}.md
 ```
 

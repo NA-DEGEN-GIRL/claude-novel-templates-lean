@@ -81,9 +81,30 @@ Determine variables from this file's path:
 ### 1. Session Management
 
 - tmux session name: the `SESSION` inferred above
-- **If session doesn't exist**: Create with `tmux new-session -d -s {{SESSION}} -x 220 -y 50`, then run `tmux send-keys -t {{SESSION}} 'cd {{NOVEL_DIR}} && unset CLAUDECODE && claude' Enter`
+- **If session doesn't exist**: Create with `tmux new-session -d -s {{SESSION}} -x 220 -y 50`, then launch the auditor using the command send protocol below.
 - **If session exists**: Capture the screen to assess current state and continue
 - **Session size**: Must be 220x50 or larger to prevent capture-pane truncation
+
+#### Command Send Protocol
+
+Do not rely on a single `tmux send-keys ... Enter` call. `Enter` may occasionally fail to register.
+
+Always send commands in this order:
+
+```bash
+tmux send-keys -t {{SESSION}} -l 'command text'
+sleep 0.3
+tmux send-keys -t {{SESSION}} Enter
+```
+
+Then verify shortly after:
+
+```bash
+sleep 2
+tmux capture-pane -t {{SESSION}} -p -S -20
+```
+
+If Enter likely failed (command visible but still at `> ` prompt), resend only Enter once. Apply this protocol to all prompt sends, `/clear`, and recovery commands.
 
 ### 2. Batch Planning
 
@@ -105,7 +126,7 @@ Example: START_EP=1, END_EP=35, BATCH_SIZE=10
 ```
 
 - First batch: `/audit {{START_EP}}-{first batch end}`
-- Subsequent batches: `/audit --resume {batch end}` (tracker-based resume)
+- Subsequent batches: `/audit {next batch start}-{batch end}` (tracker in `full-audit-carry.md` tracks progress)
 - Last batch: proceed even if remaining episodes < N
 
 ### 3. Audit Prompts
@@ -119,7 +140,7 @@ Example: START_EP=1, END_EP=35, BATCH_SIZE=10
 #### 3b. Subsequent Batch Prompt (after /clear)
 
 ```
-/audit --resume {{BATCH_END}}
+/audit {{NEXT_BATCH_START}}-{{BATCH_END}}
 ```
 
 #### 3c. Full Audit Prompt (BATCH_SIZE = -1)
@@ -171,8 +192,9 @@ To determine batch completion, verify all of the following:
 # Check last audited episode in report
 grep -oP '### \K\d+(?=화)' {{NOVEL_DIR}}/summaries/full-audit-report.md | tail -1
 
-# Check last completed episode in tracker
-grep -oP '마지막 완료.*?(\d+)화' {{NOVEL_DIR}}/summaries/full-audit-carry.md
+# Check last completed episode in tracker (YAML format)
+grep 'last_episode_audited' {{NOVEL_DIR}}/summaries/full-audit-carry.md
+# Note: carry file is deleted on full completion. If missing, audit is done.
 ```
 
 #### 4d. Batch Transition Procedure (BATCH_SIZE > 0)

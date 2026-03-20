@@ -21,9 +21,9 @@ Called by the main conversation during INIT-PROMPT:
 
 ---
 
-## 6 Expert Lenses
+## 7 Expert Lenses
 
-Evaluate from all 6 perspectives. Each lens produces a verdict + specific findings.
+Evaluate from all 7 perspectives. Each lens produces a verdict + specific findings.
 
 ### Lens 1: 연재 편집자 (Serialization Editor)
 
@@ -43,6 +43,8 @@ Evaluate from all 6 perspectives. Each lens produces a verdict + specific findin
 | **Simultaneous convergence risk** | Do multiple plot threads resolve in the same time window? |
 | **Late-stage info-dump temptation** | Will the last arc need heavy exposition/briefings to resolve mysteries? |
 | **Tone sustainability** | 작품의 길이에 비추어, 의도한 톤이 정서적 단조로움 없이 유지·변주될 수 있는가? 장편이면 장기 지속 가능성을, 중단편이면 해당 분량 안의 밀도와 변주를 본다. 공포·스릴러처럼 높은 강도 유지가 장르 핵심인 경우, '강도 완화'보다 리듬·정보 배치·긴장 방식의 변주가 있는지를 우선 점검한다. |
+| **Reader desire** | What is the primary sustained desire this concept generates? How many episodes can it carry before it must resolve or be replaced? |
+| **Distinctiveness** | What does this concept do that readers will not find elsewhere in the genre? If nothing, flag as generic. |
 
 ### Lens 2: 장르 전문가 (Genre Specialist)
 
@@ -79,6 +81,7 @@ Additional checks:
 | **Agency preservation** | Does each arc have a scene where the MC makes a costly choice, investigates actively, or takes physical risk? Or could the MC become a passive recipient? |
 | **Information passivity risk** | Is there a temptation to advance the plot via anonymous tips, data reveals, memory playback, or other characters explaining things? |
 | **Emotional climax protection** | Could technical/logistical content bury the emotional core in later arcs? |
+| **Obligatory action pre-check** | When key characters learn critical info, does the concept design include natural reasons for their response patterns? Or will "character knows but doesn't act" become a recurring issue? |
 
 ### Lens 4: 구조 엔지니어 (Arc/Conflict Engineer)
 
@@ -127,6 +130,17 @@ This lens predicts AI-specific failure modes — NOT to reject ambitious concept
 | **Deus ex machina risk** | Are there hidden keys, master plans, or "it was designed all along" reveals that could feel like plot convenience? |
 | **Genre drift prediction** | At which arc will the genre pleasure start diluting? What will it drift toward? |
 
+### Lens 7: 주제/의미 편집자 (Theme/Meaning Editor) — NEW
+
+"Does this concept have something to say?"
+
+| Check | Question |
+|-------|----------|
+| Thematic seed | Does the dramatic situation naturally generate the thematic question stated in §1.2? Or will the author have to impose the theme from outside? |
+| Protagonist as argument | Is this specific protagonist the right person for this theme? Would a different person produce a meaningfully different story? |
+| Arc-level thematic variation | Can each arc explore a different facet of the theme without repetition? |
+| Ending resonance | What should readers feel when they close the last page? Is the concept designed to produce that specific emotional-intellectual residue? |
+
 ---
 
 ## Output Format
@@ -148,6 +162,7 @@ For each of the 3 scenarios:
 | 구조 엔지니어 | {N}/5 | {1줄} |
 | 설정 감사자 | {N}/5 | {1줄} |
 | AI 실패 예측 | {N}/5 | {1줄} |
+| 주제/의미 편집자 | {N}/5 | {1줄} |
 
 **강점** (최대 3개):
 - ...
@@ -160,6 +175,9 @@ For each of the 3 scenarios:
 
 **AI 집필 시 주의할 실패 패턴**:
 - ...
+
+**주제 한줄 후보**: {이 시나리오가 다룰 수 있는 주제}
+**독자 갈망 1차 진단**: {독자가 가장 먼저 기다리게 될 것}
 ```
 
 ### For Step 2 (Expanded Concept Evaluation)
@@ -203,6 +221,18 @@ For each of the 3 scenarios:
 - 반복 표현 위험 앵커: {top 3}
 - 클라이맥스 압축 위험: {진단}
 
+### 주제/의미 편집자
+- 주제-컨셉 정합성: {주제가 극적 상황에서 자연스럽게 나오는가}
+- 주인공-주제 적합성: {이 주인공이 이 주제에 맞는 이유}
+- 아크별 주제 변주: {각 아크가 주제의 어떤 면을 탐색하는가}
+- 결말 잔향: {독자가 마지막 화를 덮으며 느낄 감정/질문}
+
+### Voice & Desire Preflight
+- 서술 온도 초안: {1줄 — 이 컨셉의 서술자 거리감}
+- 보이스 의존도: 높음/보통/낮음 (높으면 §0 즉시 채울 것)
+- 독자 초반 갈망: {독자가 가장 먼저 기다리는 것}
+- 갈망 갱신 방식: {충족 후 무엇으로 교체되는가}
+
 ### 필수 수정 사항 (GO 전 해결)
 1. ...
 
@@ -213,6 +243,12 @@ For each of the 3 scenarios:
 > 금지사항이 아니라 **과정 제약**으로 표현. 내용을 금지하지 말고, 쉬운 지름길을 금지한다.
 > 예: ✅ "익명 제보로 핵심 정보를 2회 이상 전달하지 않는다" (과정 제약)
 > 예: ❌ "엑소더스를 실행하지 않는다" (내용 금지 — 이건 작가가 판단할 영역)
+>
+> 각 가드레일 형식:
+> - **가드레일**: {과정 제약 문장}
+> - **적용 범위**: {전체 / 특정 아크}
+> - **트리거**: {이 규칙이 발동하는 상황}
+> - **만료 조건**: {이 가드레일이 불필요해지는 시점}
 
 ### 반전별 복선 설계
 | 반전 | 재독 시 공정하게 느낄 씨앗 | 배치 시점 |
@@ -220,8 +256,8 @@ For each of the 3 scenarios:
 > 강한 씨앗 1개 또는 가벼운 씨앗 2개. 기계적 최소 개수가 아니라 "재독 시 공정한가"가 기준.
 
 ### 핵심 반전 인과 테이블 (비밀/은폐/제도 실패에 의존하는 반전만, 상위 1-3개)
-| 반전 | 누가 | 어떻게 실행 | 왜 숨김 | 왜 뻔한 행동을 안 했나 |
-|------|------|-----------|--------|---------------------|
+| 반전 | 누가 | 어떻게 실행 | 왜 숨김 | 왜 뻔한 행동을 안 했나 | 사전 징후 | 반전 후 후폭풍 |
+|------|------|-----------|--------|---------------------|----------|--------------|
 > 모든 반전에 강제하지 않는다. "장기간 비밀 유지", "능력자가 못 찾음", "몰래 실행" 같은 요소가 있는 핵심 반전만 대상. 이 테이블이 비어있으면 해당 반전은 집필 시 설명 구멍이 생긴다.
 ```
 
@@ -250,7 +286,7 @@ For each of the 3 scenarios:
 1. **Be ruthless.** A weak concept becomes a weak 200-episode novel. Kill bad ideas early.
 2. **Be specific.** "The premise is weak" is useless. "The premise has no repeatable episode loop — after the initial reveal, there's no engine to generate new conflicts" is useful.
 3. **Think in episodes.** Everything must translate to concrete scenes. "Interesting worldbuilding" that can't become episodes is worthless.
-4. **Consider the target audience.** A literary SF concept might score low on "genre pleasure density" for 무협 readers, and that's correct — it's the wrong genre for that audience.
+4. **Consider the target audience.** Evaluate whether the concept delivers the core emotional contract the target readers expect. A concept's genre label matters less than whether it satisfies the audience's desired experience (tension, wonder, romance, catharsis, etc.).
 5. **Don't optimize for safety.** Bold, distinctive concepts that might fail spectacularly are preferable to safe, generic concepts that will be forgettable.
 6. **Predict AI failures, but don't kill ambition.** Flag how AI will predictably break the concept, then suggest **support rails** — not concept changes. A fragile ambitious concept with good guardrails beats a robust boring one.
 7. **Generate guardrails, not content bans.** Ban failure patterns ("don't advance plot via anonymous exposition"), not story possibilities ("don't execute the exodus"). Maximum 3, phrased as process constraints. Allow expiry by arc.

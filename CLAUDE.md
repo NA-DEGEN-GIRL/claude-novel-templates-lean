@@ -36,6 +36,17 @@
 2. {{PROMISE_2}}
 3. {{PROMISE_3}}
 
+### 1.2 Thematic Statement
+
+> 이 소설이 궁극적으로 무엇에 관한 이야기인지 한두 문장으로 선언한다. 장르 규칙이나 플롯 구조가 아니라, 독자가 마지막 화를 닫으며 남기는 감정/질문/통찰이다.
+
+- **주 주제**: {{MAIN_THEME}} (소설 전체를 관통하는 핵심 질문)
+  (예: "상실 후에도 사랑할 수 있는가", "정의는 복수와 어떻게 다른가")
+- **부 주제**: {{SUB_THEMES}} (아크별로 다를 수 있는 변주. 1~2개. 없으면 생략)
+  (예: "권력은 인간을 어떻게 변형하는가", "기억이 곧 존재인가")
+
+> 매 에피소드는 주 주제 또는 부 주제 중 하나와 연결되어야 한다 — 직접 다루거나, 주제가 작동하는 세계를 구축하거나, 캐릭터의 입장을 변화시키는 방식으로. 어느 주제와도 무관한 에피소드가 3회 이상 연속되면 방향을 재점검한다.
+
 ---
 
 ## 2. Folder Structure
@@ -56,6 +67,11 @@
 ├── chapters/              ← Episode manuscripts
 ├── plot/                  ← Plot / foreshadowing
 ├── summaries/             ← Per-episode summaries
+│   ├── running-context.md
+│   ├── episode-log.md
+│   ├── character-tracker.md
+│   ├── decision-log.md    ← Project-level deviation recording
+│   └── (+ promise/knowledge/relationship/feedback logs)
 └── .claude/agents/        ← Agents (writer, unified-reviewer, etc.)
 ```
 
@@ -79,22 +95,22 @@
    - Write prose naturally first. Then verify numerical consistency with calc only if needed.
    - Calc results allowed in: (1) unified-reviewer evidence, (2) summaries/ updates, (3) in-world UI/popup/display numbers. NEVER insert calc results into narration, dialogue, or inner monologue.
    - **Characters do mental math like humans, not computers.** Exact tool outputs are for author/model reasoning only. Do NOT copy exact results into character dialogue, monologue, or close-POV narration. Convert to human estimates, rounded quantities, sensory scale, or emotional interpretation.
-     - ❌ "잔여 공간이 구 할 삼 푼" → ✅ "한 할도 남지 않았다"
+     - ❌ "잔여 공간이 구 할 삼 푼" → ✅ "일 할도 남지 않았다"
      - ❌ "사흘 뒤면 정확히 삼백 이십 리" → ✅ "사흘이면 닿겠지"
      - ❌ "58,110원 남았네" → ✅ "6만 원도 안 남았나"
      - **Approximation guide** (default human scale):
        - Money: 천/만 단위 반올림 ("한 5만 원쯤", "~도 안 된다")
-       - Distance: 반나절/하루길/사흘쯤/몇 리/한참
-       - Ratio/remaining: 거의 없다/한 할도/절반쯤/얼마 안 남았다
-       - Time: 한 시진 남짓/두어 시간/사나흘/열흘 남짓
+       - Distance: 한참/사나흘 거리/반나절 (pre-modern: 몇 리/하루길)
+       - Ratio/remaining: 거의 없다/일 할도/절반쯤/얼마 안 남았다
+       - Time: 두어 시간/사나흘/열흘 남짓 (pre-modern: 한 시진 남짓)
        - Count: 서넛/대여섯/열댓/스무 남짓
-     - **Emotional state affects precision**: 평온→정돈된 어림, 긴장→단순화, 패닉→수치 대신 감각("미쳤다", "또 나갔다")
-     - **Character expertise exception**: 장사꾼/회계사/수학자/천재 캐릭터는 더 촘촘한 어림이 허용되나, 그래도 "계산기 출력 복사"가 아닌 **"더 좋은 어림"**이다. settings/03-characters.md에 해당 캐릭터의 수치 정밀도를 명시할 것.
+     - **Emotional state affects precision**: 평온→정돈된 어림, 긴장→단순화, 공황→수치 대신 감각("미쳤다", "또 나갔다")
+     - **Character expertise exception**: 회계사/상인/수학자/천재 등 수치에 밝은 캐릭터는 더 촘촘한 어림이 허용되나, 그래도 "계산기 출력 복사"가 아닌 **"더 좋은 어림"**이다. settings/03-characters.md에 해당 캐릭터의 수치 정밀도를 명시할 것.
      - **When exact numbers ARE natural** (do NOT force approximation here):
        - Reading a price tag, receipt, menu, scoreboard, clock, calendar ("1,990원입니다")
        - Repeating a number someone just told them ("삼백 냥이라고?")
        - Quoting official data, addresses, phone numbers, test scores
-       - In-world displays, documents, system readouts, ledgers, instruments
+       - In-world displays, documents, system readouts, ledgers, instruments (exact values OK, but pre-modern settings still require 한글 수사 — §3.2.7 numeral rules apply even inside display/readout brackets)
      - **When approximation IS natural** (this is the rule's main target):
        - Mental arithmetic ("내 돈이 얼마 남았더라...")
        - Estimating distance, time, quantity from memory
@@ -104,16 +120,16 @@
    - **Use calc when**: dates are plot-critical, travel distance/time may cause contradiction, economy/supply is core conflict, checking word count.
    - **Skip calc when**: vague time expressions, atmospheric approximations, mundane travel/trade, combat distances/speeds.
    - Tools: dates(`date_calc`/`weekday`/`d_plus`/`date_diff`) | arithmetic(`calculate`) | travel(`speed_distance_time`/`travel_estimate`) | units(`unit_convert`/`convert_time`) | economy(`currency_calc`/`supply_calc`/`growth_calc`) | length(`char_count`)
-5. **Always use `novel-hanja` MCP for Hanja naming.** Never assemble Hanja via LLM inference.
+5. **When the novel uses Hanja naming** (martial arts, historical, Sino-Korean fantasy), **use `novel-hanja` MCP**. Never assemble Hanja via LLM inference. For modern/SF settings where names don't require Hanja etymology, this step may be skipped.
    - `hanja_lookup`, `hanja_search`, `hanja_meaning`, `hanja_verify`
-6. **Hanja notation**: Show reading + Hanja only on first appearance (`내공(內功)`). Korean-only thereafter. Ref: `summaries/hanja-glossary.md`. Exception: re-appearance after 30+ episodes, homophone disambiguation.
-7. **Use era-appropriate units and terminology.**
-   - Pre-modern settings: metric → traditional units, loanwords → Sino-Korean/native Korean. Use `unit_convert`.
-   - Modern/SF: modern units OK. Refer to `settings/04-worldbuilding.md`.
-   - **Pre-modern numeral rules (Korean output)**:
+6. **Hanja notation**: Show reading + Hanja only on first appearance (e.g., 내공(內功), 대사헌(大司憲) — genre-dependent). Korean-only thereafter. Ref: `summaries/hanja-glossary.md`. Exception: re-appearance after 30+ episodes, homophone disambiguation.
+7. **Use era-appropriate units and terminology.** Refer to `settings/04-worldbuilding.md` for your novel's setting.
+   - Modern/SF: Modern units, loanwords, and Arabic numerals are natural. No conversion needed.
+   - Pre-modern/historical: metric → traditional units, loanwords → Sino-Korean/native Korean. Use `unit_convert`.
+   - **Pre-modern numeral rules (Korean output)** — (Apply only when settings specify a pre-modern or historical era. For modern/SF, Arabic numerals and modern counting are natural.):
      - 아라비아 숫자 금지 in prose. Use 한글 수사.
-     - No decimal notation: `1.5장` → `한 장 반`
-     - `100명` → `백여 명`, `3일` → `사흘`, `7일` → `이레`, `10일` → `열흘`, `15일` → `보름`
+     - No decimal notation: `1.5장` → `일 장 반`
+     - `100명` → `백 명`, `3일` → `사흘`, `7일` → `이레`, `10일` → `열흘`, `15일` → `보름`
      - Exception: EPISODE_META, plot/, summaries/ (meta areas)
 8. **Footnotes**: Use `[^N]` format. `\[N\]` or `[N]` formats forbidden.
 
@@ -123,7 +139,7 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 
 **Modes** (periodic + change-based triggers):
 - `continuity` (every episode): 13 continuity items + critical Korean errors(❌) + 반복표현/번역투/호응오류
-- `standard` (every 5 eps **OR** new key character, relationship reversal, secret reveal, combat-heavy ep, etc.): continuity + 7 narrative items + full Korean proofing + external feedback
+- `standard` (per `settings/07-periodic.md` trigger — default every 5 eps, flexible up to 8 **OR** new key character, relationship reversal, secret reveal, combat-heavy ep, etc.): continuity + 7 narrative items + full Korean proofing + external feedback
 - `full` (arc boundary / setting change / long-term foreshadowing payoff): all items + detailed analysis + direct settings/ reference
 
 **External feedback sources** (per CLAUDE.md flags):
@@ -138,7 +154,7 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 
 1. **Inline summary update**: Writer updates directly in context after writing (no separate agent needed).
    - Required (every ep): `running-context.md`, `episode-log.md`, `character-tracker.md`
-   - Conditional (only if relevant change): `promise-tracker.md`, `knowledge-map.md`, `relationship-log.md`, `foreshadowing.md`
+   - Conditional (only if relevant change): `promise-tracker.md`, `knowledge-map.md`, `relationship-log.md`, `foreshadowing.md`, `decision-log.md`
 2. **Insert EPISODE_META**: Append metadata block at episode end. Set `date` to today `"YYYY-MM-DD"`.
 3. **Update feedback log**: Record 3.3 results in `editor-feedback-log.md`.
 4. **Git commit**: After episode completion (manuscript + summaries). Batch 2-3 eps OK. Message: `{소설명} {N}~{M}화 집필`. Push only on user request.
@@ -146,6 +162,8 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 ### 3.5 Parallel Writing & Periodic Checks
 
 → See `settings/07-periodic.md`.
+
+**Why-checker** (`/why-check`): Runs at arc boundaries (text mode), arc starts (plan mode), and optionally every 5-8 episodes (rolling mini-check). See `.claude/agents/why-checker.md` for Phase 1.5 OAG (Obligatory Action Gap detection).
 
 ---
 
@@ -156,6 +174,8 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 3. **Previous episode text** — established facts
 4. **summaries/** — reference only, episode text takes precedence
 
+> Note: When `settings/` files provide more detailed or updated rules than this document's general principles (e.g., flexible periodic check timing in `07-periodic.md`), the settings file's specific rule takes precedence over this document's general statement.
+
 ---
 
 ## 5. Prohibitions
@@ -164,13 +184,13 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 
 1. **No sudden character personality changes**: Only gradual change allowed. Abrupt shifts require a convincing preceding event.
 2. **No deus ex machina**: Crisis resolution only via previously established abilities/resources/characters.
-3. **No setting contradictions**: Established worldbuilding rules cannot be changed. Modify settings files first if needed.
-4. **No length violations**: Stay within ±20% of target length.
+3. **No setting contradictions**: Established worldbuilding rules' mechanics cannot be changed without modifying settings files first. Reveals that recontextualize a rule's origin or intent (without changing how it works) are allowed per settings/04-worldbuilding.md.
+4. **No extreme length violations**: Stay within ±30% of target length (70~130%). Deviations beyond ±20% require recording in EPISODE_META intentional_deviations.
 5. **No meta expressions**: 금지 표현 예시: "소설에서처럼", "독자 여러분" — no 4th wall breaking.
 6. **No renaming proper nouns**: Names defined in settings files cannot be arbitrarily changed.
-7. **No episode structure meta-references in prose**: 금지: "3화에서", "프롤로그에서", "1부에서" in narration/dialogue. Reference past events by date/place/event name. Meta areas (EPISODE_META, plot/, summaries/) are exempt.
+7. **No episode structure meta-references in prose**: 금지: "3화에서", "프롤로그에서", "1부에서" in narration/dialogue. Reference past events by date/place/event name. Meta areas (EPISODE_META, plot/, summaries/) are exempt. 의도적 메타픽션 장르에서는 CLAUDE.md §5.1에 등록하여 허용 가능.
 8. **No POV switch spoilers**: 금지: `[시점 전환: 세르반]` meta tags in prose. Use `***` scene break then shift naturally via tone/setting/senses.
-9. **No unearned emotional escalation**: 감정적 클라이맥스(죽음, 고백, 배신, 재회)는 해당 관계나 갈등이 최소 2화 이상 사전 전개된 후에만 허용한다.
+9. **No unearned emotional escalation**: 감정적 클라이맥스(죽음, 고백, 배신, 재회)는 해당 관계나 갈등이 충분히 사전 전개된 후에만 허용한다. 일반적으로 2화 이상이 기준이나, 장르·구조에 따라 1화 내 충분한 축적도 허용 (EPISODE_META에 기록).
 10. **No costless victories**: 주요 성과를 "무상 보상"처럼 처리하지 말 것. 희생·트레이드오프·후속 부담은 같은 화에 드러날 수도 있고, 복선으로 유예되었다가 이후 큰 대가로 회수될 수도 있다. 어떤 경우에도 성과가 장기적으로 긴장과 균형을 깨는 순이익으로만 남아서는 안 된다.
 11. **No finale overload**: 마지막 아크에서 설명, 감정 결산, 클라이맥스 액션을 한 화에 과밀하게 압축하지 않는다. 독자가 전개를 따라가고 감정과 사건을 각각 소화할 여백을 확보한다. 적정 분량은 전체 길이·장르·리듬에 맞게 조정. 스릴러 등 압축이 미덕인 장르에서는 의도된 고밀도 전개를 허용한다.
 
@@ -211,6 +231,12 @@ new_elements:
 unresolved:
   - "{{UNRESOLVED_THREAD}}"
 next_episode_hook: "{{HOOK}}"
+thematic_function: "{{이번 화의 주제적 역할}}"  # from planning gate step 4(f)
+intentional_deviations:  # (optional) record deliberate rule deviations for THIS episode
+  - rule: "ending-hook"  # use kebab-case rule ID for consistency
+    detail: "여운형 결말로 마무리"
+    reason: "아크 종결 화, 감정 정리 우선"
+# For recurring deviations, record once in summaries/decision-log.md instead of repeating per episode.
 ```
 ```
 
@@ -232,7 +258,7 @@ next_episode_hook: "{{HOOK}}"
 
 ### 8.1 호칭/어투 매트릭스
 
-"행 캐릭터가 열 캐릭터에게 말할 때"의 존댓말/반말/호칭 규칙. 자주 대화하는 쌍만 기록.
+"행의 화자가 열의 청자에게 말할 때"의 존댓말/반말/호칭 규칙. 자주 대화하는 쌍만 기록.
 
 | 화자 → 청자 | {{CHAR_A}} | {{CHAR_B}} | {{CHAR_C}} |
 |-------------|-----------|-----------|-----------|
@@ -260,7 +286,7 @@ next_episode_hook: "{{HOOK}}"
 2. **감정 극단 시 일시적 이탈 허용**: 장면 종료 후 원래로 복귀.
 3. **공적/사적 구분**: 같은 쌍이라도 상황에 따라 다를 수 있다.
 4. **어투 역행 금지**: 반말→존댓말 전환은 특수 사건(배신, 관계 단절 등) 필요.
-5. **대화는 정보 전달만을 위해 존재하지 않는다**: 모든 대화 교환은 정보 전달 외에 최소 하나의 기능(캐릭터 성격 노출, 관계 변화, 서브텍스트, 유머)을 수행해야 한다.
+5. **대화는 정보 전달만을 위해 존재하지 않는다**: 대부분의 대화 교환은 정보 전달 외에 최소 하나의 기능(캐릭터 성격 노출, 관계 변화, 서브텍스트, 유머)을 수행해야 한다. 일상적 정보 전달(가격, 길 안내 등)은 예외.
 
 ---
 
@@ -270,10 +296,16 @@ After copying this template, fill in `{{PLACEHOLDER}}` values and:
 
 1. `settings/01-style-guide.md` — prose style rules
 2. `settings/02-episode-structure.md` — episode structure
-3. `settings/03-characters.md` — character sheets
+3. `settings/03-characters.md` — character sheets (include 대표 대사 2~3종)
 4. `settings/04-worldbuilding.md` — worldbuilding
-5. `cover-prompt.txt` — cover image prompt
-6. Optional: `settings/06-humor-guide.md` etc.
-7. Section 8 — fill in the honorific/speech-level matrix
+5. `settings/05-continuity.md` — timeline baseline, continuity settings
+6. `settings/07-periodic.md` — periodic check settings (adjust trigger frequency)
+7. `settings/08-illustration.md` — cover/illustration rules
+8. `cover-prompt.txt` — cover image prompt
+9. Optional: `settings/06-humor-guide.md`
+10. Section 8 — fill in the honorific/speech-level matrix
+11. `settings/01-style-guide.md` §0 — **Voice Profile** (서술 온도, 보이스 우선순위, 대표 문단). 이것이 소설의 목소리다.
+12. Section 1.2 — **Thematic Statement** (주 주제 + 부 주제). 이것이 소설의 영혼이다.
+12. `summaries/decision-log.md` — initialize if project-wide deviations are planned
 
 ---

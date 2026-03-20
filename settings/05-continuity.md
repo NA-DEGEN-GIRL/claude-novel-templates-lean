@@ -23,13 +23,13 @@ Write metadata at the end of each episode using the YAML template from CLAUDE.md
 
 ### Timeline Baseline
 
-- **Starting point**: {{TIMELINE_START}} (e.g., "서기 1234년 봄", "D-Day", "현대 2026년 3월")
-- **Time unit**: {{TIME_UNIT}} (e.g., "십이지시", "24시간제", "계절 단위")
-- **Calendar system**: {{CALENDAR}} (e.g., "음력", "양력", "가상 달력")
+- **Starting point**: {{TIMELINE_START}} (e.g., "현대 2026년 3월", "D-Day", "서기 1234년 봄")
+- **Time unit**: {{TIME_UNIT}} (e.g., "24시간제", "십이지시", "계절 단위")
+- **Calendar system**: {{CALENDAR}} (e.g., "양력", "음력", "가상 달력")
 
 ### Long-Term Continuity Management
 
-#### Every 10 episodes
+#### Every 8~12 episodes (or at arc transitions)
 
 1. **Character master sheet** (`03-characters.md`): Update changed relationships, add new characters
 2. **Worldbuilding settings** (`04-worldbuilding.md`): Add newly revealed settings, update timeline

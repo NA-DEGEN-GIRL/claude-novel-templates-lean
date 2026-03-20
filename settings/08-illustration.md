@@ -14,7 +14,7 @@ Save `cover.png` (or `.jpg`) in the novel root.
 
 **Prompt composition elements:**
 - Protagonist appearance (from `settings/03-characters.md`)
-- Novel genre and atmosphere (무협 → Eastern/Oriental, modern → urban/neon, SF → futuristic)
+- Novel genre and atmosphere (modern → urban/neon, SF → futuristic, 무협 → Eastern martial arts)
 - Key symbolic objects (sword, magic, tech devices, etc.)
 - Tone & mood (dark → dim lighting, bright → vivid colors)
 - Cover-appropriate composition: upper body or full body, impactful pose
