@@ -290,6 +290,7 @@ Check if any of these files exist in `summaries/`:
 - `book-review.md` (Claude book review)
 - `book-review-gpt.md` (GPT book review)
 - `why-check-report.md` (WHY-checker report)
+- `why-fix-log.md` (WHY-fix HOLD items from previous cycle — treat 보류 items as new input)
 
 **If none exist**: Skip Phase 4 entirely. End the report after Phase 3.
 

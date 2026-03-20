@@ -8,6 +8,7 @@
 /narrative-fix --source why-check # why-check 보고서 기반 (경량 모드)
 /narrative-fix --source why-check --scope priority-6+  # 고우선도만
 /narrative-fix --source why-check --items MISS-01,MISS-03  # 특정 항목만
+/narrative-fix --source why-check --promote --items INF-02  # INFERABLE 항목 승격 수정
 ```
 
 ## 두 가지 모드

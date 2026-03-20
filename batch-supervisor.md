@@ -77,7 +77,7 @@ Supervise batch writing for the {{NOVEL_ID}} novel. Follow these rules.
 ### 1. Session Management
 
 - tmux session name: `{{SESSION}}`
-- **If session doesn't exist**: Create with `tmux new-session -d -s {{SESSION}} -x 220 -y 50`, then run `tmux send-keys -t {{SESSION}} 'cd {{NOVEL_DIR}} && unset CLAUDECODE && {{WRITER_CMD}}' Enter`
+- **If session doesn't exist**: Create with `tmux new-session -d -s {{SESSION}} -x 220 -y 50`, then launch the writer using the command send protocol in 3d
 - **If session exists**: Capture the screen to assess current state and continue
 - **Session size**: Must be 220x50 or larger to prevent capture-pane truncation
 
@@ -133,6 +133,45 @@ Given episode number N, determine the arc and zero-padded filename from this map
 - 완료 후 {N}화 집필을 이어서 진행한다.
 ```
 
+#### 3d. Command Send Protocol (Important)
+
+Do not rely on a single `tmux send-keys ... Enter` call for prompts or recovery commands. `Enter` may occasionally fail to register, leaving the command text pasted but not executed.
+
+Always send commands in this order:
+
+```bash
+tmux send-keys -t {{SESSION}} -l 'command text'
+sleep 0.3
+tmux send-keys -t {{SESSION}} Enter
+```
+
+Then verify shortly after sending:
+
+```bash
+sleep 2
+tmux capture-pane -t {{SESSION}} -p -S -20
+```
+
+Interpretation:
+
+- **Started correctly**: New output appears, or the trailing `> ` prompt disappeared
+- **Enter likely failed**: The command text is visible but the session is still waiting at `> `
+
+If Enter likely failed, resend only Enter once:
+
+```bash
+tmux send-keys -t {{SESSION}} Enter
+sleep 2
+tmux capture-pane -t {{SESSION}} -p -S -20
+```
+
+Rules:
+
+- Use `-l` for command text so tmux sends the string literally
+- Send `Enter` separately; do not use double-Enter by default
+- Retry only one extra `Enter` before treating it as a state/error investigation case
+- Apply this protocol to all prompt sends, `/clear`, `/why-check`, permission answers, and recovery commands
+
 ### 4. Supervision Loop
 
 #### 4a. Screen Capture
@@ -150,8 +189,8 @@ tmux capture-pane -t {{SESSION}} -p -S -50
 |-------|-------------------|--------|
 | **Working** | No `> ` prompt visible, text being output. Or last line shows `Working`, `Thinking`, `Simmering` etc. | Re-check after 2 minutes |
 | **Auto-compact triggered** | `Auto-compact` or `Compacting conversation` message | Normal operation. Re-check after 2 minutes |
-| **Stuck asking question** | Line ending with `?` followed by `> ` prompt. Or `(y/n)`, `[Y/n]` etc. input wait | Send appropriate answer: `tmux send-keys -t {{SESSION}} 'answer' Enter` |
-| **Permission request** | `Allow`, `Deny`, `permission` etc. with input wait | `tmux send-keys -t {{SESSION}} 'y' Enter` |
+| **Stuck asking question** | Line ending with `?` followed by `> ` prompt. Or `(y/n)`, `[Y/n]` etc. input wait | Send appropriate answer using the command send protocol in 3d |
+| **Permission request** | `Allow`, `Deny`, `permission` etc. with input wait | Send `y` using the command send protocol in 3d |
 | **Error occurred** | `Error`, `error`, `FATAL`, `Traceback`, `Permission denied`, `No such file` etc. | Analyze error cause, send recovery command |
 | **MCP connection failure** | `MCP`, `connection`, `timeout`, `ECONNREFUSED` etc. | Try reconnecting with `/mcp`. If repeated failure, restart session |
 | **Infinite loop** | Same operation repeated 3+ times, or no progress on same episode for 10+ minutes | `/clear` then restart with full prompt |
@@ -185,10 +224,11 @@ After completion verification, the supervisor directly registers the episode in 
 
 | Situation | Check Interval |
 |-----------|----------------|
+| Immediately after sending any prompt/command | 2 seconds later to verify execution (3d), then normal interval |
 | Immediately after sending first prompt | 30 seconds later to confirm start |
 | Work in progress | Every 2 minutes |
 | After error recovery | Every 1 minute for 3 checks, then normal interval |
-| After chunk boundary (/clear) | 1 minute later to confirm start |
+| After chunk boundary (/clear) | 2 seconds later to verify execution, then 1 minute later to confirm start |
 
 ### 5. Special Situation Handling
 
@@ -199,7 +239,9 @@ After completion verification, the supervisor directly registers the episode in 
 **If `CHUNK_SIZE > 0`**: Reset context every CHUNK_SIZE episodes:
 
 ```bash
-tmux send-keys -t {{SESSION}} '/clear' Enter
+tmux send-keys -t {{SESSION}} -l '/clear'
+sleep 0.3
+tmux send-keys -t {{SESSION}} Enter
 ```
 
 Wait 3 seconds, then send full prompt (3a).
