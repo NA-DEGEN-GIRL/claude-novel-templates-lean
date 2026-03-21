@@ -252,7 +252,9 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
   - `external_review`: sources called and result (success/fail per source)
   - Update `summaries/editor-feedback-log.md` with review processing results from step 10.
 
-- [ ] 12. **Git commit** — Stage manuscript + all updated summary files. Commit message: `{소설명} {N}화 집필`. Run git status to check for missed files.
+- [ ] 12. **Git commit + Action log** — Stage manuscript + all updated summary files. Commit message: `{소설명} {N}화 집필`. Run git status to check for missed files.
+  - After commit, append to `summaries/action-log.md`:
+    `| {시각} | writer | {N}화 집필 완료 | chapter-{NN}.md | success | review:{mode}, external:{결과}, {글자수}자 |`
 
 - [ ] 12+. **Arc transition package** — If this episode is the LAST episode of the current arc (check plot/ or ARC_MAP):
   1. `/oag-check` on completed arc (**separate agent context**) — 행동 갭 탐지

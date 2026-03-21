@@ -225,3 +225,4 @@ Format:
 3. **writer.md, why-checker.md와 독립**: 별도 컨텍스트에서 실행. 집필 과정의 합리화 편향을 피하기 위함.
 4. **Phase 1-5는 텍스트 + 캐릭터 시트만 읽는다**: settings/03-characters.md 외에 plot/, summaries/는 읽지 않음. **Phase 5.5(Fixability)에서만 plot 참조 허용** — 패치 충돌 검사와 수정 범위 판정 용도로만.
 5. **짧게 끝낸다**: OAG만 기재. 잘 된 부분, 총평, 칭찬은 보고하지 않음.
+6. **Action log**: 보고서 작성 완료 후 `summaries/action-log.md`에 한 줄 append: `| {시각} | oag-checker | {text/plan} mode | {대상 범위} | success | {N}건 OAG ({patch}건 feasible, {plot}건 plot-change) |`

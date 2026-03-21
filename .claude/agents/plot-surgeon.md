@@ -385,3 +385,4 @@ Auto-approve 시 로그에 `[AUTO-APPROVED]` 태그를 기록한다.
 3. **보존 불변식을 위반하는 수정안은 제안하지 않는다.**
 4. **새 캐릭터, 새 세계관 규칙을 임의로 도입하지 않는다.** 필요하면 수정안에 "settings 파일 수정 필요"로 명시.
 5. **과도한 수선 금지.** 동기 구멍 하나를 메우기 위해 아크 전체를 재설계하지 않는다.
+6. **Action log**: 각 단계(proposal/승인/plot 수정/rewrite-brief) 완료 시 `summaries/action-log.md`에 한 줄 append.
