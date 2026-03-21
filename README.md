@@ -482,7 +482,7 @@ writer 에이전트가 매 화마다 수행하는 12단계 파이프라인:
 | 8 | Inline summary update | running-context, episode-log, character-tracker 등 7종 요약 갱신 |
 | 9 | Summary fact-check | 갱신된 요약이 실제 에피소드와 일치하는지 검증 |
 | **E. Review** | | |
-| 10 | Unified review | 리뷰 모드 결정(continuity/standard/full) + 외부 AI 리뷰 + unified-reviewer 실행 |
+| 10 | External review + Unified review | 매 화 외부 AI 리뷰(review_episode) 호출 → unified-reviewer 실행 (모드: review_floor 기반) |
 | **F. Finalize** | | |
 | 11 | EPISODE_META | 에피소드 끝에 메타데이터 삽입 |
 | 12 | Git commit | 원고 + 요약 커밋 |
@@ -504,9 +504,12 @@ writer 에이전트가 매 화마다 수행하는 12단계 파이프라인:
 
 | 모드 | 트리거 | 범위 |
 |------|--------|------|
-| `continuity` (기본) | 매 화 | 연속성 13항목 + 한글 오류(치명적만) |
-| `standard` (승격) | 새 핵심 인물, 관계 반전, 비밀 공개, 전투 비중 큼, 감정 클라이맥스, 정기 점검 | continuity + 서사 품질 7항목 + 한글 전체 교정 + 외부 AI |
-| `full` (추가 승격) | 아크 경계, 설정 변경, 장기 복선 회수 | 전 항목 + 상세 분석 + settings/ 직접 참조 |
+| `continuity` (기본) | 매 화 | 연속성 13항목 + 한글 기초 + **외부 AI 피드백 전체 처리** |
+| `standard` (5화 배수, 감독자 강제) | 5화 배수 또는 고위험 화 | continuity + **서사 품질 7항목 점수화** + 한글 전체 교정 + summary 검증 |
+| `full` (아크 경계, 감독자 강제) | 아크 첫 화 또는 설정 변경 | 전 항목 + 상세 분석 + Voice Profile 감사 + settings/ 직접 참조 |
+
+> **외부 AI 리뷰(review_episode MCP)는 모든 화에서 호출된다.** unified-reviewer 모드와 무관. 실패 시 로그만 남기고 계속.
+> **review_floor**: 감독자가 에피소드 번호로 결정 (5화배수=standard, 아크경계=full). writer는 floor 이상으로만 승격 가능.
 
 ### Why-Checker & OAG
 
@@ -843,9 +846,9 @@ graph LR
 ```mermaid
 graph TD
     START["매 화 완료"] --> CHECK{"리스크 평가"}
-    CHECK -->|"평범한 화"| CONT["continuity<br/>13항목 + 한글 기초<br/>외부 리뷰 ❌"]
-    CHECK -->|"핵심 인물/반전/전투/감정"| STD["standard<br/>+ 서사 7항목 + 외부 AI<br/>외부 리뷰 ✅"]
-    CHECK -->|"아크 경계/설정 변경"| FULL["full<br/>+ 상세 분석 + Voice 감사<br/>외부 리뷰 ✅"]
+    CHECK -->|"평범한 화"| CONT["continuity<br/>13항목 + 한글 기초 + 외부 피드백"]
+    CHECK -->|"5화 배수 (감독자 강제)"| STD["standard<br/>+ 서사 7항목 점수화<br/>+ 한글 전체 교정"]
+    CHECK -->|"아크 경계 (감독자 강제)"| FULL["full<br/>+ 상세 분석 + Voice 감사"]
 
     style CONT fill:#C8E6C9
     style STD fill:#FFECB3
@@ -864,8 +867,8 @@ C. Write -- 본문 집필 (문체 + 세계관 준수) + 자가 리뷰
 D. Summary - writer가 직접 요약 7종 갱신 + fact-check
      |
 E. Review
-   |-- review_episode MCP (외부 AI) -> EDITOR_FEEDBACK_*.md
-   |-- unified-reviewer (continuity/standard/full)
+   |-- review_episode MCP (매 화 호출) -> EDITOR_FEEDBACK_*.md
+   |-- unified-reviewer (review_floor 기반: continuity/standard/full)
    +-- korean-naturalness (최종 패스)
      |
 F. Finalize - EPISODE_META 삽입 + git commit
