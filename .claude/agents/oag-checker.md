@@ -7,7 +7,7 @@
 **왜 독립인가**: writer가 쓴 글을 같은 컨텍스트에서 검사하면 합리화 편향이 생긴다. 이 에이전트는 **별도 컨텍스트**에서, **본문만 읽고**, **기대 행동을 먼저 생성한 뒤** 텍스트에서 확인한다.
 
 **When to run**:
-- 아크 전환 시 (arc transition package의 일부, why-check 이후)
+- 아크 전환 시 (arc transition package의 **첫 단계** — why-check보다 먼저)
 - 5화마다 rolling mini-check (선택)
 - 고위험 장면 직후 (rescue/증거확보/비밀인지/배신목격/부모책임/도주/신고)
 

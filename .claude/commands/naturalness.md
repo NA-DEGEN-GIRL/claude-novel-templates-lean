@@ -22,7 +22,7 @@
    → chapters/{arc}/chapter-{N}.md 1개만 읽고
    → 어색한 표현을 찾아 보고
    ```
-3. 각 Agent의 결과를 수집하여 `summaries/naturalness-report.md`에 통합 저장. **모든 에피소드의 상세 테이블(위치, 원문, 왜 어색한가, 수정안)을 빠짐없이 포함한다.** "N건" 요약만 적고 상세를 생략하거나 임시 파일을 참조하게 하지 않는다. `/naturalness-fix`가 이 보고서만 보고 수정하므로, 상세가 없으면 수정 불가.
+3. 각 Agent의 결과를 수집하여 `summaries/naturalness-report.md`에 통합 저장. **모든 에피소드의 상세 테이블(위치, 원문, 왜 어색한가, 수정 방향)을 빠짐없이 포함한다.** "N건" 요약만 적고 상세를 생략하거나 임시 파일을 참조하게 하지 않는다. `/naturalness-fix`가 이 보고서만 보고 수정하므로, 상세가 없으면 수정 불가.
 4. 이미 `summaries/full-audit-report.md`가 있으면, 해당 보고서의 "자연스러움" 섹션도 갱신
 
 ## 주의

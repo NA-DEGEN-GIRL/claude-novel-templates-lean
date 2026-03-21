@@ -902,15 +902,18 @@ F. Finalize - EPISODE_META 삽입 + git commit
 
 ### 아크 전환
 
-아크 전환 시 감독자가 자동으로 수행하는 추가 작업:
+아크 전환 시 자동 실행 (arc transition package):
 
-1. 완료 아크에 `/why-check` 실행 (사후 검증)
-2. 우선도 6+ 항목에 `/narrative-fix --source why-check` 경량 패치 (1~3문장)
-3. 다음 아크 plot 파일이 없으면 생성
-4. 다음 아크 plot에 `/why-check plan` 실행 (사전 검증). PLANNING GAP 즉시 수정
-5. 정기 점검(P1~P10) 지시
+1. `/oag-check` — 행동 갭 탐지 (별도 에이전트)
+2. `/narrative-fix --source oag` — 행동 갭 수정 (CRITICAL→HIGH)
+3. `/why-check text` — **수정된 본문**에서 설명 누락 탐지
+4. `/narrative-fix --source why-check --scope priority-6+` — 설명 보강
+5. Arc summary + character state reset + thread triage
+6. 다음 아크 plot 파일 없으면 생성
+7. `/why-check plan` — 다음 아크 플롯 사전 검증
+8. 정기 점검(P1~P10) 지시
 
-플롯 단계에서 구멍 1개를 막는 비용은 문장 1개다. 같은 구멍이 집필 후 발견되면 장면 재작성이 필요하다.
+> oag 수정 → why-check 순서가 중요. oag가 장면 골격을 바꾸므로, why-check는 수정된 최신 본문 기준으로 돌려야 한다.
 
 ### 완결 후 최종 검증 (/final-review)
 
