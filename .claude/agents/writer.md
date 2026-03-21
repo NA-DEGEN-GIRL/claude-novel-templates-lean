@@ -256,7 +256,7 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
   - After commit, append to `summaries/action-log.md`:
     `| {시각} | writer | {N}화 집필 완료 | chapter-{NN}.md | success | review:{mode}, external:{결과}, {글자수}자 |`
 
-- [ ] 12+. **Arc transition package** — If this episode is the LAST episode of the current arc (check plot/ or ARC_MAP):
+- [ ] 12+. **Arc transition package** — If this episode is the LAST episode of the current arc (check plot/ or ARC_MAP). **프롤로그, 에필로그 포함 — 모든 아크 경계에서 반드시 실행. 스킵 금지.**
   1. `/oag-check` on completed arc (**separate agent context**) — 행동 갭 탐지
   2. `/narrative-fix --source oag` — 행동 갭 수정 (CRITICAL→HIGH 순)
   3. `/why-check text` on completed arc — **수정된 본문**에서 설명 누락 탐지
