@@ -484,7 +484,7 @@ writer 에이전트가 매 화마다 수행하는 12단계 파이프라인:
 | **E. Review** | | |
 | 10 | External review + Unified review | 매 화 외부 AI 리뷰(review_episode) 호출 → unified-reviewer 실행 (모드: review_floor 기반) |
 | **F. Finalize** | | |
-| 11 | EPISODE_META | 에피소드 끝에 메타데이터 삽입 |
+| 11 | EPISODE_META | 메타데이터 삽입 (review_mode/review_floor/external_review 포함) |
 | 12 | Git commit | 원고 + 요약 커밋 |
 
 **Planning Flags 시스템 (Step 4):**
@@ -506,7 +506,8 @@ writer 에이전트가 매 화마다 수행하는 12단계 파이프라인:
 |------|--------|------|
 | `continuity` (기본) | 매 화 | 연속성 13항목 + 한글 기초 + **외부 AI 피드백 전체 처리** |
 | `standard` (5화 배수, 감독자 강제) | 5화 배수 또는 고위험 화 | continuity + **서사 품질 7항목 점수화** + 한글 전체 교정 + summary 검증 |
-| `full` (아크 경계, 감독자 강제) | 아크 첫 화 또는 설정 변경 | 전 항목 + 상세 분석 + Voice Profile 감사 + settings/ 직접 참조 |
+| `full` (아크 첫 화, 감독자 강제) | 아크 첫 화 또는 설정 변경 | 전 항목 + 상세 분석 + Voice Profile 감사 + settings/ 직접 참조 |
+| `standard + arc transition` (아크 마지막 화) | 아크 마지막 화 | standard 리뷰 + why-check text + narrative-fix + arc summary + thread triage |
 
 > **외부 AI 리뷰(review_episode MCP)는 모든 화에서 호출된다.** unified-reviewer 모드와 무관. 실패 시 로그만 남기고 계속.
 > **review_floor**: 감독자가 에피소드 번호로 결정 (5화배수=standard, 아크경계=full). writer는 floor 이상으로만 승격 가능.
@@ -848,7 +849,8 @@ graph TD
     START["매 화 완료"] --> CHECK{"리스크 평가"}
     CHECK -->|"평범한 화"| CONT["continuity<br/>13항목 + 한글 기초 + 외부 피드백"]
     CHECK -->|"5화 배수 (감독자 강제)"| STD["standard<br/>+ 서사 7항목 점수화<br/>+ 한글 전체 교정"]
-    CHECK -->|"아크 경계 (감독자 강제)"| FULL["full<br/>+ 상세 분석 + Voice 감사"]
+    CHECK -->|"아크 첫 화 (감독자 강제)"| FULL["full<br/>+ 상세 분석 + Voice 감사"]
+    CHECK -->|"아크 마지막 화"| TRANS["standard + transition<br/>why-check + arc summary"]
 
     style CONT fill:#C8E6C9
     style STD fill:#FFECB3
