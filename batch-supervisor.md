@@ -91,6 +91,22 @@ Given episode number N, determine the arc and zero-padded filename from this map
 - Arc: the key whose range contains N
 - File: `chapters/{arc}/chapter-{NN}.md` (NN = zero-padded 2 digits, or 3 digits if 100+ episodes)
 
+### 2.5 Review Floor Determination (Supervisor Responsibility)
+
+Before sending any writing prompt, the supervisor determines the `review_floor` for that episode:
+
+```
+if N is first episode of a new arc → review_floor = full
+elif N % 5 == 0                    → review_floor = standard
+else                               → review_floor = continuity
+```
+
+Insert the determined `review_floor` into the writing prompt's [리뷰] section. The writer can escalate above the floor (e.g., continuity → standard if a new character appears), but CANNOT go below it.
+
+**Arc boundary detection**: Check ARC_MAP — if episode N is the first episode of a new arc range, set `full`.
+
+**Periodic check alignment**: When `review_floor = standard` (5화 배수), also add periodic check instruction to the prompt.
+
 ### 3. Writing Prompts
 
 #### 3a. Chunk Start Prompt (first episode or after /clear every CHUNK_SIZE)
@@ -106,12 +122,11 @@ Given episode number N, determine the arc and zero-padded filename from this map
 - planning flags(flashback_present, new_danger, new_setting_claim, calc_used)를 step 4에서 먼저 결정하고, step 7 자가 리뷰는 해당 플래그에 따라 조건부 항목까지 수행한다.
 - 파일명: chapters/{arc}/chapter-{NN}.md
 [리뷰]
-1. 기본 리뷰 모드는 continuity다.
-2. 새 핵심 인물 등장, 관계 반전/배신/화해, 비밀 공개, 전투 비중 큼, 감정 클라이맥스, 자가 리뷰 이슈, 정기 점검 타이밍이면 standard로 승격한다.
-3. 아크 경계, 설정 변경, 장기 복선 회수면 full로 승격한다.
-4. standard 또는 full일 때만 mcp__novel_editor__review_episode(episode_file="{{NOVEL_DIR}}/chapters/{arc}/chapter-{NN}.md", novel_dir="{{NOVEL_DIR}}", sources="auto")를 호출한다.
-5. unified-reviewer를 결정된 모드로 실행한다. 외부 리뷰 생성 시에만 EDITOR_FEEDBACK 파일을 참조한다.
-6. 수정 발생 시 summary 파일을 재갱신하고 검증한다.
+- 외부 AI 리뷰: 매 화 반드시 호출. mcp__novel_editor__review_episode(episode_file="{{NOVEL_DIR}}/chapters/{arc}/chapter-{NN}.md", novel_dir="{{NOVEL_DIR}}", sources="auto"). 실패 시 로그만 남기고 계속.
+- 이번 화의 리뷰 최소 모드(review_floor): {supervisor가 §2.5 규칙으로 결정하여 삽입}
+- review_floor 이하로 강등하지 마라. 올릴 수만 있다.
+1. unified-reviewer를 최종 결정 모드로 실행한다. EDITOR_FEEDBACK 파일이 있으면 전체 항목을 참조하여 처리한다.
+2. 수정 발생 시 summary 파일을 재갱신하고 검증한다.
 [후처리]
 - writer.md steps 8-9에 따라 요약 파일 인라인 갱신 및 summary fact-check를 수행한다.
 - step 11에서 EPISODE_META를 삽입하고, 리뷰를 처리한 경우 editor-feedback-log까지 갱신한다.
@@ -130,8 +145,8 @@ Given episode number N, determine the arc and zero-padded filename from this map
 - compile_brief(novel_dir="{{NOVEL_DIR}}", episode_number={N})로 현재 상태를 먼저 확인한다.
 - compile_brief를 우선 사용하되, writer.md step 2-3에 필요한 범위의 plot/{arc}.md와 직전 화 마지막 2~3문단은 직접 확인한다.
 - step 4에서 planning flags를 먼저 결정하고, step 7 자가 리뷰는 해당 플래그 기반 조건부 항목까지 수행한다.
-- 리뷰는 기본 continuity, 리스크 있으면 standard, 아크 경계/설정 변경/장기 복선 회수면 full로 승격한다.
-- 외부 AI 리뷰는 standard 또는 full일 때만 호출한다.
+- 리뷰 최소 모드(review_floor): {supervisor가 삽입}. 이 모드 이하로 강등 불가. 올릴 수만 있다.
+- review_floor가 standard 이상이면 반드시 review_episode MCP를 호출한다.
 - 파일명: chapters/{arc}/chapter-{NN}.md
 ```
 

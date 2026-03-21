@@ -181,29 +181,33 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
 
 - [ ] 10. **Determine review mode and execute**:
 
-  **Default: continuity mode** — 13 continuity items + critical Korean errors (❌) + 반복표현/번역투/호응오류. No external review.
+  **Step 10a: External AI review (every episode)**:
+  ```
+  mcp__novel_editor__review_episode(episode_file="{chapter_path}", novel_dir="{novel_dir}", sources="auto")
+  ```
+  - Called **every episode** regardless of review mode. Generates `EDITOR_FEEDBACK_*.md`.
+  - Skip if all feedback flags are `false` in CLAUDE.md.
+  - On failure: log and continue — unified-reviewer runs without external feedback.
 
-  **Risk escalation to standard** (if any condition is met, upgrade):
+  **Step 10b: Determine unified-reviewer mode**:
+
+  If `review_floor` was specified by supervisor, use that as minimum. Otherwise determine:
+
+  **Default: continuity mode** — 13 continuity items + critical Korean errors (❌) + EDITOR_FEEDBACK 전체 항목 처리 (외부 AI가 찾은 오류 반영).
+
+  **Escalation to standard** (if any condition is met, or review_floor = standard):
+  - Episode number is a periodic check trigger (default every 5, flexible up to 8)
   - New key character introduced
   - Relationship reversal / betrayal / reconciliation
   - Secret revealed or misunderstanding resolved
   - Combat-heavy episode
   - Emotional climax
   - Self-review (step 7) flagged an issue
-  - Episode number triggers periodic check per `settings/07-periodic.md` (default every 5, flexible up to 8)
 
-  **Risk escalation to full** (rare):
+  **Escalation to full** (rare, or review_floor = full):
   - Arc boundary
   - Setting change occurred
   - Long-term foreshadowing payoff
-
-  **When standard or full**: Call `review_episode` MCP for external AI feedback:
-  ```
-  mcp__novel_editor__review_episode(episode_file="{chapter_path}", novel_dir="{novel_dir}", sources="auto")
-  ```
-  - Generates `EDITOR_FEEDBACK_*.md` files (Gemini/GPT/NIM/Ollama per CLAUDE.md flags).
-  - Skip if all feedback flags are `false` in CLAUDE.md.
-  - On failure: log and continue — unified-reviewer will run without external feedback.
 
   Then run unified-reviewer in the determined mode:
   ```

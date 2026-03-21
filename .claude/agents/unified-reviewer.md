@@ -128,7 +128,13 @@ Do NOT correct intentional non-standard text (character speech style/dialect). P
 
 ---
 
-## D. External Feedback Processing — standard, full Modes (When Flag Enabled)
+## D. External Feedback Processing
+
+External AI review (`review_episode` MCP) is now called **every episode**. `EDITOR_FEEDBACK_*.md` files may exist regardless of mode.
+
+**Processing scope by mode:**
+- **continuity**: Process all feedback items using the verdict criteria below. Apply fixes for ✅ items. This adds ~1-2K tokens but catches errors external models found that continuity checks alone would miss.
+- **standard/full**: Same processing, plus integrated with narrative quality scoring (Section B).
 
 Evaluate when `EDITOR_FEEDBACK_*.md` files exist.
 
