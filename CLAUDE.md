@@ -165,7 +165,9 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 
 → See `settings/07-periodic.md`.
 
-**Why-checker** (`/why-check`): Runs at arc boundaries (text mode), arc starts (plan mode), and optionally every 5-8 episodes (rolling mini-check). See `.claude/agents/why-checker.md` for Phase 1.5 OAG (Obligatory Action Gap detection).
+**Why-checker** (`/why-check`): Runs at arc boundaries (text mode), arc starts (plan mode), and optionally every 5-8 episodes (rolling mini-check). See `.claude/agents/why-checker.md`.
+
+**OAG-checker** (`/oag-check`): Detects Obligatory Action Gaps — characters knowing information but failing to act on it. Runs at arc transitions (text mode) and before writing new arcs (plan mode). See `.claude/agents/oag-checker.md`.
 
 ---
 
