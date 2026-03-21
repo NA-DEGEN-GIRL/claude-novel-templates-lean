@@ -108,6 +108,14 @@ lean 템플릿에서 아래를 복사/적용:
 - `summary-generator` → writer 인라인 갱신
 - 기타 구 참조 → lean 대응
 
+새 에이전트/커맨드 추가 확인:
+- `.claude/agents/oag-checker.md` (행동 갭 탐지 — Text/Planning 모드)
+- `.claude/agents/plot-surgeon.md` (플롯 수선 — plot-change-needed 처리)
+- `.claude/commands/oag-check.md` (`/oag-check`, `/oag-check plan`)
+- `.claude/commands/plot-repair.md` (`/plot-repair`)
+- writer.md에 `partial-rewrite` 모드 포함 확인
+- narrative-fixer.md에 `--source oag`, `--source arc-read` 모드 포함 확인
+
 > ✅ 완료 기준: grep으로 구 에이전트명 전수 검색 0건
 
 ### 7단계: summaries 스키마 점검

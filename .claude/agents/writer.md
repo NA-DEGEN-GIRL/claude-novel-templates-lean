@@ -84,7 +84,7 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
 
 ### B. Planning (Steps 4–5)
 
-- [ ] 4. **Planning gate** — Draft outlines for 2–4 scenes (per episode structure settings; 1 or 5+ allowed with recording). For each scene define: {summary, purpose, characters, tone, foreshadowing}. Ensure:
+- [ ] 4. **Planning gate** — Draft scene outlines. Scene count is determined by the episode's purpose, not a fixed number. For each scene define: {summary, purpose, characters, tone, foreshadowing}. Consider:
   - (a) Purpose aligns with episode goal and arc alignment from step 2.
   - (b) At least one scene has a concrete emotional anchor — a moment where a character's personal stake becomes visible. Not every scene needs explicit emotion; in atmosphere/mystery/action/horror scenes, restrained or absent emotional reaction is valid if intentional.
   - (c) Opening approach: Do the first 2–3 sentences compel continued reading? (in medias res, unresolved question, or arresting image)
