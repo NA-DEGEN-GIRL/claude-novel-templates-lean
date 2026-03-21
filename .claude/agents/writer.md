@@ -250,11 +250,12 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
 - [ ] 12. **Git commit** — Stage manuscript + all updated summary files. Commit message: `{소설명} {N}화 집필`. Run git status to check for missed files.
 
 - [ ] 12+. **Arc transition package** — If this episode is the LAST episode of the current arc (check plot/ or ARC_MAP):
-  1. Run `/why-check text` on the completed arc (all episodes in this arc range). Catches accumulated explanation gaps.
-  2. If MISSING items with priority 6+ → apply `/narrative-fix --source why-check --scope priority-6+`.
-  3. Write arc summary to `summaries/arc-summaries/`. Record character states as reset point.
-  4. Triage unresolved threads: carry-forward to next arc vs discard.
-  5. Log results. **This step is mandatory — do not skip even in autonomous batch mode.**
+  1. Run `/why-check text` on the completed arc. Catches explanation gaps.
+  2. Run `/oag-check` on the completed arc (**separate agent context**). Catches obligatory action gaps.
+  3. Fix: MISSING priority 6+ → `/narrative-fix --source why-check`. OAG CRITICAL → direct fix (1-3 sentences).
+  4. Write arc summary to `summaries/arc-summaries/`. Record character states as reset point.
+  5. Triage unresolved threads: carry-forward to next arc vs discard.
+  6. Log results. **This step is mandatory — do not skip even in autonomous batch mode.**
 
 ---
 

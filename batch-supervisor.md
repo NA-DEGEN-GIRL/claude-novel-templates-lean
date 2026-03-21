@@ -103,10 +103,11 @@ else                                  → review_floor = continuity
 ```
 
 **Arc transition package** (마지막 화 완료 후 자동 실행):
-- `/why-check text` on completed arc
-- Priority 6+ items → `/narrative-fix --source why-check`
-- Arc summary + character state reset (settings/05-continuity.md)
-- Unresolved thread triage (carry-forward vs discard)
+1. `/why-check text` on completed arc (설명 누락 탐지)
+2. **`/oag-check`** on completed arc (의무 행동 갭 탐지 — 별도 에이전트)
+3. Priority 6+ items → `/narrative-fix --source why-check` + OAG CRITICAL items 수정
+4. Arc summary + character state reset (settings/05-continuity.md)
+5. Unresolved thread triage (carry-forward vs discard)
 
 Insert the determined `review_floor` into the writing prompt's [리뷰] section. The writer can escalate above the floor (e.g., continuity → standard if a new character appears), but CANNOT go below it.
 
