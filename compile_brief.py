@@ -1130,7 +1130,7 @@ def _compile_brief(
     if char_slice:
         sections.append(f"## 등장인물 설정\n\n{char_slice}")
 
-    # 11. 어휘/표현 규칙집 (style-lexicon — 작고 전역적이므로 전체 포함)
+    # 11. 어휘 치환 사전 (style-lexicon — 작고 전역적이므로 전체 포함)
     style_lexicon = _safe_read(summaries / "style-lexicon.md")
     if style_lexicon:
         # 데이터 행이 있는 경우만 포함 (빈 템플릿 제외)
@@ -1139,7 +1139,7 @@ def _compile_brief(
             if line.startswith("|") and "→" in line
         ]
         if data_rows:
-            sections.append(f"## 어휘/표현 규칙\n\n{style_lexicon.strip()}")
+            sections.append(f"## 어휘 치환 사전\n\n{style_lexicon.strip()}")
 
     brief = "\n\n".join(sections)
 
