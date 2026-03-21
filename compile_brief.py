@@ -573,6 +573,75 @@ def _extract_last_n_episodes(
     return "\n\n".join(result)
 
 
+def _extract_character_slice(
+    novel_dir: str, characters: list[str]
+) -> str:
+    """settings/03-characters.md에서 등장인물의 핵심 필드만 추출한다.
+
+    추출 필드: 이름, 성격/말투, 동기, 금기/트리거, 대표 대사.
+    전체 캐릭터 시트가 아니라 이번 화 집필에 필요한 최소 정보만.
+    characters가 빈 리스트이면 모든 캐릭터 섹션을 추출한다.
+    """
+    novel_path = Path(novel_dir)
+    content = _safe_read(novel_path / "settings" / "03-characters.md")
+    if not content:
+        return ""
+
+    # 캐릭터별 섹션을 ##/### 헤더로 분리
+    char_sections = re.split(r"(?=^#{2,3}\s)", content, flags=re.MULTILINE)
+
+    # characters가 비어있으면 모든 캐릭터 섹션 포함
+    include_all = not characters
+
+    result: list[str] = []
+    for section in char_sections:
+        # 이 섹션이 등장인물과 관련있는지 확인
+        if not include_all and not any(char in section[:200] for char in characters):
+            continue
+
+        # 핵심 필드만 추출
+        lines = section.strip().splitlines()
+        if not lines:
+            continue
+
+        header = lines[0]
+        extracted: list[str] = [header]
+
+        # 키워드 기반 필드 추출
+        keep_keywords = [
+            "성격", "말투", "동기", "목표", "금기", "트리거",
+            "대표 대사", "특징", "호칭", "어투", "감정 표현",
+            "행동 패턴", "습관", "외형"  # 외형은 간략히 포함
+        ]
+
+        in_relevant = False
+        for line in lines[1:]:
+            # 하위 헤더나 볼드 키워드로 섹션 감지
+            is_key_line = any(kw in line for kw in keep_keywords)
+            is_sub_header = line.startswith("#") or line.startswith("**")
+            is_list_item = line.startswith("- ") or line.startswith("  -")
+            is_table = line.startswith("|")
+
+            if is_key_line or (is_sub_header and any(kw in line for kw in keep_keywords)):
+                in_relevant = True
+                extracted.append(line)
+            elif in_relevant and (is_list_item or is_table or line.startswith("  ")):
+                extracted.append(line)
+            elif in_relevant and line.strip() == "":
+                extracted.append("")
+            elif is_sub_header:
+                # 새 섹션인데 관련 키워드 아님 → 관련 영역 종료
+                in_relevant = False
+            # 대표 대사 블록 (코드블록/인용)
+            elif in_relevant and (line.startswith(">") or line.startswith("```")):
+                extracted.append(line)
+
+        if len(extracted) > 1:  # 헤더만 있으면 스킵
+            result.append("\n".join(extracted))
+
+    return "\n\n".join(result) if result else ""
+
+
 def _extract_claude_md_rules(content: str) -> str:
     """CLAUDE.md에서 금지사항 + §5.1 의도적 미스터리 + 호칭/어투 매트릭스를 추출한다."""
     if not content:
@@ -1049,6 +1118,17 @@ def _compile_brief(
         rules_combined += "\n\n### 표기 규칙\n\n" + notation_rules
 
     sections.append(f"## 핵심 규칙\n\n{rules_combined}")
+
+    # 10. 등장인물 설정 슬라이스 (settings/03-characters.md에서 핵심만)
+    # characters가 비어있으면(첫 화 등) 전체 추적 캐릭터, 그것도 비면 주인공+주요 캐릭터 전체
+    slice_chars = characters
+    if not slice_chars:
+        slice_chars = _extract_all_tracked_characters(
+            summaries / "character-tracker.md"
+        )
+    char_slice = _extract_character_slice(novel_dir, slice_chars)
+    if char_slice:
+        sections.append(f"## 등장인물 설정\n\n{char_slice}")
 
     brief = "\n\n".join(sections)
 

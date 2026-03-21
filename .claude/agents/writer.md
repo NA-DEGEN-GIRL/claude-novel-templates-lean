@@ -69,10 +69,15 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
 
 ### A. Pre-Writing (Steps 1–3)
 
-- [ ] 1. **Call `compile_brief` MCP tool** — Receive current context, character states, foreshadowing, promises, knowledge map, relationships, ending hook tracker, and next-episode goals in one response (~4KB).
+- [ ] 1. **Call `compile_brief` MCP tool** — Receive current context, character states, foreshadowing, promises, knowledge map, relationships, ending hook tracker, and next-episode goals in one response (~4-15KB). **이것이 기본 컨텍스트다. settings/ 파일을 전체 직접 읽지 않는다.**
   - Fallback if unavailable: Read `summaries/running-context.md` → relevant arc plot → `plot/foreshadowing.md` → `summaries/character-tracker.md` in order.
   - **First episode of a new novel**: skip fallback files that don't exist yet or are empty stubs. Start from `plot/{arc}.md` if `running-context.md` is empty. Step 2 arc alignment is mandatory (create plot file from master-outline if needed). Step 3 previous episode check is N/A.
   - **Cover check (first episode only)**: If `cover.png`/`cover.jpg` doesn't exist, generate via `generate_image`.
+  - **settings/ 직접 읽기 정책**: compile_brief가 핵심 설정을 이미 포함한다. 추가로 settings/를 직접 읽는 것은 아래 경우에만:
+    - 아크 첫 화 또는 review_floor=full — `settings/03-characters.md` 전체를 읽어 보이스 기준선 확인
+    - `new_setting_claim=yes` — `settings/04-worldbuilding.md` 해당 부분 확인
+    - compile_brief에 필요한 정보가 없다고 판단될 때 — 해당 파일만 선택적으로 읽기
+    - 그 외에는 compile_brief 출력만으로 집필한다.
 
 - [ ] 2. **Arc alignment check** — Read the relevant section of `plot/{arc}.md` and confirm:
   - Current arc goal and this episode's functional role within it
