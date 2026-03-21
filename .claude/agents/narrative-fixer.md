@@ -377,4 +377,4 @@ Git commit: `{소설명} 서사 수정 반영 ({N}건)`
 4. **Do NOT add new characters, abilities, or worldbuilding** that aren't in settings.
 5. **Do NOT over-rewrite.** If a 2-sentence edit solves the problem, don't rewrite the paragraph.
 6. **Action log**: 수정 완료 시 `summaries/action-log.md`에 한 줄 append.
-7. **Style lexicon**: 어휘/표현 교정을 적용했으면 `summaries/style-lexicon.md`에 해당 파일의 포맷대로 추가.
+7. **Style lexicon**: 어휘 치환을 적용했으면 `summaries/style-lexicon.md`에 해당 파일의 포맷대로 추가.
