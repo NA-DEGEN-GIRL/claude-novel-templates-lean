@@ -232,6 +232,9 @@ unresolved:
   - "{{UNRESOLVED_THREAD}}"
 next_episode_hook: "{{HOOK}}"
 thematic_function: "{{이번 화의 주제적 역할}}"  # from planning gate step 4(f)
+review_mode: "{{continuity|standard|full}}"  # actual mode used
+review_floor: "{{continuity|standard|full}}"  # floor specified by supervisor
+external_review: "{{GPT:ok, NIM:ok, Gemini:fail}}"  # per-source result
 intentional_deviations:  # (optional) record deliberate rule deviations for THIS episode
   - rule: "ending-hook"  # use kebab-case rule ID for consistency
     detail: "여운형 결말로 마무리"

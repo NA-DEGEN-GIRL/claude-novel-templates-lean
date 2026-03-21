@@ -96,14 +96,24 @@ Given episode number N, determine the arc and zero-padded filename from this map
 Before sending any writing prompt, the supervisor determines the `review_floor` for that episode:
 
 ```
-if N is first episode of a new arc → review_floor = full
-elif N % 5 == 0                    → review_floor = standard
-else                               → review_floor = continuity
+if N is first episode of a new arc   → review_floor = full
+elif N is last episode of current arc → review_floor = standard + arc transition package
+elif N % 5 == 0                       → review_floor = standard
+else                                  → review_floor = continuity
 ```
+
+**Arc transition package** (마지막 화 완료 후 자동 실행):
+- `/why-check text` on completed arc
+- Priority 6+ items → `/narrative-fix --source why-check`
+- Arc summary + character state reset (settings/05-continuity.md)
+- Unresolved thread triage (carry-forward vs discard)
 
 Insert the determined `review_floor` into the writing prompt's [리뷰] section. The writer can escalate above the floor (e.g., continuity → standard if a new character appears), but CANNOT go below it.
 
-**Arc boundary detection**: Check ARC_MAP — if episode N is the first episode of ANY arc range (including prologue and epilogue), set `full`. This means: episode 1 (prologue start), first episode of arc-01, arc-02, ..., and first episode of epilogue.
+**Arc boundary detection**: Check ARC_MAP:
+- **First episode** of any arc → `full` (보이스/설정/톤 진입 제어)
+- **Last episode** of any arc → `standard` + arc transition package (why-check + 요약 리셋)
+- Both checks apply to prologue, all arcs, and epilogue.
 
 **Periodic check alignment**: When `review_floor = standard` (5화 배수), also add periodic check instruction to the prompt.
 

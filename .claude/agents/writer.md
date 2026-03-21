@@ -205,8 +205,12 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
   - Self-review (step 7) flagged an issue
 
   **Escalation to full** (rare, or review_floor = full):
-  - Arc boundary (including: first episode of the novel, prologue→arc-01 transition, any arc→arc transition, arc→epilogue transition)
+  - Arc boundary — **first episode** of any arc (including prologue, each arc, epilogue). Purpose: voice/setting/tone control for new arc entry.
   - Setting change occurred
+  - Long-term foreshadowing payoff
+
+  **Arc last episode** (review_floor = standard from supervisor, plus arc transition package):
+  - Last episode of any arc triggers standard review + mandatory arc transition (why-check + summary reset). See step 12+.
   - Long-term foreshadowing payoff
 
   Then run unified-reviewer in the determined mode:
@@ -237,10 +241,20 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
 
 ### F. Finalize (Steps 11–12)
 
-- [ ] 11. **Insert EPISODE_META** — Append metadata block at the end of the episode using the format defined in CLAUDE.md "에피소드 메타데이터". Include `intentional_deviations` if any rule was deliberately bypassed. Record planning flags used in this episode.
-  - Update `summaries/editor-feedback-log.md` with review processing results from step 10 (if external feedback was processed).
+- [ ] 11. **Insert EPISODE_META** — Append metadata block at the end of the episode using the format defined in CLAUDE.md "에피소드 메타데이터". Include `intentional_deviations` if any rule was deliberately bypassed. Record planning flags and review results:
+  - `review_mode`: actual mode used (continuity/standard/full)
+  - `review_floor`: floor specified by supervisor (if any)
+  - `external_review`: sources called and result (success/fail per source)
+  - Update `summaries/editor-feedback-log.md` with review processing results from step 10.
 
 - [ ] 12. **Git commit** — Stage manuscript + all updated summary files. Commit message: `{소설명} {N}화 집필`. Run git status to check for missed files.
+
+- [ ] 12+. **Arc transition package** — If this episode is the LAST episode of the current arc (check plot/ or ARC_MAP):
+  1. Run `/why-check text` on the completed arc (all episodes in this arc range). Catches accumulated explanation gaps.
+  2. If MISSING items with priority 6+ → apply `/narrative-fix --source why-check --scope priority-6+`.
+  3. Write arc summary to `summaries/arc-summaries/`. Record character states as reset point.
+  4. Triage unresolved threads: carry-forward to next arc vs discard.
+  5. Log results. **This step is mandatory — do not skip even in autonomous batch mode.**
 
 ---
 
