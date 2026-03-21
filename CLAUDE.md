@@ -158,7 +158,8 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 2. **Insert EPISODE_META**: Append metadata block at episode end. Set `date` to today `"YYYY-MM-DD"`.
 3. **Update feedback log**: Record 3.3 results in `editor-feedback-log.md`.
 4. **Git commit**: After episode completion (manuscript + summaries). Batch 2-3 eps OK. Message: `{소설명} {N}~{M}화 집필`. Push only on user request.
-5. **Action log**: 주요 작업 완료 시 `summaries/action-log.md`에 한 줄 append. 형식: `| {시각} | {에이전트} | {행동} | {대상} | {상태} | {비고} |`. 서사 맥락이 아닌 운영 로그이므로 compile_brief에 포함하지 않는다.
+5. **Action log**: 주요 작업 완료 시 `summaries/action-log.md`에 한 줄 append.
+6. **Style lexicon**: 리뷰에서 채택된 어휘 교체/표현 규칙을 `summaries/style-lexicon.md`에 즉시 기록. 한 번이라도 채택되면 등록한다. compile_brief에 자동 포함. 형식: `| {시각} | {에이전트} | {행동} | {대상} | {상태} | {비고} |`. 서사 맥락이 아닌 운영 로그이므로 compile_brief에 포함하지 않는다.
 
 ### 3.5 Parallel Writing & Periodic Checks
 

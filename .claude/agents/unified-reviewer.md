@@ -350,6 +350,7 @@ Append the following to the standard output:
 1. **Brief-based verification**: Do NOT read settings/ directly (except in full mode). The brief contains sufficient information.
 2. **Objective comparison**: The core task is comparing against explicitly stated content in settings files. Minimize subjective judgment.
 3. **Fix suggestions mandatory**: When flagging errors or improvements, always include the specific location + proposed fix.
+4. **Style lexicon update**: 어휘/표현 교정이 채택되면 `summaries/style-lexicon.md`에 즉시 기록. 한 번이라도 채택되면 등록한다. 이후 에피소드에서 동일 교정이 반복되지 않게 한다.
 4. **Respect intentional non-standard text**: Do NOT correct character speech styles or dialects in dialogue.
 5. **No over-correction**: Rules must not override creative intent. Preserve ellipses, repetition, etc. when they serve a deliberate narrative purpose.
 6. **Report settings file contradictions**: If a contradiction is found within settings files themselves, report it separately.
