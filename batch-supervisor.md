@@ -103,7 +103,7 @@ else                               → review_floor = continuity
 
 Insert the determined `review_floor` into the writing prompt's [리뷰] section. The writer can escalate above the floor (e.g., continuity → standard if a new character appears), but CANNOT go below it.
 
-**Arc boundary detection**: Check ARC_MAP — if episode N is the first episode of a new arc range, set `full`.
+**Arc boundary detection**: Check ARC_MAP — if episode N is the first episode of ANY arc range (including prologue), set `full`. This means: episode 1 (prologue start), first episode of arc-01, first episode of arc-02, etc.
 
 **Periodic check alignment**: When `review_floor = standard` (5화 배수), also add periodic check instruction to the prompt.
 
