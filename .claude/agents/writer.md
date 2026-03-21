@@ -205,7 +205,7 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
   - Self-review (step 7) flagged an issue
 
   **Escalation to full** (rare, or review_floor = full):
-  - Arc boundary (including: first episode of the novel, prologue→arc-01 transition, any arc→arc transition)
+  - Arc boundary (including: first episode of the novel, prologue→arc-01 transition, any arc→arc transition, arc→epilogue transition)
   - Setting change occurred
   - Long-term foreshadowing payoff
 
