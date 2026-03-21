@@ -205,6 +205,53 @@ Add 1 sentence connecting two existing facts that the reader should link but can
 #### E4. Repositioning (재배치)
 Move existing explanation to where the reader needs it. No new content.
 
+---
+
+## OAG Mode (`--source oag`)
+
+When invoked with `--source oag`, the input is `summaries/oag-report.md` instead of narrative-review or why-check reports. OAG items are **행동 누락** — 캐릭터가 알면서 안 한 것.
+
+### OAG Mode Rules
+
+1. **Target**: ABSENT items only (CRITICAL first, then HIGH)
+2. **Read the original episode text** and understand the scene context before fixing
+3. **Character-fit**: Fix must match the character's personality from settings/03-characters.md. Don't insert actions that feel out of character.
+4. **Limit**: 1-3 sentences per item, single episode, existing scene
+5. **Escalate to HOLD**: If fix requires new scene, multi-episode changes, or plot restructuring
+
+### OAG Strategies (A1-A3)
+
+#### A1. Blocker Insertion (방해 요인 명시)
+Add 1-2 sentences showing why the character couldn't do the expected action. Make the inability concrete and character-appropriate.
+- "X를 먼저 해야 했다. 하지만 Y 때문에 불가능했다."
+
+#### A2. Decision Monologue (판단 과정 삽입)
+Add 1-2 sentences of inner monologue showing the character considered the action but chose otherwise for a specific reason.
+- The character's choice must feel earned, not explained away.
+
+#### A3. Action Insertion (행동 삽입)
+Actually perform a minimal version of the expected action. 1-2 sentences.
+- Prefer this when the expected action is simple and the gap is egregious.
+
+### OAG Fix Log
+
+Write `summaries/oag-fix-log.md`:
+
+```markdown
+# OAG-Fix 수정 로그
+
+> 수정일: {date}
+> 기반 보고서: oag-report.md
+
+## 수정 내역
+
+| OAG-ID | 심각도 | 화수 | 전략 | 추가 문장 수 | 상태 |
+|--------|--------|------|------|-------------|------|
+| OAG-01 | CRITICAL | {N}화 | A{n} | {N}문장 | ✅ 완료 / ⏸️ 보류 |
+```
+
+---
+
 ### WHY-CHECK Fix Log
 
 Write `summaries/why-fix-log.md` (separate from narrative-fix-log):
