@@ -128,7 +128,7 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
   - [ ] 7-2. Is the length roughly within target range (±20% is fine)? → `char_count` for reference only. 서사의 자연스러운 호흡이 분량 목표보다 우선한다.
   - [ ] 7-3. Were any characters/abilities/locations improvised without being in settings?
   - [ ] 7-4. Were any CLAUDE.md prohibitions violated?
-  - [ ] 7-5. **Style lexicon check**: compile_brief의 어휘/표현 규칙에 해당하는 표현이 본문에 있으면 교정. 새로운 교정을 적용했으면 `summaries/style-lexicon.md`에 추가.
+  - [ ] 7-5. **Style lexicon check**: compile_brief의 어휘/표현 규칙에 해당하는 표현이 본문에 있으면 교정. 새로운 교정을 적용했으면 `summaries/style-lexicon.md`에 해당 파일의 포맷대로 추가.
   - [ ] 7-6. **Dialogue grammar check**: ❌ 평서형 종결(`-다/-는다/-했다/-있다`) + `?`로 의문문 만들기 (되물음·혼잣말 제외). ❌ 종결어미에 `요` 기계적 덧붙이기 (`가라요/마라요/그러냐요`).
   - [ ] 7-7. **Ending hook verification**: Does the draft's actual ending deliver the hook planned in step 4(d)? Is the type different from the previous episode? (If intentionally omitted, record in EPISODE_META.)
   - [ ] 7-8. **Loanword check** (pre-modern/historical settings only — skip for modern/SF): Scan the draft for English loanwords (외래어) in prose. Common offenders: 시스템→체계, 패턴→규칙/결, 에너지→기운, 허브→약초, 아우라→기운, 레벨→단계/등급, 밸런스→균형. Choose replacements fitting your novel's register.
