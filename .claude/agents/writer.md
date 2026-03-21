@@ -238,8 +238,6 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
 
   > Maximum 2 re-reviews. If still failing after 2nd, proceed and flag for periodic check.
 
-  **Korean naturalness check**: 매 화 실행하지 않는다. 아크 전환 시 `/naturalness` + `/naturalness-fix`가 아크 전체에 대해 일괄 실행됨 (batch-supervisor E단계).
-
   **If revisions were made, re-update step 8 summary files** (skip if no changes).
 
 ### F. Finalize (Steps 11–12)
