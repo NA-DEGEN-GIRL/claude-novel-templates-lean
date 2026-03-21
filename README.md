@@ -785,7 +785,74 @@ WHY/HOW 질문 생성 + 본문 답 검색. 여러 모드 지원.
 
 ## 워크플로
 
-### 매 화 (12-Step Pipeline)
+### 전체 소설 라이프사이클
+
+```mermaid
+graph TD
+    INIT["🎬 INIT-PROMPT<br/>컨셉 생성 + 7-Lens 평가"]
+    SETTINGS["📋 설정 파일 생성<br/>CLAUDE.md + settings/ + plot/"]
+    VERIFY["🔍 사전 검증<br/>/why-check plan + 교차 검증"]
+
+    WRITE["✍️ 매 화 집필<br/>12-Step Pipeline"]
+    PERIODIC["📊 정기 점검<br/>P1~P10 (5~8화마다)"]
+    ARC["🔄 아크 전환<br/>/why-check + plot 생성 + /why-check plan"]
+
+    FINAL_A["Phase A~B: 분석<br/>/why-check full + /book-review + /narrative-review"]
+    FINAL_C["Phase C~D: 수정<br/>/narrative-fix + /why-check delta"]
+    FINAL_E["Phase E: 감사<br/>/audit + /audit-fix"]
+
+    DONE["✅ 완성"]
+
+    INIT --> SETTINGS --> VERIFY --> WRITE
+    WRITE -->|"5~8화마다"| PERIODIC --> WRITE
+    WRITE -->|"아크 종료"| ARC --> WRITE
+    WRITE -->|"소설 완결"| FINAL_A --> FINAL_C --> FINAL_E --> DONE
+
+    style INIT fill:#4CAF50,color:#fff
+    style WRITE fill:#2196F3,color:#fff
+    style FINAL_A fill:#FF9800,color:#fff
+    style FINAL_C fill:#FF9800,color:#fff
+    style FINAL_E fill:#FF9800,color:#fff
+    style DONE fill:#9C27B0,color:#fff
+```
+
+### 매 화 12-Step Pipeline
+
+```mermaid
+graph LR
+    A1["1. compile_brief"] --> A2["2. 아크 정합"] --> A3["3. 직전화+피드백"]
+    A3 --> B4["4. Planning Gate<br/>장면+훅+주제+flags"]
+    B4 --> B5["5. Reader Objection<br/>WHY/HOW + OAG"]
+    B5 --> C6["6. 초고 작성"]
+    C6 --> C7["7. 자가 리뷰<br/>필수4 + 트리거"]
+    C7 --> D8["8. 요약 갱신"]
+    D8 --> D9["9. 팩트체크"]
+    D9 --> E10["10. 리뷰<br/>continuity/standard/full"]
+    E10 --> F11["11. EPISODE_META"]
+    F11 --> F12["12. git commit"]
+
+    style A1 fill:#E8F5E9
+    style B4 fill:#E3F2FD
+    style C6 fill:#FFF3E0
+    style E10 fill:#FCE4EC
+    style F12 fill:#F3E5F5
+```
+
+### Risk Escalation (리뷰 모드 결정)
+
+```mermaid
+graph TD
+    START["매 화 완료"] --> CHECK{"리스크 평가"}
+    CHECK -->|"평범한 화"| CONT["continuity<br/>13항목 + 한글 기초<br/>외부 리뷰 ❌"]
+    CHECK -->|"핵심 인물/반전/전투/감정"| STD["standard<br/>+ 서사 7항목 + 외부 AI<br/>외부 리뷰 ✅"]
+    CHECK -->|"아크 경계/설정 변경"| FULL["full<br/>+ 상세 분석 + Voice 감사<br/>외부 리뷰 ✅"]
+
+    style CONT fill:#C8E6C9
+    style STD fill:#FFECB3
+    style FULL fill:#FFCDD2
+```
+
+### 매 화 (12-Step Pipeline) — 텍스트 버전
 
 ```
 A. Prep --- compile_brief MCP (압축 브리프 ~4-15KB)
@@ -864,26 +931,26 @@ Phase E: /final-review audit
 
 ## 프롬프트 파일 4종
 
-### INIT-PROMPT.md
+### [INIT-PROMPT.md](./INIT-PROMPT.md)
 
 새 소설 프로젝트를 생성하는 프롬프트 모음. 4가지 변형이 준비되어 있다.
 
-- **프롬프트 1 (시나리오 선택형):** 가장 포괄적. 시나리오 제안 -> 전문가 평가 -> 선택 -> 확장 -> 재평가 -> 파일 생성 -> 플롯 검증 -> 교차 검증 -> 커밋. 총 8단계.
+- **프롬프트 1 (시나리오 선택형):** 가장 포괄적. 시나리오 제안 → 7-Lens 평가 → 선택 → 확장 → 재평가 → 파일 생성 → 플롯 검증 → 교차 검증 → 커밋. 총 8단계.
 - **프롬프트 2 (컨셉 확정형):** 이미 아이디어가 있을 때. 평가 + 파일 생성 + 검증.
 - **프롬프트 3 (풀 자동):** 장르만 지정. Claude가 모든 것을 결정.
 - **프롬프트 4 (복제):** 기존 소설의 설정을 복제하여 새 프로젝트 생성. 모델 비교 테스트용.
 
 모든 프롬프트는 `/root/novel/`(상위 폴더)에서 실행한다. 소설 폴더 안이 아니다.
 
-### MIGRATION-PROMPT.md
+### [MIGRATION-PROMPT.md](./MIGRATION-PROMPT.md)
 
 기존 12-agent 소설 프로젝트를 lean 9-agent 체계로 전환하는 12단계 마이그레이션 프롬프트.
 
-- **사전 백업** -> **인벤토리** -> **계획 수립** -> **lean 골격 반영** -> **CLAUDE.md 재구성** -> **settings 영어 전환** -> **참조 교체** -> **summaries 스키마** -> **운영 문서** -> **정적 검증** -> **GPT 의미 검증** -> **agent 작동 검증** -> **커밋**
+- **사전 백업** → **인벤토리** → **계획 수립** → **lean 골격 반영** → **CLAUDE.md 재구성** → **settings 영어 전환** → **참조 교체** → **summaries 스키마** → **운영 문서** → **정적 검증** → **GPT 의미 검증** → **agent 작동 검증** → **커밋**
 - 본문(`chapters/`)은 절대 수정하지 않는다
 - 진행 중인 소설과 완결 소설 모두 지원
 
-### REBUILD-PROMPT.md
+### [REBUILD-PROMPT.md](./REBUILD-PROMPT.md)
 
 lean 마이그레이션 후 세계관/플롯을 재정립하고 처음부터 다시 집필할 수 있도록 준비하는 8 Phase 프롬프트.
 
@@ -891,7 +958,7 @@ lean 마이그레이션 후 세계관/플롯을 재정립하고 처음부터 다
 - 기존 원고는 아카이브(보존)하고 삭제하지 않는다
 - 핵심 컨셉은 유지하고 실행 방법만 개선한다
 
-### batch-supervisor.md
+### [batch-supervisor.md](./batch-supervisor.md)
 
 배치 자동 집필 감독 프롬프트. 감독자(Claude Code)가 tmux 세션의 집필 AI를 모니터링한다.
 
