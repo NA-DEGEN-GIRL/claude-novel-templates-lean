@@ -143,9 +143,13 @@ else                                  → review_floor = continuity
      - 구조 변경 필요, 3화 이상 연쇄 영향, 플롯 재배선 필요 → `[HOLD]`로 남기고 다음 `/narrative-review` 또는 `/plot-repair` 사이클로 이관
    - 결함 없으면: E단계로
 
-**E. 아크 마감**
-7. Arc summary + character state reset (settings/05-continuity.md)
-8. Unresolved thread triage (carry-forward vs discard)
+**E. 한국어 자연스러움 교정**
+7. 모든 수정(A~D)이 완료된 최종본에 대해 `/naturalness` 실행 → `summaries/naturalness-report.md`
+8. 보고서 기반으로 `/naturalness-fix` 실행 — 채택된 어휘 치환은 `summaries/style-lexicon.md`에 기록
+
+**F. 아크 마감**
+9. Arc summary + character state reset (settings/05-continuity.md)
+10. Unresolved thread triage (carry-forward vs discard)
 
 Insert the determined `review_floor` into the writing prompt's [리뷰] section. The writer can escalate above the floor (e.g., continuity → standard if a new character appears), but CANNOT go below it.
 
