@@ -133,8 +133,12 @@ Phase 1 보존 명세서를 항목별로 계승하며 재구성한다:
 
 ### Phase 4: 사전 검증
 
-#### 4-1. /why-check plan
-`plot/master-outline.md`와 `plot/arc-01.md`에 대해 Planning Mode 실행. Phase 1.5 OAG(의무 행동 갭 탐지)를 포함하여 실행한다.
+#### 4-1a. /oag-check plan (동기 갭 — 먼저)
+`plot/master-outline.md`와 `plot/arc-01.md`에 대해 oag-checker Planning Mode 실행.
+PLANNING GAP / MOTIVATION GAP 발견 시 즉시 수정.
+
+#### 4-1b. /why-check plan (설명 갭 — 4-1a 수정 후)
+위 플롯에 대해 why-checker Planning Mode 실행.
 PLANNING GAP 발견 시 즉시 수정.
 
 #### 4-2. 교차 검증 (INIT-PROMPT 4단계와 동일)
@@ -145,9 +149,9 @@ PLANNING GAP 발견 시 즉시 수정.
 GPT에게 재구축된 설정 전체를 보여주고 최종 검토.
 
 #### 4-4. 재검증 (조건부)
-4단계 교차 검증에서 plot 파일이 수정되었다면, `/why-check plan`을 해당 파일에 대해 1회 재실행한다.
+4단계 교차 검증에서 plot 파일이 수정되었다면, `/oag-check plan` + `/why-check plan`을 해당 파일에 대해 1회 재실행한다.
 
-> ✅ 완료 기준: why-check plan PASS + 교차 검증 0건 + GPT 승인
+> ✅ 완료 기준: oag-check plan PASS + why-check plan PASS + 교차 검증 0건 + GPT 승인
 
 ### 승인 게이트 (Phase 3~4 결과)
 설정 재구성 + 사전 검증 결과를 사용자에게 보고한다.

@@ -81,7 +81,7 @@
 
 ### 3.1 Preparation (Prep)
 
-1. **Call `compile_brief` MCP tool**: Generates a compressed brief (~4-15KB) from project files (~300KB+). Do NOT read individual files directly.
+1. **Call `compile_brief` MCP tool**: Generates a compressed brief (~4-15KB) from project files (~300KB+). compile_brief를 우선 사용하되, 불가능하면 아래 fallback으로 전환.
    - Fallback if unavailable: `summaries/running-context.md` → relevant arc plot → `plot/foreshadowing.md` → `summaries/character-tracker.md`.
 2. **Read last 2-3 paragraphs of previous episode**: Verify hook connection + prevent same ending hook type consecutively.
 3. **Check editor feedback**: Reference `EDITOR_FEEDBACK_*.md` if unprocessed feedback exists.
@@ -204,6 +204,18 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 | {{MYSTERY_1}} | {{아크/화수}} | {{서사적 이유}} |
 
 > 이 목록에 없는 설명 누락은 실수로 간주한다.
+
+### 5.2 AI Execution Guardrails (Process Constraints)
+
+> AI 집필 시 반복적으로 발생하는 실패 패턴에 대한 사전 방어. 장르와 소설에 맞게 3개 이상을 정의한다. 빈 섹션으로 남기지 않는다.
+
+| # | 가드레일 | 위반 예시 | 올바른 접근 |
+|---|---------|----------|-----------|
+| G1 | {{GUARDRAIL_1}} | {{위반 예시}} | {{올바른 접근}} |
+| G2 | {{GUARDRAIL_2}} | {{위반 예시}} | {{올바른 접근}} |
+| G3 | {{GUARDRAIL_3}} | {{위반 예시}} | {{올바른 접근}} |
+
+> 가드레일은 금지(§5)와 다르다. 금지는 "절대 하지 않는 것", 가드레일은 "AI가 습관적으로 빠지는 패턴을 사전에 방지하는 것"이다. 예: 수동적 정보 수령 2연속 금지, 유머 회피 3연속 금지, 수련 전용 에피소드 금지 등.
 
 ---
 

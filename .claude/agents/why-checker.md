@@ -152,6 +152,33 @@ If an answer is ANSWERED but appears in a later episode than the event it explai
 
 ---
 
+### Phase 2.5: Consequence Audit
+
+> 행동이 외부 세계에 **지속적이고 관측 가능한 변화**를 만들었을 때, 그 변화의 상식적 후속 결과가 텍스트에 없거나 이후 전개와 충돌하는지 점검한다.
+
+**트리거 조건** — 아래 3개를 모두 만족하는 행동:
+1. 행동이 세계 상태를 **실질적으로** 바꾼다 (일상적 행동 — 문을 닫음, 차를 탐 — 은 해당 안 됨)
+2. 그 결과가 독자 입장에서 **예측 가능**하다
+3. 그 결과의 부재가 **이해/긴장/인과에 영향**을 준다
+
+**절차**:
+1. 트리거 행동을 찾으면, **장르 비의존적**인 자연 결과 1-3개를 먼저 생성한다. 장르 관습이나 독자 기대가 아니라, 상식적으로 뒤따를 결과만.
+2. 이후 1-3화에서 각 결과가 **발생, 차단(명시적 blocker), 수습** 되었는지 확인한다.
+   - 즉시성 결과(물리적 행동)는 1화 내, 파급성 결과(소문, 추적, 제도적 반응)는 2-3화 내.
+3. 판정:
+   - **RESOLVED**: 결과가 텍스트에 있거나, 차단 사유가 명시됨
+   - **CONSEQUENCE GAP**: 결과도 차단 사유도 텍스트에 없음
+   - **CAUSAL CHAIN BREAK**: 이후 텍스트가 그 결과가 없었던 것처럼 전개되어 **직접 충돌**함 (암묵적 어색함 정도는 GAP)
+
+> CONSEQUENCE GAP과 CAUSAL CHAIN BREAK만 보고서에 기재한다. RESOLVED는 생략.
+> 같은 행동에서 파생된 여러 결과가 하나의 상위 갭이면 묶어서 보고한다.
+
+**Text mode vs Planning mode**:
+- **Text mode**: 에피소드 텍스트만으로 판정. plot 파일 참조 안 함.
+- **Planning mode**: plot 파일을 참조하여 "계획되었으나 아직 집필 안 됨" 여부도 확인. `planned-but-not-dramatized`는 GAP이 아니라 참고 메모로 처리.
+
+---
+
 ### Phase 3: Priority Scoring
 
 For each MISSING and INFERABLE item, calculate a priority score.
@@ -254,6 +281,21 @@ Write to `summaries/why-check-report.md`.
 
 ---
 
+## 후속 결과 공백 (Phase 2.5)
+
+행동은 수행되었지만, 그 자연 결과가 텍스트에 없거나 이후 전개와 충돌하는 항목. CAUSAL CHAIN BREAK는 Impact 최저 2.
+
+### [CGAP-01] {짧은 제목}
+
+- **행동**: EP {N}에서 {수행된 행동}
+- **자연 결과**: {1-3개}
+- **판정**: CONSEQUENCE GAP / CAUSAL CHAIN BREAK
+- **Reader question**: {독자가 품을 질문}
+- **충돌 지점**: {이후 텍스트와 모순되는 부분 — BREAK일 때만}
+- **우선순위**: {Phase 3과 동일 기준 — BREAK는 Impact 최저 2}
+
+---
+
 ## 늦은 설명 (참고)
 
 설명이 존재하지만 사건이 발생한 이후에 나타나는 경우.
@@ -323,6 +365,6 @@ A planning gap costs one sentence in the outline to fix. The same gap found in f
 | Arc completion (Full Check) | Entire arc | Final verification |
 | Immediate trigger | Single episode | Rescue/pursuit/evidence/secrecy/reporting scenes where inaction is conspicuous |
 
-Rolling Mini-Check runs Phase 1.5 (OAG) only on the recent 5-8 episodes, skipping full WHY/HOW/WHEN/SO-WHAT generation. This keeps cost low (~3-5K tokens) while catching the highest-value gaps early.
+Rolling Mini-Check runs WHY/HOW explanation checks only on the recent 5-8 episodes, keeping cost low (~3-5K tokens). **행동 갭(OAG)은 별도 에이전트 `/oag-check`가 담당한다.** Rolling mini에서 행동 갭이 의심되면 `/oag-check {range}`를 별도 실행하라.
 
 > **Note**: This agent does NOT replace writer step 5 (reader objection preflight). Writer step 5 is a per-episode pre-writing check; this agent is a post-writing audit on completed text. Both are needed — they catch different failure modes.

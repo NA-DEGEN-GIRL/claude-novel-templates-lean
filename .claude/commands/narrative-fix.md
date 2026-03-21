@@ -7,6 +7,7 @@
 /narrative-fix C1,H1,H2          # 특정 항목만 수정
 /narrative-fix --source why-check # why-check 보고서 기반 (설명 보강)
 /narrative-fix --source why-check --scope priority-6+  # 고우선도만
+/narrative-fix --source arc-read # arc-readthrough 기반 (흐름 결함 수정)
 /narrative-fix --source oag      # oag-report 기반 (행동 갭 메우기)
 /narrative-fix --source oag --items OAG-01,OAG-02  # 특정 항목만
 ```
@@ -22,7 +23,14 @@
 - 입력: `summaries/why-check-report.md`
 - 전략: E1~E4 (경량 설명 보강)
 - 범위: **항목당 1~3문장, 단일 화수, 기존 장면 내부 삽입만**
-- MISSING만 기본 대상. INFERABLE은 `--promote` 시만.
+- **MISSING + CONSEQUENCE GAP** 기본 대상. INFERABLE은 `--promote` 시만.
+- **CAUSAL CHAIN BREAK → 자동 HOLD** (plot-repair 또는 narrative-review로 이관)
+
+### Arc-Read 모드 (`--source arc-read`)
+- 입력: `summaries/arc-readthrough-report.md`
+- 전략: R1~R4 (중복 제거 / 순서 조정 / 반응 보강 / 전환 매끄럽게)
+- 최소 수정 우선이나, 흐름을 살리기 위해 필요한 만큼 자유롭게 수정
+- `patch-feasible: yes` 항목만 처리. `[HOLD]` 항목은 `/narrative-review`로 이관.
 
 ### OAG 모드 (`--source oag`)
 - 입력: `summaries/oag-report.md`

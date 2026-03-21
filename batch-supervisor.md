@@ -103,12 +103,49 @@ else                                  → review_floor = continuity
 ```
 
 **Arc transition package** (마지막 화 완료 후 자동 실행):
-1. `/oag-check` on completed arc (행동 갭 탐지 — 별도 에이전트)
-2. `/narrative-fix --source oag` — 행동 갭 수정 (CRITICAL→HIGH 순)
-3. `/why-check text` on completed arc (수정된 본문에서 설명 누락 탐지)
-4. `/narrative-fix --source why-check --scope priority-6+` — 설명 보강
-5. Arc summary + character state reset (settings/05-continuity.md)
-6. Unresolved thread triage (carry-forward vs discard)
+
+**A. OAG 탐지 + 플롯 수선** (plot-change-needed가 있을 때만)
+1. `/oag-check` on completed arc → `oag-report.md`
+2. `plot-change-needed` 항목 확인:
+   - 없으면: B단계로 건너뜀
+   - 있으면:
+     a. `/plot-repair` → proposal + 평가 + supervisor 승인 (§2.6 기준)
+     b. 승인 시: plot-surgeon이 plot 파일 수정 + `rewrite-brief.md` 생성
+     c. writer partial-rewrite로 기집필 본문 재작성 → `rewrite-log.md`
+     d. `/oag-check plan {arc}` 재검증 (수정된 플롯 기준)
+     e. 재검증 통과 후 B단계로
+
+**B. 본문 패치** (patch-feasible 항목)
+3. `/narrative-fix --source oag` — `patch-feasible` 항목만 행동 갭 수정 (CRITICAL→HIGH 순)
+
+**C. 설명 갭**
+4. `/why-check text` on completed arc (수정된 본문에서 설명 누락 탐지)
+5. `/narrative-fix --source why-check --scope priority-6+` — 설명 보강
+
+**D. 아크 통독 (외부 AI)**
+6. 모든 수정(A~C)이 반영된 **최종본** 기준으로 외부 AI 아크 통독을 수행한다.
+   - **기본 전송 방식은 전문 일괄 전송이 아니라 `Context Bundle`이다.**
+   - 기본 입력 묶음:
+     - `summaries/running-context.md`
+     - `summaries/episode-log.md`에서 해당 아크 구간
+     - `compile_brief`로 생성한 아크 압축 brief
+     - **최근 수정된 화수 전문만 추가** (A~C에서 손댄 화 + 인접 1화)
+   - 전문 전체 전송은 **예외 모드**다. 외부 AI가 "이 항목은 원문 확인 없이는 판정 불가"라고 명시한 경우에만, 해당 화수만 chunk로 분할 전송한다.
+   - **프롬프트 목적** (품질 평가가 아니라 흐름 결함 탐지):
+     - 에피소드 간 중복 정보/문장 재노출
+     - 사건/방문/결정의 타이밍 어색함
+     - 직전 사건 대비 인물 반응 불일치
+     - 독자가 "어? 이거 아까 했는데?" 또는 "왜 이 순서지?" 라고 멈칫하는 지점
+   - **산출물 파일**: `summaries/arc-readthrough-report.md`
+   - **항목 형식**: `ID / severity / 관련 화수 / 결함 유형 / 근거 / 최소 수정안 / patch-feasible 여부 / 상태(open|hold|resolved)`
+   - supervisor가 보고서를 읽고 분류:
+     - `patch-feasible = yes`이고 1~2화의 국소 수정으로 해결 가능 → `/narrative-fix --source arc-read`
+     - 구조 변경 필요, 3화 이상 연쇄 영향, 플롯 재배선 필요 → `[HOLD]`로 남기고 다음 `/narrative-review` 또는 `/plot-repair` 사이클로 이관
+   - 결함 없으면: E단계로
+
+**E. 아크 마감**
+7. Arc summary + character state reset (settings/05-continuity.md)
+8. Unresolved thread triage (carry-forward vs discard)
 
 Insert the determined `review_floor` into the writing prompt's [리뷰] section. The writer can escalate above the floor (e.g., continuity → standard if a new character appears), but CANNOT go below it.
 
@@ -118,6 +155,31 @@ Insert the determined `review_floor` into the writing prompt's [리뷰] section.
 - Both checks apply to prologue, all arcs, and epilogue.
 
 **Periodic check alignment**: When `review_floor = standard` (5화 배수), also add periodic check instruction to the prompt.
+
+### 2.6 Supervisor Plot-Repair Approval Protocol
+
+batch-supervisor는 plot-repair의 "사용자" 역할을 수행할 수 있다. `/plot-repair`의 Step 3.5 평가 결과(`summaries/plot-repair-proposal.md`)를 읽고 직접 승인/거부를 판단한다.
+
+**Supervisor 승인 기준** (모두 충족 시 supervisor가 자동 승인):
+1. 내부 평가에서 1위 안이 **GO** 판정
+2. 외부 AI 평가를 수행한 경우, **외부도 동일한 안 추천**
+3. 1위 안의 치명적 리스크가 **"없음"**
+4. 비용이 **대규모 아크 재구성이 아님**
+5. 보존 불변식 충돌이 **없음**
+
+**Supervisor 거부 / 사용자 에스컬레이션**:
+- 위 조건 중 하나라도 불충족 → supervisor는 집필을 중단하고 사용자에게 알린다
+- 1위와 2위 점수 차가 5점 미만 → 사용자 판단 요청
+- 수정안이 3개 이상의 아크에 영향 → 사용자 판단 요청
+
+**승인 후 절차**:
+1. `plot/prologue.md` (또는 해당 arc) 수정
+2. 기집필 에피소드가 있으면 → `/narrative-fix --source oag`로 본문 수정 지시
+3. `summaries/plot-repair-log.md`에 `[SUPERVISOR-APPROVED]` 기록
+4. `/oag-check plan {arc}` + `/why-check plan {arc}` 재검증
+5. 재검증 통과 후 집필 재개
+
+> **주의**: supervisor 승인은 완전 자동화를 위한 것이다. 사용자가 실시간 모니터링 중이면 직접 판단하는 것이 항상 우선한다.
 
 ### 3. Writing Prompts
 
@@ -293,7 +355,18 @@ Wait 3 seconds, then send full prompt (3a).
 When the episode number enters a new arc range:
 
 1. Confirm completion of the last episode of the previous arc
-2. **Run `/why-check` on the completed arc**: Send the following prompt to the writer session:
+2. **Run `/oag-check` on the completed arc**: Send the following prompt to the writer session:
+   ```
+   방금 완료한 {prev_arc}({start}~{end}화)에 대해 /oag-check를 실행해줘.
+   - .claude/agents/oag-checker.md의 Text Mode 절차를 따른다.
+   - 대상: {start}화 ~ {end}화
+   - 산출물: summaries/oag-report.md
+   - 완료 후 대기.
+   ```
+   Wait for completion. Check the report:
+   - `plot-change-needed` items → Run `/plot-repair`. After Step 3.5 evaluation completes, supervisor reviews the proposal and applies the supervisor approval protocol (see below). After plot fix, re-run `/oag-check plan {prev_arc}` to verify.
+   - `patch-feasible` items → send `/narrative-fix --source oag` to apply patches (CRITICAL→HIGH order).
+3. **Run `/why-check text` on the completed arc**: Send the following prompt to the writer session:
    ```
    방금 완료한 {prev_arc}({start}~{end}화)에 대해 /why-check text를 실행해줘.
    - .claude/agents/why-checker.md의 Text Mode 절차를 따른다.
@@ -303,19 +376,59 @@ When the episode number enters a new arc range:
    ```
    Wait for completion. If MISSING items with priority 6+ are found:
    - Items fixable in 1-3 sentences → send `/narrative-fix --source why-check --scope priority-6+` to apply quick patches before proceeding
-   - Items requiring structural changes → log as HOLD in `summaries/why-check-report.md` (add `[HOLD]` tag to the item), defer to next `/narrative-review` cycle. HOLD is released when narrative-review Phase 4 re-diagnoses the item as `confirmed` (integrated into fix guide) or `unconfirmed` (dismissed with reasoning).
-3. Check if `plot/{arc}.md` exists for the new arc
+   - Items requiring structural changes → log as HOLD in `summaries/why-check-report.md` (add `[HOLD]` tag to the item), defer to next `/narrative-review` cycle.
+4. **Run external arc readthrough on the completed arc**:
+   - Build a `Context Bundle` instead of sending the full arc by default:
+     - `summaries/running-context.md`
+     - `summaries/episode-log.md` entries for `{start}~{end}`
+     - arc-level compressed brief from `compile_brief`
+     - full text only for episodes modified in steps 2~3, plus adjacent 1 episode when needed for transition reading
+   - Send the bundle to `ask_gpt` or `ask_gemini` with this instruction:
+   ```
+   방금 완료한 {prev_arc}({start}~{end}화)를 독자처럼 통독하되, 평점이 아니라 "흐름 결함"만 찾아줘.
+   찾을 대상:
+   - 같은 정보/감정/설명이 에피소드 사이에서 중복 재노출되는 지점
+   - 사건, 방문, 결정, 공개 순서가 어색한 지점
+   - 직전 사건 대비 인물 반응이 약하거나 어긋나는 지점
+   - 독자가 "이미 한 얘기 아닌가?", "왜 이 순서지?"라고 멈칫할 지점
+
+   출력 형식:
+   - ID
+   - severity (critical/high/medium/low)
+   - 관련 화수
+   - 결함 유형
+   - 근거
+   - 최소 수정안
+   - patch-feasible (yes/no)
+
+   중요:
+   - 입력이 요약 기반이라 확신이 낮으면 추측하지 말고 "원문 필요"라고 명시한다.
+   - 원문 필요 항목만 지정하면 supervisor가 해당 화수 전문을 추가 전송한다.
+   ```
+   - Save the normalized result to `summaries/arc-readthrough-report.md`.
+   - If the external AI requests source text for a specific item, send only that episode (or small chunk), not the whole arc.
+   - Triaging rule:
+     - `patch-feasible: yes` and local to 1-2 episodes → send `/narrative-fix --source arc-read`
+     - wider structural issue → add `[HOLD]` and defer to `/narrative-review` or `/plot-repair`
+5. Check if `plot/{arc}.md` exists for the new arc
    - If missing, send plot generation prompt (3c) first
-4. **Run `/why-check plan` on the new arc's plot file**: After plot/{arc}.md is created (or confirmed to exist), send:
+6. **Run `/oag-check plan` on the new arc's plot file**: After plot/{arc}.md is created (or confirmed to exist), send:
+   ```
+   plot/{arc}.md에 대해 /oag-check plan을 실행해줘.
+   - .claude/agents/oag-checker.md의 Planning Mode 절차를 따른다.
+   - PLANNING GAP/MOTIVATION GAP이 발견되면 plot/{arc}.md를 즉시 수정한다.
+   - 산출물: summaries/oag-check-plan-{arc}.md
+   - 완료 후 대기.
+   ```
+7. **Run `/why-check plan` on the new arc's plot file**: Send:
    ```
    plot/{arc}.md에 대해 /why-check plan을 실행해줘.
    - .claude/agents/why-checker.md의 Planning Mode 절차를 따른다.
-   - 이전 아크까지의 본문도 참조하여, 이 플롯이 만들 WHY/HOW 질문에 답이 있는지 확인한다.
    - PLANNING GAP이 발견되면 plot/{arc}.md를 즉시 수정한다.
    - 산출물: summaries/why-check-plan-{arc}.md
    - 완료 후 대기.
    ```
-   Wait for completion. This is the highest-value application of why-checker — fixing a gap in the outline costs one sentence, fixing it in finished prose costs a scene rewrite.
+   Wait for completion. Fixing a gap in the outline costs one sentence; fixing it in finished prose costs a scene rewrite.
 5. Arc transitions are periodic check triggers, so add to the first episode prompt after transition:
 
 ```

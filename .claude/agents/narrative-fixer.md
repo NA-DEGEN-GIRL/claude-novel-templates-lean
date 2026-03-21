@@ -184,11 +184,13 @@ When invoked with `--source why-check`, this agent operates under stricter const
 
 ### WHY-CHECK Mode Rules
 
-1. **Target**: MISSING items only (INFERABLE only with `--promote`)
+1. **Target**: MISSING items + CONSEQUENCE GAP items (INFERABLE only with `--promote`)
 2. **Skip**: Items matching CLAUDE.md §5.1 (intentional mysteries) → auto-skip with 🔒
 3. **Skip**: Items already in narrative-review fix guide as `confirmed` → narrative-fix owns those
 4. **Limit**: 1-3 sentences per item, single episode, existing scene only
 5. **Escalate to HOLD**: If fix requires new scene, multi-episode changes, setting additions, or plot changes
+6. **CAUSAL CHAIN BREAK → 자동 HOLD**: BREAK 항목은 이후 텍스트와 직접 충돌하므로 1-3문장 패치로 해결 불가. 자동 HOLD 처리하고 `/plot-repair` 또는 `/narrative-review`로 이관한다.
+7. **CGAP 패치 원칙**: 가능한 한 장면 내부의 흔적/반응/수습으로 닫는다. 다만 인과 회복에 필요하다면, 관리 가능한 후속 의무는 허용한다.
 
 ### WHY-CHECK Strategies (E1-E4)
 
@@ -207,6 +209,52 @@ Move existing explanation to where the reader needs it. No new content.
 
 ---
 
+## Arc-Read Mode (`--source arc-read`)
+
+When invoked with `--source arc-read`, the input is `summaries/arc-readthrough-report.md` — 외부 AI 아크 통독에서 발견된 흐름 결함.
+
+### Arc-Read Mode Rules
+
+1. **Target**: `patch-feasible: yes` 항목을 처리. `[HOLD]` 항목은 스킵.
+2. **최소 수정 우선**: 가능한 한 적게 건드리되, 흐름을 살리기 위해 필요한 만큼은 자유롭게 수정한다. 문장 수나 화수에 대한 경직된 제한은 없다.
+3. **성격**: arc-read 결함은 주로 **중복 제거, 순서 조정, 반응 보강, 전환 매끄럽게**이다. 새 정보 삽입보다는 기존 텍스트의 흐름을 다듬는 작업.
+
+### Arc-Read Strategies (R1-R4)
+
+#### R1. Deduplication (중복 제거)
+같은 정보/독백/판단이 인접 화에 중복 → 한쪽을 삭제하거나 변주로 교체.
+- 원칙: 먼저 나온 쪽을 유지, 나중 쪽을 삭제 또는 변주.
+
+#### R2. Resequencing (순서 조정)
+사건/방문/결정의 순서가 어색 → 장면 순서를 재배치하거나 연결 문장 추가.
+- 원칙: 인과 순서를 따르되, 기존 장면의 내용은 최대한 보존.
+
+#### R3. Reaction Reinforcement (반응 보강)
+직전 사건에 대한 인물 반응이 약함 → 1-2문장의 반응/인지를 추가.
+- E2(반응 추가)와 유사하나, 원인이 "설명 누락"이 아니라 "흐름 단절"인 점이 다름.
+
+#### R4. Transition Smoothing (전환 매끄럽게)
+에피소드 경계에서 흐름이 끊김 → 끝/시작에 연결 문장 추가 또는 수정.
+
+### Arc-Read Fix Log
+
+Write `summaries/arc-read-fix-log.md`:
+
+```markdown
+# Arc-Read Fix 수정 로그
+
+> 수정일: {date}
+> 기반 보고서: arc-readthrough-report.md
+
+## 수정 내역
+
+| ID | 화수 | 전략 | 수정 내용 | 상태 |
+|----|------|------|----------|------|
+| AR-01 | {N}화 | R{n} | {1줄 요약} | ✅ 완료 / ⏸️ HOLD |
+```
+
+---
+
 ## OAG Mode (`--source oag`)
 
 When invoked with `--source oag`, the input is `summaries/oag-report.md` instead of narrative-review or why-check reports. OAG items are **행동 누락** — 캐릭터가 알면서 안 한 것.
@@ -217,7 +265,17 @@ When invoked with `--source oag`, the input is `summaries/oag-report.md` instead
 2. **Read the original episode text** and understand the scene context before fixing
 3. **Character-fit**: Fix must match the character's personality from settings/03-characters.md. Don't insert actions that feel out of character.
 4. **Limit**: 1-3 sentences per item, single episode, existing scene
-5. **Escalate to HOLD**: If fix requires new scene, multi-episode changes, or plot restructuring
+5. **Escalate to HOLD**: If fix requires new scene, multi-episode changes, or plot restructuring.
+   - **oag-report의 `plot-change-needed` 항목은 자동 HOLD.** Fixer는 이 판정을 재분류할 수 없다. `patch-feasible` 항목만 수정한다.
+   - **Self-test (supplementary)**: `patch-feasible` 항목이라도, 수정 후 "이 패치 후에도 독자의 원래 의문이 남아 있는가?"를 확인한다. 남아 있으면 수정을 폐기하고 HOLD로 격상한다.
+   - HOLD items are reported back with `⏸️ HOLD — 플롯 수정 필요` and a brief reason. The fixer does NOT attempt a weaker patch as fallback for HOLD items.
+   - **HOLD 해제**: fixer가 아닌, 사용자 또는 narrative-reviewer만 가능.
+6. **Prefer scene-grounded fixes**: OAG를 메울 때는 현재 장면 안의 제약, 망설임, 검토 흔적처럼 장면에 발을 딛는 설명을 우선한다. 미래 계획을 덧붙여 해결하는 방식은 기본 선택지로 삼지 않는다. 다만 구체적 추적 의무를 만들지 않는 열린 의도 표현은 자유롭게 허용한다.
+7. **Avoid creating new continuity obligations**: 삽입 문장이 이후 화에서 "지켰는지/안 지켰는지" 확인해야 하는 약속, 시한, 후속 조치를 새로 만들 수 있다면 주의한다. 그런 경우에는 더 약한 표현으로 낮추거나, 비구속적 생각/감정 반응으로 대체한다.
+   - **OK (열린 의도)**: "다음에 마주치면 물어봐야지", "여유가 생기면 알아봐야겠다", "마음에 걸렸다", "강해져야 한다", "언젠가 다시 생각해 볼 문제였다"
+   - **Risky (구속 약속)**: "보름 안에 돌아온다", "사흘 뒤 사람을 보내겠다", "내일 다시 확인하겠다"
+   - **Rule of thumb**: 일정·약속·실행계획보다 감정·방향성·찜찜함을 우선한다.
+8. **OAG mode plot usage = veto only**: OAG 모드에서는 `plot/{arc}.md`를 수정 내용 생성의 참고로 사용하지 않는다. 수정안을 만든 뒤 plot과의 충돌 여부를 확인하는 veto 용도로만 사용한다. 충돌 시 수정안을 폐기하고 더 약한 버전으로 대체하거나 HOLD 처리한다.
 
 ### OAG Strategies (A1-A3)
 

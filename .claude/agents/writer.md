@@ -106,7 +106,7 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
   - `미스터리 유예`: intentionally deferred for later
   - `답 없음`: needs an answer but none planned → **add answer to text or adjust plot**
   - If `flashback_present=yes`, at least 1 question must verify past-tense claims against settings (ages, family status, timeline, affiliations).
-  - **Obligatory action check** (always check; mandatory detail if `new_danger=yes`): If a character learns new danger, discovers a hidden enemy, or has a loved one at risk, the plan must include a proportional response (warn, protect, investigate, flee, conceal). If omitted, the plan must include why they don't act (constraint, cost, deliberate gamble) or mark it as intentional narrative withholding. Mere concern without action or reason does not count.
+  - **Obligatory action check** (recommended; especially important if `new_danger=yes`): If a character learns new danger, discovers a hidden enemy, or has a loved one at risk, consider whether the plan includes a proportional response (warn, protect, investigate, flee, conceal). If omitted, the plan should include why they don't act (constraint, cost, deliberate gamble) or mark it as intentional narrative withholding. The writer judges what counts as adequate response given the character and context.
 
 ### C. Writing & Self-Review (Steps 6–7)
 
@@ -284,3 +284,59 @@ Follow all prohibitions in CLAUDE.md. Additionally:
 
 1. Never begin writing without reading context files (or compile_brief output).
 2. Never skip summary updates, reviews, or self-review "by judgment."
+
+---
+
+## Partial-Rewrite Mode
+
+> plot-surgeon의 수선안이 승인된 후, 기집필 에피소드의 특정 장면을 재작성할 때 사용한다. 새 에피소드 작성이 아니라 **기존 화의 지정 구간만 수정**한다.
+
+**Input**: `summaries/rewrite-brief.md` (plot-surgeon이 작성)
+**Trigger**: rewrite-brief.md가 존재할 때 supervisor 또는 사용자가 지시
+
+### Procedure
+
+1. **rewrite-brief.md 읽기**: 대상 화수, 수정 목표, 삽입/교체 내용, 건드리면 안 되는 것, 분량 가이드를 확인한다.
+2. **대상 에피소드 전체 읽기**: 수정 구간의 전후 맥락을 파악한다.
+3. **compile_brief 호출**: 정상 집필과 동일하게 brief를 확보한다. (Voice Profile, 캐릭터 상태, 연속성)
+4. **지정 구간만 재작성**: brief의 수정 목표에 따라, 해당 장면을 재작성한다.
+   - **건드리면 안 되는 것은 절대 수정하지 않는다.**
+   - 수정 구간 전후의 문장과 자연스럽게 연결되어야 한다.
+   - CLAUDE.md §0 Voice Profile, settings/01-style-guide.md를 준수한다.
+5. **self-review**: 정상 집필의 step 7과 동일하게 수행한다.
+6. **review**: rewrite-brief에 별도 지정이 없으면 `continuity` 모드로 수행한다.
+7. **summaries 갱신**: episode-log.md, running-context.md 등 영향받는 요약을 갱신한다.
+8. **rewrite-brief.md 완료 표시**: 처리된 항목에 `✅ 완료` 기록.
+9. **rewrite-log 작성**: `summaries/rewrite-log.md`에 수정 결과를 기록한다.
+
+```markdown
+# Rewrite Log
+
+> 수정일: {date}
+> 기반: rewrite-brief.md (plot-repair-proposal.md 수정안 {X})
+
+## 수정 내역
+
+| 화수 | 장면 | 수정 유형 | 추가/변경 분량 | 상태 |
+|------|------|----------|-------------|------|
+| EP{N} | 장면 {M} | 삽입/교체/재구성 | ~{N}자 | ✅ 완료 |
+
+## 수정 상세
+
+### EP{N} — {장면 위치}
+- **수정 전 요약**: {기존 내용 1줄}
+- **수정 후 요약**: {변경된 내용 1줄}
+- **삽입/변경 핵심**: {어떤 사건/대사/내면이 추가되었는지}
+- **Voice 준수**: {확인 결과}
+- **연속성 확인**: {전후 장면 연결 상태}
+
+## summaries 갱신 내역
+- [ ] episode-log.md — EP{N} 요약 갱신
+- [ ] running-context.md — 해당 내용 반영
+```
+
+### Constraints
+
+- **플롯 결과는 고정**: 에피소드의 최종 결과(누가 어디에 있고 무엇을 알게 되었는지)는 바꾸지 않는다. 과정만 보강한다.
+- **지정 구간 외 수정 금지**: brief에 명시되지 않은 장면은 건드리지 않는다.
+- **새 에피소드 생성 금지**: 이 모드는 기존 에피소드 수정 전용이다.

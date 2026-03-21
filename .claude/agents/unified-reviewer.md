@@ -69,7 +69,7 @@ Evaluate from the reader's perspective. Core criterion: **"Does the reader want 
 | 6 | Immersion/pacing | 4 | Boring stretches, unnecessary descriptions, appropriate length |
 | 7 | Foreshadowing/hooks | 3 | New hooks planted, existing hooks utilized, anticipation built |
 
-**AI Psychological Violation Patterns** — In `standard` mode, report only patterns actually found during reading. In `full` mode, perform exhaustive P1-P10 audit.
+**AI Psychological Suspicion Patterns** — 아래는 AI가 빠지기 쉬운 패턴이지만, **캐릭터 성격이나 장르적 의도로 정당화될 수 있다.** 절대 위반이 아니라 의심 신호로 취급하고, 맥락을 확인한 뒤 판정한다. In `standard` mode, report only patterns actually found during reading. In `full` mode, perform exhaustive P1-P10 audit.
 
 | # | Pattern | Description |
 |---|---------|-------------|
@@ -84,7 +84,7 @@ Evaluate from the reader's perspective. Core criterion: **"Does the reader want 
 | P9 | 감정의 증발 | Strong emotion from previous scene completely gone in next scene |
 | P10 | 증거 없는 성장 | 인물의 중요한 성장이나 입장 변화가 서사 안에서 체감되지 않고 선언만 앞설 때. 누적된 선택·관계·행동 차이로도 입증 가능. 성장 동력은 고통뿐 아니라 기쁨·연결·깨달음도 된다. |
 
-Any pattern found → deduct from B2 + flag as ⚠️ with location and fix suggestion.
+Pattern found → check if it's justified by character personality, genre convention, or intentional narrative choice. If unjustified → deduct from B2 + flag as ⚠️ with location and fix suggestion. If justified → note as "의도적 사용" and do not deduct.
 
 **Score interpretation**: 4.5-5.0 Excellent (publish) / 3.5-4.4 Good (minor edits) / 2.5-3.4 Revision needed / Below 2.5 Re-review required
 
