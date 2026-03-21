@@ -144,8 +144,13 @@ else                                  → review_floor = continuity
    - 결함 없으면: E단계로
 
 **E. 한국어 자연스러움 교정**
-7. 모든 수정(A~D)이 완료된 최종본에 대해 `/naturalness` 실행 → `summaries/naturalness-report.md`
-8. 보고서 기반으로 `/naturalness-fix` 실행 — 채택된 어휘 치환은 `summaries/style-lexicon.md`에 기록
+7. `/naturalness` 실행 (화별 개별 Agent) → `summaries/naturalness-report.md`
+8. `/naturalness-fix` 실행 — 채택된 어휘 치환은 `summaries/style-lexicon.md`에 기록
+9. **GPT 결합 자연성 검사** (선택 — GPT 한도 초과 시 스킵):
+   - 각 화별로 `ask_gpt`에 본문을 보내고, 결합 자연성만 전문으로 검사
+   - 프롬프트: "이 한국어 소설 텍스트에서 문법은 맞지만 한국어 화자가 거의 쓰지 않는 단어 결합을 찾아줘. 시적 비유나 의도적 표현은 제외. 진짜 어색한 결합만."
+   - 결과는 `summaries/naturalness-report.md`에 추가 기록
+   - GPT 호출 실패 시 → 스킵하고 다음 단계로
 
 **F. 아크 마감**
 9. Arc summary + character state reset (settings/05-continuity.md)
