@@ -120,7 +120,7 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
 
   **Always (every episode):**
   - [ ] 7-1. Do character speech patterns match settings?
-  - [ ] 7-2. Is the length within target range? → Verify with `char_count`.
+  - [ ] 7-2. Is the length roughly within target range (±20% is fine)? → `char_count` for reference only. 서사의 자연스러운 호흡이 분량 목표보다 우선한다.
   - [ ] 7-3. Were any characters/abilities/locations improvised without being in settings?
   - [ ] 7-4. Were any CLAUDE.md prohibitions violated?
   - [ ] 7-5. **Dialogue grammar check**: ❌ 평서형 종결(`-다/-는다/-했다/-있다`) + `?`로 의문문 만들기 (되물음·혼잣말 제외). ❌ 종결어미에 `요` 기계적 덧붙이기 (`가라요/마라요/그러냐요`).
