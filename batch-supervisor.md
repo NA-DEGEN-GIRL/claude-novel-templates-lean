@@ -102,7 +102,9 @@ elif N % 5 == 0                       → review_floor = standard
 else                                  → review_floor = continuity
 ```
 
-**Arc transition package** (마지막 화 완료 후 자동 실행):
+**Arc transition package** (마지막 화 완료 후 supervisor가 반드시 순서대로 지시):
+
+> **주의**: writer가 자체적으로 arc summary만 만들고 A~E를 스킵하는 경우가 있다. supervisor가 A→B→C→D→E→F를 빠짐없이 순차 지시해야 한다. 한 단계가 완료되었음을 확인한 뒤 다음 단계를 지시한다.
 
 **A. OAG 탐지 + 플롯 수선** (plot-change-needed가 있을 때만)
 1. `/oag-check` on completed arc → `oag-report.md`
