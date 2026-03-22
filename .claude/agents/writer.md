@@ -131,17 +131,18 @@ Specialized agent for web novel episode writing. Handles: manuscript → summary
   - [ ] 7-5. **Style lexicon check**: compile_brief의 어휘 치환 사전에 해당하는 표현이 본문에 있으면 교정. 새로운 어휘 치환을 적용했으면 `summaries/style-lexicon.md`에 해당 파일의 포맷대로 추가.
   - [ ] 7-6. **Dialogue grammar check**: ❌ 평서형 종결(`-다/-는다/-했다/-있다`) + `?`로 의문문 만들기 (되물음·혼잣말 제외). ❌ 종결어미에 `요` 기계적 덧붙이기 (`가라요/마라요/그러냐요`).
   - [ ] 7-7. **Ending hook verification**: Does the draft's actual ending deliver the hook planned in step 4(d)? Is the type different from the previous episode? (If intentionally omitted, record in EPISODE_META.)
-  - [ ] 7-8. **Loanword check** (pre-modern/historical settings only — skip for modern/SF): Scan the draft for English loanwords (외래어) in prose. Common offenders: 시스템→체계, 패턴→규칙/결, 에너지→기운, 허브→약초, 아우라→기운, 레벨→단계/등급, 밸런스→균형. Choose replacements fitting your novel's register.
+  - [ ] 7-8. **Loanword check** (pre-modern/historical settings only — skip for modern/SF): Scan the **entire draft including UI/readout/system text** for loanwords (외래어). UI 문구도 예외 아님 — 세계관에 맞는 한자어/고유어로 대체. Common offenders: 시스템→체계, 패턴→규칙/결, 에너지→기운, 에너지원→기원(氣源), 허브→약초, 아우라→기운, 레벨→단계/등급, 밸런스→균형, 네트워크→정보망.
+  - [ ] 7-9. **POV knowledge boundary**: 이 문장을 POV 인물이 **지금 이 시점에서** 말하거나 생각할 수 있는가? 아직 모르는 사실/명칭/용어를 서술에 사용하지 않았는가? close POV에서 후행 설정 진실이 선반영되면 information leak.
 
   **Triggered by planning flags:**
   - If `flashback_present=yes`:
-    - [ ] 7-9. **Flashback/setting consistency** — Any flashback/backstory claim (age, family alive/dead, origin, affiliation, injury, dates) must match settings and current timeline. Do not fill gaps with genre conventions. Cross-ref knowledge-map.
+    - [ ] 7-10. **Flashback/setting consistency** — Any flashback/backstory claim (age, family alive/dead, origin, affiliation, injury, dates) must match settings and current timeline. Do not fill gaps with genre conventions. Cross-ref knowledge-map.
   - If `new_danger=yes`:
     - [ ] 7-10. **Obligatory action check** — If a character learned new danger/enemy/critical info, the draft must show a proportional response given their goals and loved ones. If absent, BOTH must hold: (a) the text contains at least a minimal signal (character notices but is forced to defer, or a visible constraint prevents action), AND (b) the deliberate withholding is recorded in EPISODE_META intentional_deviations or summaries/decision-log.md. Internal record alone without any textual signal = plot hole.
   - If `calc_used=yes`:
-    - [ ] 7-11. **Calc precision check** — Do any character dialogue/monologue/close-POV lines contain tool-derived exact numbers? Characters estimate like humans — convert exact calc results to human-scale approximations per CLAUDE.md §3.2.4.
+    - [ ] 7-12. **Calc precision check** — Do any character dialogue/monologue/close-POV lines contain tool-derived exact numbers? Characters estimate like humans — convert exact calc results to human-scale approximations per CLAUDE.md §3.2.4.
   - If `new_setting_claim=yes`:
-    - [ ] 7-12. **New setting claim check** — Any new world rule or setting claim must not contradict established worldbuilding in `settings/04-worldbuilding.md`. Cross-ref knowledge-map for character information boundaries.
+    - [ ] 7-13. **New setting claim check** — Any new world rule or setting claim must not contradict established worldbuilding in `settings/04-worldbuilding.md`. Cross-ref knowledge-map for character information boundaries.
 
 ### D. Summary Update (Steps 8–9)
 

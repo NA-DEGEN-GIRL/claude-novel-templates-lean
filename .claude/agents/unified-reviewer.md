@@ -43,9 +43,10 @@ Read the text from start to finish and compare against the brief. Mark ⚠️ wh
 | 8 | Deceased characters | No reappearance of dead characters? Past tense when mentioned? (세계관 규칙과 사전 단서가 있는 재등장 — 부활, 회귀, 빙의, 환영, 꿈, 복제, 영혼 등 — 은 허용. settings/03-characters.md 규칙 4 참조) |
 | 9 | Emotional/relationship continuity | Do relationships reflect prior events? No unexplained emotional shifts? |
 | 10 | Promise/plan consistency | Based on promise-tracker: No altered promise details? No ignored deadlines? |
-| 11 | Information possession consistency | Based on knowledge-map: No use of unknown information? No non-reaction to known information? |
+| 11 | Information possession consistency | Based on knowledge-map: No use of unknown information? No non-reaction to known information? **명칭/용어 수준도 확인**: POV 인물이 아직 모르는 이름/분류/용어를 서술에 사용하지 않았는가? (예: "탐사선"이라는 명칭을 모르는 시점에서 "탐사선 잔해"라고 서술) |
 | 12 | Encounter/relationship consistency | Based on relationship-log: No familiar conversation between unacquainted characters? |
-| 13 | Era/worldbuilding terminology | **Pre-modern/historical**: No anachronistic loanwords or Arabic numerals in prose? **Modern/SF**: N/A — loanwords and modern units are natural. **CLAUDE.md prohibitions override settings examples** — if a settings example contains a loanword, do not accept it in prose. Flag any 외래어 as ❌, not ⚠️. |
+| 13 | Era/worldbuilding terminology | **Pre-modern/historical**: No anachronistic loanwords or Arabic numerals in prose? **UI/readout/system 문구도 예외 아님** — 세계관에 맞는 어휘만 사용. **Modern/SF**: N/A — loanwords and modern units are natural. **CLAUDE.md prohibitions override settings examples** — if a settings example contains a loanword, do not accept it in prose. Flag any 외래어 as ❌, not ⚠️. |
+| 14 | Intra-scene spatial/action logic | 장면 내부에서 인물의 동작/시선/방향 순서가 모순되지 않는가? 아직 안 돌아섰는데 등 뒤를 보거나, 앉은 상태에서 걷는 행동이 나오지 않는가? |
 
 **Time/distance verification principle**: Vague expressions ("며칠 후", "사흘 거리") are NOT errors. Only verify with `novel-calc` when specific numbers are stated.
 
