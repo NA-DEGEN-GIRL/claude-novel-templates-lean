@@ -251,8 +251,10 @@ def _filter_knowledge_map(
         ]
         result_lines.append("|" + "|".join(filtered) + "|")
 
-    # 결과가 너무 길면 최근 정보만 (마지막 15행)
-    max_data_rows = 15
+    # 결과가 너무 길면 최근 정보만 (마지막 25행)
+    # 장편(60화+)에서 15행은 핵심 지식을 놓칠 수 있으므로 25행으로 확대.
+    # 전역 핵심 정보(비밀/오해 등)는 _extract_global_knowledge로 별도 보장됨.
+    max_data_rows = 25
     if len(result_lines) > max_data_rows + 2:  # 헤더+구분선+N행
         header_rows = result_lines[:2]
         data_rows = result_lines[2:]
@@ -281,7 +283,7 @@ def _filter_relationship_log(
 
     # 1. 관계 매트릭스
     matrix_match = re.search(
-        r"## 관계 매트릭스\s*\n((?:\|.+\n)+)", content
+        r"## (?:관계 매트릭스|관계 상태 매트릭스)\s*\n((?:\|.+\n)+)", content
     )
     if matrix_match:
         matrix_text = matrix_match.group(1)
@@ -377,9 +379,9 @@ def _filter_promise_tracker(content: str) -> str:
     if not content:
         return "(파일 없음)"
 
-    # '## 활성 약속' 섹션 추출
+    # '## 활성 약속' 또는 '## 활성 약속 (미이행)' 섹션 추출
     active_match = re.search(
-        r"## 활성 약속\s*\n(.*?)(?=\n## |$)",
+        r"## 활성 약속(?:\s*\(미이행\))?\s*\n(.*?)(?=\n## |$)",
         content,
         re.DOTALL,
     )
@@ -650,15 +652,16 @@ def _extract_claude_md_rules(content: str) -> str:
     parts: list[str] = []
 
     # 금지사항 섹션 — 번호 항목만 추출 (설명 제거)
+    # 한국어("금지 사항") 또는 영어("Prohibitions") 헤딩 모두 매칭
     prohib_match = re.search(
-        r"## 5\. 금지 사항\s*\n(.*?)(?=\n### 5\.1|$)",
+        r"## 5\.\s*(?:금지 사항|Prohibitions)\s*\n(.*?)(?=\n### 5\.1|$)",
         content,
         re.DOTALL,
     )
     if not prohib_match:
         # §5.1이 없는 경우 원래 패턴으로 폴백
         prohib_match = re.search(
-            r"## 5\. 금지 사항\s*\n(.*?)(?=\n## \d|$)",
+            r"## 5\.\s*(?:금지 사항|Prohibitions)\s*\n(.*?)(?=\n## \d|$)",
             content,
             re.DOTALL,
         )
@@ -678,7 +681,7 @@ def _extract_claude_md_rules(content: str) -> str:
     # §5.1 Intentional Mysteries — 테이블 전체를 추출
     # 의도적 미스터리를 브리프에 포함해야 작가가 플롯 홀로 오인하지 않는다
     mystery_match = re.search(
-        r"### 5\.1 Intentional Mysteries.*?\n(.*?)(?=\n## \d|\n---\n|$)",
+        r"### 5\.1\s*(?:Intentional Mysteries|의도적 미스터리|의도적 비밀).*?\n(.*?)(?=\n## \d|\n### 5\.2|\n---\n|$)",
         content,
         re.DOTALL,
     )
@@ -747,9 +750,9 @@ def _extract_style_rules(content: str) -> str:
         text = re.sub(r"```.*?```", "", pov_match.group(1), flags=re.DOTALL)
         parts.append("**시점**: " + text.strip()[:300])
 
-    # 문장 리듬 기본 원칙
+    # 문장 리듬 기본 원칙 (lean: "우선 원칙", legacy: "기본 원칙")
     rhythm_match = re.search(
-        r"### 기본 원칙\s*\n(.*?)(?=\n###|\n## |$)",
+        r"### (?:\d+\.\d+\s+)?(?:우선 원칙|기본 원칙)\s*\n(.*?)(?=\n###|\n## |$)",
         content,
         re.DOTALL,
     )
@@ -762,24 +765,38 @@ def _extract_style_rules(content: str) -> str:
 def _extract_notation_rules(
     worldbuilding: str, claude_md: str
 ) -> str:
-    """worldbuilding과 CLAUDE.md에서 표기/단위 규칙을 추출한다."""
+    """worldbuilding과 CLAUDE.md에서 표기/단위 규칙을 추출한다.
+
+    시대 판별: worldbuilding에 현대/SF 키워드가 있으면 비현대 숫자 규칙을 주입하지 않는다.
+    """
     rules: list[str] = []
 
-    # CLAUDE.md에서 비현대 숫자 표기 규칙
-    if "아라비아 숫자" in claude_md:
-        rules.append("- 비현대 배경: 아라비아 숫자 금지, 한글 수사 사용")
-    if "소수점" in claude_md:
-        rules.append("- 소수점 금지 (1.5장→한 장 반)")
-    if "사흘" in claude_md:
-        rules.append("- 3일→사흘, 7일→이레, 10일→열흘, 15일→보름")
-
-    # worldbuilding에서 시대 배경
+    # worldbuilding에서 시대 배경 판별
+    is_modern = False
+    era_desc = ""
     if worldbuilding:
         era_match = re.search(
             r"(?:시대|배경|세계관).*?[:：]\s*(.+)", worldbuilding
         )
         if era_match:
-            rules.insert(0, f"- 세계관: {era_match.group(1).strip()[:100]}")
+            era_desc = era_match.group(1).strip()[:100]
+            rules.append(f"- 세계관: {era_desc}")
+
+        modern_keywords = ["현대", "SF", "미래", "21세기", "20세기", "근대", "sci-fi", "science fiction", "cyberpunk"]
+        wb_lower = worldbuilding.lower()
+        if any(kw.lower() in wb_lower for kw in modern_keywords):
+            is_modern = True
+
+    # CLAUDE.md에서 비현대 숫자 표기 규칙 — 비현대 배경에서만 주입
+    if not is_modern:
+        if "아라비아 숫자" in claude_md:
+            rules.append("- 비현대 배경: 아라비아 숫자 금지, 한글 수사 사용")
+        if "소수점" in claude_md:
+            rules.append("- 소수점 금지 (1.5장→한 장 반)")
+        if "사흘" in claude_md:
+            rules.append("- 3일→사흘, 7일→이레, 10일→열흘, 15일→보름")
+    else:
+        rules.append("- 현대/SF 배경: 아라비아 숫자, 현대 단위, 외래어 자연스럽게 허용")
 
     return "\n".join(rules) if rules else ""
 
@@ -980,21 +997,21 @@ def _compile_brief(
     goals = _extract_episode_goals(novel_dir, episode_number)
     sections.append(f"## 이번 화 목표\n\n{goals}")
 
-    # 2. 최근 맥락 — 현재 시점 + 최근 아크 요약만 (전체 흐름 압축은 생략)
+    # 2. 최근 맥락 — 현재 상태 + 최근 아크 요약만 (압축 흐름은 생략)
     if running_context:
         rc_parts: list[str] = []
-        # "## 현재 시점" 섹션 추출
+        # "## 현재 상태" 또는 "## 현재 시점" 섹션 추출
         current_match = re.search(
-            r"## 현재 시점\s*\n(.*?)(?=\n## |$)",
+            r"## (?:현재 상태|현재 시점)\s*\n(.*?)(?=\n## |$)",
             running_context,
             re.DOTALL,
         )
         if current_match:
             rc_parts.append(current_match.group(1).strip())
 
-        # "## 전체 흐름 압축" 중 마지막 아크 2개만
+        # "## 압축 흐름" / "## 전체 흐름 압축" / "## 전체 흐름 (압축)" 중 마지막 아크 2개만
         flow_match = re.search(
-            r"## 전체 흐름 압축\s*\n(.*?)(?=\n## |$)",
+            r"## (?:압축 흐름|전체 흐름 압축|전체 흐름 \(압축\))\s*\n(.*?)(?=\n## |$)",
             running_context,
             re.DOTALL,
         )
@@ -1119,6 +1136,48 @@ def _compile_brief(
 
     sections.append(f"## 핵심 규칙\n\n{rules_combined}")
 
+    # 9.5. 연속성 불변 조건 + 타임라인 (settings/05-continuity.md에서 추출)
+    continuity = _safe_read(novel_path / "settings" / "05-continuity.md")
+    if continuity:
+        cont_parts = []
+        # 불변 조건 표 추출 (헤딩과 테이블 사이에 blockquote/빈줄이 있을 수 있음)
+        inv_match = re.search(
+            r"### Continuity Invariants.*?\n((?:>.*\n|\s*\n)*)((?:\|.+\n)+)",
+            continuity,
+        )
+        if inv_match:
+            inv_text = inv_match.group(2).strip()
+            # 플레이스홀더 행 제외
+            inv_lines = [
+                l for l in inv_text.splitlines()
+                if l.startswith("|") and "{{" not in l
+            ]
+            if inv_lines:
+                cont_parts.append(
+                    "### 불변 조건 (반드시 준수)\n\n"
+                    + "\n".join(inv_lines)
+                )
+
+        # 타임라인 마커 추출 (헤딩과 테이블 사이에 blockquote/빈줄 가능)
+        tm_match = re.search(
+            r"### Key Timeline Markers.*?\n((?:>.*\n|\s*\n)*)((?:\|.+\n)+)",
+            continuity,
+        )
+        if tm_match:
+            tm_text = tm_match.group(2).strip()
+            tm_lines = [
+                l for l in tm_text.splitlines()
+                if l.startswith("|") and "{{" not in l
+            ]
+            if tm_lines:
+                cont_parts.append(
+                    "### 핵심 타임라인\n\n"
+                    + "\n".join(tm_lines)
+                )
+
+        if cont_parts:
+            sections.append("## 연속성 불변 조건\n\n" + "\n\n".join(cont_parts))
+
     # 10. 등장인물 설정 슬라이스 (settings/03-characters.md에서 핵심만)
     # characters가 비어있으면(첫 화 등) 전체 추적 캐릭터, 그것도 비면 주인공+주요 캐릭터 전체
     slice_chars = characters
@@ -1130,6 +1189,17 @@ def _compile_brief(
     if char_slice:
         sections.append(f"## 등장인물 설정\n\n{char_slice}")
 
+    # 10.5. 에피소드 구조/분량 (settings/02-episode-structure.md에서 핵심만)
+    ep_structure = _safe_read(novel_path / "settings" / "02-episode-structure.md")
+    if ep_structure:
+        # "## 4. 분량 가이드" 또는 "분량" 섹션의 테이블 전체 추출
+        table_match = re.search(
+            r"## \d+\.\s*분량.*?\n\s*\n?((?:\|.+\n)+)",
+            ep_structure,
+        )
+        if table_match:
+            sections.append("## 분량/구조\n\n" + table_match.group(1).strip())
+
     # 11. 어휘 치환 사전 (style-lexicon — 작고 전역적이므로 전체 포함)
     style_lexicon = _safe_read(summaries / "style-lexicon.md")
     if style_lexicon:
@@ -1140,6 +1210,29 @@ def _compile_brief(
         ]
         if data_rows:
             sections.append(f"## 어휘 치환 사전\n\n{style_lexicon.strip()}")
+
+    # 12. 반복 패턴 감시 목록 (repetition-watchlist — WATCH/HIGH만 압축)
+    watchlist = _safe_read(summaries / "repetition-watchlist.md")
+    if watchlist:
+        watch_lines = []
+        in_watch_section = False
+        for line in watchlist.splitlines():
+            stripped = line.strip()
+            # "## 감시 중 (WATCH)" 또는 WATCH/HIGH가 포함된 섹션만
+            if "감시 중" in stripped or "WATCH" in stripped or "HIGH" in stripped:
+                in_watch_section = True
+            elif stripped.startswith("## 면책") or stripped.startswith("## 해결"):
+                in_watch_section = False
+            # 데이터 행 추출 (헤더/구분선 제외, 감시 섹션 내부만)
+            if in_watch_section and stripped.startswith("|") and not stripped.startswith("| ID") and not stripped.startswith("|--"):
+                watch_lines.append(stripped)
+        if watch_lines:
+            sections.append(
+                "## 반복 패턴 주의 (WATCH/HIGH)\n\n"
+                "| ID | 유형 | 패턴 | 현재 빈도 | 허용 한도 | 비고 |\n"
+                "|----|----|------|---------|---------|------|\n"
+                + "\n".join(watch_lines[:15])  # 최대 15행
+            )
 
     brief = "\n\n".join(sections)
 

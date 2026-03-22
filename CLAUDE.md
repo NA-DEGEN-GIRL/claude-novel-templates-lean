@@ -138,7 +138,7 @@
 Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korean proofreading + external feedback in a single pass.
 
 **Modes** (periodic + change-based triggers):
-- `continuity` (every episode): 13 continuity items + critical Korean errors(❌) + 반복표현/번역투/호응오류
+- `continuity` (every episode): 14 continuity items + critical Korean errors(❌) + 반복표현/번역투/호응오류
 - `standard` (per `settings/07-periodic.md` trigger — default every 5 eps, flexible up to 8 **OR** new key character, relationship reversal, secret reveal, combat-heavy ep, etc.): continuity + 7 narrative items + full Korean proofing + external feedback
 - `full` (arc boundary / setting change / long-term foreshadowing payoff): all items + detailed analysis + direct settings/ reference
 
@@ -168,6 +168,12 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 **Why-checker** (`/why-check`): Runs at arc boundaries (text mode), arc starts (plan mode), and optionally every 5-8 episodes (rolling mini-check). See `.claude/agents/why-checker.md`.
 
 **OAG-checker** (`/oag-check`): Detects Obligatory Action Gaps — characters knowing information but failing to act on it. Runs at arc transitions (text mode) and before writing new arcs (plan mode). See `.claude/agents/oag-checker.md`.
+
+**POV-Era-checker** (`/pov-era-check`): POV 인물의 지식 범위를 벗어난 명칭/정보 + 시대/세계관에 부적합한 표현 전담 감사. 5화 단위 periodic check + 아크 경계 배치 실행. See `.claude/agents/pov-era-checker.md`.
+
+**Scene-Logic-checker** (`/scene-logic-check`): 장면 내부의 동작/시선/방향/자세 논리 모순 전담 감사. 아크 경계 배치 실행. See `.claude/agents/scene-logic-checker.md`.
+
+**Repetition-checker** (`/repetition-check`): 크로스 에피소드 반복 패턴(표현, 감정 처리, 정보 전달 구조, 에피소드 아키타입) 전담 감사. 5화 단위 정기 + 아크 경계 배치 실행. See `.claude/agents/repetition-checker.md`. 산출물: `summaries/cross-episode-repetition-report.md` + `summaries/repetition-watchlist.md`.
 
 ---
 
