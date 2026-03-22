@@ -144,7 +144,7 @@ else                                  → review_floor = continuity
    - 결함 없으면: E단계로
 
 **E. 한국어 자연스러움 교정**
-7. `/naturalness` 실행 — Claude(effort high) + GPT(effort high) 이중 검사 → `summaries/naturalness-report.md`
+7. `/naturalness` 실행 — Claude(한 문장씩 정밀 검사) + GPT(codex CLI effort high) 이중 검사 → `summaries/naturalness-report.md`
 8. `/naturalness-fix` 실행 — Claude + GPT 결과 모두 처리. 채택된 어휘 치환은 `summaries/style-lexicon.md`에 기록
 
 **F. 아크 마감**
