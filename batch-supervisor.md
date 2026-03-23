@@ -22,6 +22,8 @@ Claude Code periodically checks a tmux session and automatically supervises anot
 - **Writer**: Inside a tmux session, navigate to the novel folder (`no-title-XXX/`) and run `claude`.
   - Reads the novel folder's CLAUDE.md (writing constitution), so it follows that novel's specific rules.
 
+`settings/`는 hybrid, Claude lean, Codex lean이 공유하는 공통 집필 레이어다. 이 문서는 Claude 세션 오케스트레이션만 정의하며, 문체/캐릭터/연속성/정기 점검 규칙이 충돌하면 `settings/`를 우선한다.
+
 ---
 
 ## Configuration Variables
@@ -226,6 +228,7 @@ batch-supervisor는 plot-repair의 "사용자" 역할을 수행할 수 있다. `
 - compile_brief 실패 시에만 writer.md step 1의 폴백 순서를 따른다.
 - plot/{arc}.md를 확인하여 이번 화의 아크 역할과 다음 2~3화 런웨이를 맞춘다.
 - settings/03-characters.md에서 이번 화 핵심 인물의 대표 대사와 관계 상태를 확인한다.
+- 날짜, 나이, 이동, 부상, 미해결 약속, 불변 조건이 중요하면 settings/05-continuity.md를 직접 확인한다.
 - 직전 화 마지막 2~3문단을 확인하여 오프닝 연결과 엔딩 훅 중복을 방지한다.
 - planning flags(flashback_present, new_danger, new_setting_claim, calc_used)를 step 4에서 먼저 결정하고, step 7 자가 리뷰는 해당 플래그에 따라 조건부 항목까지 수행한다.
 - 파일명: chapters/{arc}/chapter-{NN}.md
@@ -255,6 +258,7 @@ batch-supervisor는 plot-repair의 "사용자" 역할을 수행할 수 있다. `
 - compile_brief(novel_dir="{{NOVEL_DIR}}", episode_number={N})로 현재 상태를 먼저 확인한다.
 - compile_brief를 우선 사용하되, writer.md step 2-3에 필요한 범위의 plot/{arc}.md와 직전 화 마지막 2~3문단은 직접 확인한다.
 - settings/03-characters.md에서 이번 화 핵심 인물의 대표 대사와 관계 상태를 다시 확인한다.
+- 날짜, 나이, 이동, 부상, 미해결 약속, 불변 조건이 중요하면 settings/05-continuity.md를 다시 확인한다.
 - step 4에서 planning flags를 먼저 결정하고, step 7 자가 리뷰는 해당 플래그 기반 조건부 항목까지 수행한다.
 - 외부 AI 리뷰: 매 화 반드시 review_episode MCP 호출 (실패 시 로그만 남기고 계속).
 - 리뷰 최소 모드(review_floor): {supervisor가 삽입}. 이 모드 이하로 강등 불가. 올릴 수만 있다.

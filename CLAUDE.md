@@ -55,7 +55,7 @@
 {{NOVEL_ID}}/
 ├── CLAUDE.md              ← This file (Writing Constitution)
 ├── EDITOR_FEEDBACK_*.md   ← Editor reviews (gemini/gpt/nim/ollama)
-├── settings/              ← Worldbuilding, characters, rules
+├── settings/              ← Shared novel-craft layer (same authoring rules as other templates)
 │   ├── 01-style-guide.md
 │   ├── 02-episode-structure.md
 │   ├── 03-characters.md
@@ -75,6 +75,8 @@
 └── .claude/agents/        ← Agents (writer, unified-reviewer, etc.)
 ```
 
+`settings/`는 hybrid, Claude lean, Codex lean이 공유하는 공통 집필 레이어다. 이 문서와 `batch-supervisor.md`는 Claude 런타임 규칙만 정의한다.
+
 ---
 
 ## 3. Writing Workflow
@@ -85,7 +87,8 @@
    - Fallback if unavailable: `summaries/running-context.md` → relevant arc plot → `plot/foreshadowing.md` → `summaries/character-tracker.md`.
 2. **Read last 2-3 paragraphs of previous episode**: Verify hook connection + prevent same ending hook type consecutively.
 3. **Check character anchors**: Read `settings/03-characters.md` for the episode's key characters before drafting dialogue.
-4. **Check editor feedback**: Reference `EDITOR_FEEDBACK_*.md` if unprocessed feedback exists.
+4. **Check continuity anchors when needed**: If this episode depends on dates, ages, travel time, injuries, carry-forward promises, or other invariants, read `settings/05-continuity.md` directly instead of relying on memory alone.
+5. **Check editor feedback**: Reference `EDITOR_FEEDBACK_*.md` if unprocessed feedback exists.
 
 ### 3.2 Writing (Write)
 
@@ -142,8 +145,8 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 
 **Modes** (periodic + change-based triggers):
 - `continuity` (every episode): 14 continuity items + critical Korean errors(❌) + 반복표현/번역투/호응오류
-- `standard` (per `settings/07-periodic.md` trigger — default every 5 eps, flexible up to 8 **OR** new key character, relationship reversal, secret reveal, combat-heavy ep, etc.): continuity + 7 narrative items + full Korean proofing + external feedback
-- `full` (arc boundary / setting change / long-term foreshadowing payoff): all items + detailed analysis + direct settings/ reference
+- `standard` (as triggered by `settings/07-periodic.md`): continuity + 7 narrative items + full Korean proofing + configured external feedback
+- `full` (arc boundary / setting change / long-term foreshadowing payoff): all items + detailed analysis + direct settings reference, especially `01/03/05/07`
 
 **Review anchor**:
 - review 시 주요 인물 대사가 `settings/03-characters.md`의 운용 앵커와 어긋나는지 확인한다.
@@ -195,7 +198,7 @@ Arc boundary principle:
 3. **Previous episode text** — established facts
 4. **summaries/** — reference only, episode text takes precedence
 
-> Note: When `settings/` files provide more detailed or updated rules than this document's general principles (e.g., flexible periodic check timing in `07-periodic.md`), the settings file's specific rule takes precedence over this document's general statement.
+> Note: `settings/` is the shared literary/continuity layer across template variants. When `settings/` files provide more detailed or updated rules than this document's general principles, the settings file's specific rule takes precedence; this document only governs Claude runtime behavior.
 
 ---
 
@@ -330,6 +333,8 @@ intentional_deviations:  # (optional) record deliberate rule deviations for THIS
 
 After copying this template, fill in `{{PLACEHOLDER}}` values and:
 
+> `settings/` files are intentionally shared with the hybrid and Codex lean variants. If a change is about prose, characters, continuity, or periodic checks, prefer editing the settings file. If it is about Claude execution, edit this file or `batch-supervisor.md`.
+
 1. `settings/01-style-guide.md` — prose style rules
 2. `settings/02-episode-structure.md` — episode structure
 3. `settings/03-characters.md` — character sheets (include 대표 대사 2~3종)
@@ -342,6 +347,6 @@ After copying this template, fill in `{{PLACEHOLDER}}` values and:
 10. Section 8 — fill in the honorific/speech-level matrix
 11. `settings/01-style-guide.md` §0 — **Voice Profile** (서술 온도, 보이스 우선순위, 대표 문단). 이것이 소설의 목소리다.
 12. Section 1.2 — **Thematic Statement** (주 주제 + 부 주제). 이것이 소설의 영혼이다.
-12. `summaries/decision-log.md` — initialize if project-wide deviations are planned
+13. `summaries/decision-log.md` — initialize if project-wide deviations are planned
 
 ---

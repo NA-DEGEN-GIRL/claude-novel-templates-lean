@@ -21,6 +21,14 @@ Claude Code 중심으로 한국어 웹소설 프로젝트를 운영하기 위한
 
 핵심은 "무슨 모델을 몇 개 붙이느냐"보다 **Claude Code를 어떤 문서와 규칙으로 운용하느냐**다.
 
+## Shared Settings Layer
+
+이 템플릿의 `settings/`는 [claude-codex-novel-templates-hybrid](/root/novel/claude-codex-novel-templates-hybrid/settings), [codex-novel-templates-lean](/root/novel/codex-novel-templates-lean/settings)와 **동일한 공통 집필 레이어**다.
+
+- `settings/`는 일반 소설과 웹소설 모두에 적용되는 문체, 캐릭터, 연속성, 정기 점검 규약을 담는다.
+- `CLAUDE.md`와 `batch-supervisor.md`는 Claude lean의 실행 방식만 정의한다.
+- 문학 규칙을 개선할 때는 보통 `settings/`를 먼저 고치고, Claude 전용 운용 차이는 상위 문서에서 처리한다.
+
 ---
 
 ## 먼저 볼 문서
@@ -62,7 +70,7 @@ Claude Code 중심으로 한국어 웹소설 프로젝트를 운영하기 위한
 
 ## Design Principles
 
-1. `CLAUDE.md`와 `settings/`가 집필 품질의 중심이다.
+1. `settings/`는 세 템플릿이 공유하는 집필 규약이고, `CLAUDE.md`와 `batch-supervisor.md`는 Claude 런타임 레이어다.
 2. 매 화 집필, 정기 점검, 아크 경계 감사를 문서와 체크리스트로 강제한다.
 3. `compile_brief`를 우선 쓰되, 불가하면 fallback으로 읽기 순서를 정한다.
 4. 대표 대사와 보이스 규칙은 복붙용 문장 사전이 아니라 운용 앵커로 쓴다.
@@ -86,6 +94,7 @@ Claude Code 중심으로 한국어 웹소설 프로젝트를 운영하기 위한
   - tmux auditor 감독 문서
 - `settings/`
   - 문체, 구조, 캐릭터, 세계관, 연속성, 정기 점검, 삽화 규칙
+  - hybrid / codex lean과 동일한 공통 authoring layer
 - `plot/`
   - master outline, arc plots, foreshadowing
 - `summaries/`
