@@ -225,6 +225,7 @@ batch-supervisor는 plot-repair의 "사용자" 역할을 수행할 수 있다. `
 - 집필 시작 시 compile_brief(novel_dir="{{NOVEL_DIR}}", episode_number={N}) MCP 도구를 먼저 호출하여 현재 맥락을 확인한다.
 - compile_brief 실패 시에만 writer.md step 1의 폴백 순서를 따른다.
 - plot/{arc}.md를 확인하여 이번 화의 아크 역할과 다음 2~3화 런웨이를 맞춘다.
+- settings/03-characters.md에서 이번 화 핵심 인물의 대표 대사와 관계 상태를 확인한다.
 - 직전 화 마지막 2~3문단을 확인하여 오프닝 연결과 엔딩 훅 중복을 방지한다.
 - planning flags(flashback_present, new_danger, new_setting_claim, calc_used)를 step 4에서 먼저 결정하고, step 7 자가 리뷰는 해당 플래그에 따라 조건부 항목까지 수행한다.
 - 파일명: chapters/{arc}/chapter-{NN}.md
@@ -234,6 +235,8 @@ batch-supervisor는 plot-repair의 "사용자" 역할을 수행할 수 있다. `
 - review_floor 이하로 강등하지 마라. 올릴 수만 있다.
 1. unified-reviewer를 최종 결정 모드로 실행한다. EDITOR_FEEDBACK 파일이 있으면 전체 항목을 참조하여 처리한다.
 2. 수정 발생 시 summary 파일을 재갱신하고 검증한다.
+3. 대표 대사를 그대로 복붙하지 말고, settings/03-characters.md의 어휘 선택과 위계감만 참고해 장면에 맞게 변주한다.
+4. 필요 시 `novel-calc`, `novel-hanja`, `novel-naming` MCP를 사용한다.
 [후처리]
 - writer.md steps 8-9에 따라 요약 파일 인라인 갱신 및 summary fact-check를 수행한다.
 - step 11에서 EPISODE_META를 삽입하고, 리뷰를 처리한 경우 editor-feedback-log까지 갱신한다.
@@ -251,6 +254,7 @@ batch-supervisor는 plot-repair의 "사용자" 역할을 수행할 수 있다. `
 - .claude/agents/writer.md의 steps 1-12를 동일하게 수행한다.
 - compile_brief(novel_dir="{{NOVEL_DIR}}", episode_number={N})로 현재 상태를 먼저 확인한다.
 - compile_brief를 우선 사용하되, writer.md step 2-3에 필요한 범위의 plot/{arc}.md와 직전 화 마지막 2~3문단은 직접 확인한다.
+- settings/03-characters.md에서 이번 화 핵심 인물의 대표 대사와 관계 상태를 다시 확인한다.
 - step 4에서 planning flags를 먼저 결정하고, step 7 자가 리뷰는 해당 플래그 기반 조건부 항목까지 수행한다.
 - 외부 AI 리뷰: 매 화 반드시 review_episode MCP 호출 (실패 시 로그만 남기고 계속).
 - 리뷰 최소 모드(review_floor): {supervisor가 삽입}. 이 모드 이하로 강등 불가. 올릴 수만 있다.
@@ -340,6 +344,12 @@ To accurately determine "completed" state, verify all of the following:
    <!-- batch-progress.log is created and maintained by the supervisor. Format: one line per episode, 'EP {N} DONE {timestamp}'. Used for completion tracking and resume. -->
 
 All three conditions must be met for "completed" status. If only the prompt is visible but the file doesn't exist, the episode may have failed silently.
+
+아크 마지막 화는 추가로 아래까지 확인한다.
+
+4. `summaries/review-log.md`에 arc transition 결과가 기록되었는가
+5. patch-feasible/HOLD 구분이 끝났는가
+6. open HOLD가 있으면 `hold_route`, `scope`, `blocker`, `latest-safe-resolution`이 지정되었는가
 
 #### 4d. config.json Update (Supervisor Responsibility)
 
@@ -469,16 +479,67 @@ When the episode number enters a new arc range:
 5. Arc transitions are periodic check triggers, so add to the first episode prompt after transition:
 
 ```
-※ 아크 전환 시점이므로 settings/07-periodic.md의 정기 점검(P1~P9)을 먼저 수행한 후 집필을 시작한다.
+※ 아크 전환 시점이므로 settings/07-periodic.md의 정기 점검(P1~P13)을 먼저 수행한 후 집필을 시작한다.
 ```
+
+#### 5b-1. Patch-Feasible Repair Batch
+
+`patch-feasible`은 "좋은 지적"이 아니라 즉시 수정 배치로 흘려야 하는 항목이다.
+
+1. patch-feasible 항목을 화수별로 묶는다.
+2. 각 항목을 아래 중 하나로 분류한다.
+   - `micro`: 1~3문장 사실/호응 보정
+   - `local`: 문단 단위 보강/삭제/어휘 교정
+   - `rewrite`: 장면 단위 재작성
+3. 같은 화의 `micro/local/rewrite`를 하나의 repair batch로 묶어 writer에게 보낸다.
+4. writer는 해당 화만 수정하고, summary와 review-log를 재정합한다.
+5. supervisor는 재검토 후 다음 항목으로 넘어간다.
+
+repair batch 지시 원칙:
+
+- 범위를 벗어난 새 설정 추가 금지
+- 기존 톤/리듬/엔딩 훅 보존
+- 한 화를 여러 축으로 동시에 흔들지 말고, 한 번의 배치로 끝낼 수 있게 묶기
+- 재수정이 길어지면 `patch-feasible`이 아니라 `HOLD` 재분류 검토
+
+#### 5b-2. HOLD Transfer Routing
+
+`HOLD`는 "나중에 보자"가 아니라, 즉시 수정하지 못한 구조 이슈를 명시적 목적지로 보내는 이관 티켓이다.
+
+| Route | 언제 쓰는가 | 필수 조치 | 집필 게이트 |
+|---|---|---|---|
+| `retro-fix` | 이미 집필된 부분이 현재 canon과 직접 충돌하는 경우 | 영향 화수 지정, 전용 repair batch 예약 | 다음 1~2화 진행 가능, 영향 범위 확장 금지 |
+| `forward-fix` | 기존 본문은 유지 가능하지만 설명/동기/맥락 보강이 필요한 경우 | 미래 삽입 화수와 보상 비트 지정, plot과 running-context에 반영 | 지정한 만기 화수 전까지만 진행 가능 |
+| `plot-repair` | 미래 아크 설계 자체를 다시 짜야 하는 경우 | `plot/arc-XX.md` 또는 `plot/master-outline.md` 수정 | 영향 받는 아크 진입 전 완료 |
+| `user-escalation` | 작품 핵심 premise나 엔딩 약속을 바꾸는 경우 | 사용자 보고 후 결정 대기 | 결정 전 해당 구간 집필 중단 |
+
+blocker 기본값:
+
+- `retro-fix` → `blocker=yes`
+- `forward-fix` → `blocker=no`
+- `plot-repair` → `blocker=yes`
+- `user-escalation` → `blocker=yes`
+
+기록 규칙:
+
+1. `summaries/review-log.md`에 `HOLD-ID / defect / route / scope / blocker / target / latest-safe-resolution / status` 기록
+2. `forward-fix`는 반드시 `scope: current-arc | next-arc`를 붙인다
+3. `forward-fix`는 `summaries/running-context.md`에도 경고를 남긴다
+4. 미래 화수 보상이 필요하면 해당 비트를 `plot/arc-XX.md`에 삽입한다
+
+아크 마감 게이트:
+
+- `scope: current-arc` open HOLD → 아크 마감 불가
+- `scope: next-arc` open HOLD → carry-forward 확인 후 마감 가능
+- `blocker=yes` HOLD → 해당 영향 범위 집필 시작 불가
 
 #### 5c. Periodic Check
 
 Trigger: 5화 단위를 기본으로 하되, settings/07-periodic.md에 따라 앞당기거나 늦출 수 있다 (최대 8화). When triggered, add to the next episode prompt:
 
 ```
-※ 정기 점검 시점이다. settings/07-periodic.md의 P1~P9를 수행한 후 집필을 시작한다.
-※ P7(외부 AI 일괄 리뷰)은 CLAUDE.md의 피드백 플래그(gemini_feedback, gpt_feedback 등)가 true인 소스만 대상으로 mcp__novel_editor__batch_review를 호출한다.
+※ 정기 점검 시점이다. settings/07-periodic.md의 P1~P13을 수행한 후 집필을 시작한다.
+※ P8(외부 AI 일괄 리뷰)은 CLAUDE.md의 피드백 플래그(gemini_feedback, gpt_feedback 등)가 true인 소스만 대상으로 mcp__novel_editor__batch_review를 호출한다.
 ※ 정기 점검과 별도로, OAG 탐지(행동 갭)는 /oag-check 명령으로 수동 실행한다. 자동 집필 중에는 아크 전환 시점의 /oag-check + /why-check만 수행.
 ```
 

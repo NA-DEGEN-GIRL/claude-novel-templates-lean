@@ -69,5 +69,7 @@ Write metadata at the end of each episode using the YAML template from CLAUDE.md
 - Write a full summary of the previous part
 - Record character states as a reset point
 - Sort unresolved threads into carry-forward vs. discard for the next part
+- Classify arc findings into `patch-feasible` vs `HOLD` and record them in `summaries/review-log.md`
+- If a `forward-fix` is chosen, sync it across `review-log.md`, `running-context.md`, and the next arc plot file
 
 ---

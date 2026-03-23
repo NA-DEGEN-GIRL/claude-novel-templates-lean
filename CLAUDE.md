@@ -84,7 +84,8 @@
 1. **Call `compile_brief` MCP tool**: Generates a compressed brief (~4-15KB) from project files (~300KB+). compile_brief를 우선 사용하되, 불가능하면 아래 fallback으로 전환.
    - Fallback if unavailable: `summaries/running-context.md` → relevant arc plot → `plot/foreshadowing.md` → `summaries/character-tracker.md`.
 2. **Read last 2-3 paragraphs of previous episode**: Verify hook connection + prevent same ending hook type consecutively.
-3. **Check editor feedback**: Reference `EDITOR_FEEDBACK_*.md` if unprocessed feedback exists.
+3. **Check character anchors**: Read `settings/03-characters.md` for the episode's key characters before drafting dialogue.
+4. **Check editor feedback**: Reference `EDITOR_FEEDBACK_*.md` if unprocessed feedback exists.
 
 ### 3.2 Writing (Write)
 
@@ -123,7 +124,9 @@
 5. **When the novel uses Hanja naming** (martial arts, historical, Sino-Korean fantasy), **use `novel-hanja` MCP**. Never assemble Hanja via LLM inference. For modern/SF settings where names don't require Hanja etymology, this step may be skipped.
    - `hanja_lookup`, `hanja_search`, `hanja_meaning`, `hanja_verify`
 6. **Hanja notation**: Show reading + Hanja only on first appearance (e.g., 내공(內功), 대사헌(大司憲) — genre-dependent). Korean-only thereafter. Ref: `summaries/hanja-glossary.md`. Exception: re-appearance after 30+ episodes, homophone disambiguation.
-7. **Use era-appropriate units and terminology.** Refer to `settings/04-worldbuilding.md` for your novel's setting.
+7. **Use `novel-naming` MCP** for spelling variants, title consistency, faction/skill naming drift, and alias normalization when proper nouns start proliferating.
+8. **Dialogue anchor rule**: `settings/03-characters.md`의 대표 대사는 복붙용 문장이 아니다. 어휘 선택, 높낮이, 위계감, 판단 방식을 읽고, 실제 장면에 맞게 변주한다.
+9. **Use era-appropriate units and terminology.** Refer to `settings/04-worldbuilding.md` for your novel's setting.
    - Modern/SF: Modern units, loanwords, and Arabic numerals are natural. No conversion needed.
    - Pre-modern/historical: metric → traditional units, loanwords → Sino-Korean/native Korean. Use `unit_convert`.
    - **Pre-modern numeral rules (Korean output)** — (Apply only when settings specify a pre-modern or historical era. For modern/SF, Arabic numerals and modern counting are natural.):
@@ -131,7 +134,7 @@
      - No decimal notation: `1.5장` → `일 장 반`
      - `100명` → `백 명`, `3일` → `사흘`, `7일` → `이레`, `10일` → `열흘`, `15일` → `보름`
      - Exception: EPISODE_META, plot/, summaries/ (meta areas)
-8. **Footnotes**: Use `[^N]` format. `\[N\]` or `[N]` formats forbidden.
+10. **Footnotes**: Use `[^N]` format. `\[N\]` or `[N]` formats forbidden.
 
 ### 3.3 Unified Review
 
@@ -141,6 +144,10 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 - `continuity` (every episode): 14 continuity items + critical Korean errors(❌) + 반복표현/번역투/호응오류
 - `standard` (per `settings/07-periodic.md` trigger — default every 5 eps, flexible up to 8 **OR** new key character, relationship reversal, secret reveal, combat-heavy ep, etc.): continuity + 7 narrative items + full Korean proofing + external feedback
 - `full` (arc boundary / setting change / long-term foreshadowing payoff): all items + detailed analysis + direct settings/ reference
+
+**Review anchor**:
+- review 시 주요 인물 대사가 `settings/03-characters.md`의 운용 앵커와 어긋나는지 확인한다.
+- 대표 대사를 그대로 반복한 문장은 drift 위험으로 본다.
 
 **External feedback sources** (per CLAUDE.md flags):
 1. **Gemini** (`gemini_feedback: true`): continuity/worldbuilding → `EDITOR_FEEDBACK_gemini.md`
@@ -160,6 +167,10 @@ Per `.claude/agents/unified-reviewer.md`. Continuity + narrative quality + Korea
 4. **Git commit**: After episode completion (manuscript + summaries). Batch 2-3 eps OK. Message: `{소설명} {N}~{M}화 집필`. Push only on user request.
 5. **Action log**: 주요 작업 완료 시 `summaries/action-log.md`에 한 줄 append. 형식: `| {시각} | {에이전트} | {행동} | {대상} | {상태} | {비고} |`. 운영 로그이므로 compile_brief에 포함하지 않는다.
 6. **Style lexicon**: 어휘 치환이 채택되면 `summaries/style-lexicon.md`에 즉시 기록. compile_brief에 자동 포함.
+
+Arc boundary principle:
+- 아크 경계에서 나온 항목은 `patch-feasible`과 `HOLD`로 분리한다.
+- `forward-fix`는 `review-log.md`, `running-context.md`, 다음 아크 plot 파일에 동시에 기록한다.
 
 ### 3.5 Parallel Writing & Periodic Checks
 
